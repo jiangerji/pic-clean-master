@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">   
+    <!--连框颜色值-->
+    <item>   
+        <shape android:shape="rectangle" >
+            <corners 
+                android:topLeftRadius="2dp"
+                android:topRightRadius="2dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp"/>
+        
+            <!-- 这是半透明，还可以设置全透明，那就是白色边框的效果了 -->
+            <solid android:color="@android:color/white" />
+        
+            <stroke
+                android:dashGap="0dp"
+                android:width="1dp"
+                android:color="#E4E4E4" />
+            
+        </shape>   
+    </item>
+    
+    <!--主体背景颜色值-->  
+    <item 
+        android:left="1dp" 
+        android:right="1dp"
+        android:top="5dp" >   
+        <shape>   
+            <solid android:color="#ffffff" />  
+            <padding android:bottom="1dp"  
+                android:left="10dp"  
+                android:right="10dp"  
+                android:top="0dp" />
+        </shape>
+    </item>  
+</layer-list>  

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- CircleButton Attribute -->
+    <declare-styleable name="CircleButton">
+        <attr name="circle_icon" format="reference"/>
+        <attr name="circle_color" format="color"/>
+        <attr name="circle_shadow_radius" format="float"/>
+        <attr name="circle_shadow_offset_x" format="float"/>
+        <attr name="circle_shadow_offset_y" format="float"/>
+        <attr name="circle_shadow_color" format="color"/>
+    </declare-styleable>
+    
+</resources>

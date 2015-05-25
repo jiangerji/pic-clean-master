@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">图片清理大师</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="recycle">回收站</string>
+    <string name="feedback">意见反馈</string>
+    <string name="deleting_progress">正在删除相似图片&#8230;</string>
+    <string name="need_handle">需要处理</string>
+    <string name="auto_select">智能选择</string>
+    <string name="cancel_auto_select">取消智能选择</string>
+    <string name="select_all">全选</string>
+    <string name="cancel_select_all">取消全选</string>
+    
+    <string name="slide_menu_hint_total_handle">累计处理照片</string>
+    <string name="slide_menu_duplicate_scan">相似照片</string>
+    
+    <string name="delete_confirm">确认删除</string>
+    <string name="delete_with_size">删除(%1$s)</string>
+    
+    <string name="delete_message">删除选中的%1$d张照片？7天内可在<font color="#ff0000">回收站</font>找回</string>
+    
+    <string name="scanning">正在扫描：%s</string>
+    
+    <string name="scan_result_progress_hint">共扫描%1$d张图片，发现%2$d张相似照片</string>
+
+</resources>

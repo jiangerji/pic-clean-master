@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2C5AA9</color>
+    <color name="primary_dark">#2C5AA9</color>
+    
+    <color name="haha">#367D9D</color>
+    
+    <!-- 
+    <color name="primary_dark">#536DFE</color>
+    -->
+    <color name="accent">#d500f9</color>
+    
+    <color name="activity_background_color">#EDEDED</color>
+    
+    <color name="red_light_EB5347">#EB5347</color>
+    <color name="divider">#E4E4E4</color>
+    
+    <color name="title">#666666</color>
+    <color name="black_light_333333">#333333</color>
+    <color name="black_light_494949">#494949</color>
+    <color name="text_black_444E53">#444E53</color>
+    <color name="text_black_545E63">#444E53</color>
+    <color name="white_light_FAFAFA">#FAFAFA</color>
+</resources>

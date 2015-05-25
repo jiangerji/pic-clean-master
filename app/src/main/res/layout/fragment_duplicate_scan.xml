@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <LinearLayout
+        android:id="@+id/delete_btn_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white_light_FAFAFA"
+        android:orientation="vertical"
+        android:visibility="gone" >
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider" />
+        
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/bottom_delete_btn_bg"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_light_FAFAFA"
+            android:text="@string/delete" />
+    </LinearLayout>
+    
+    <cn.iam007.pic.clean.master.base.widget.CustomRecyclerView
+        android:id="@+id/duplicate_images"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:clipToPadding="false"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/delete_btn_container" />
+    
+    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+        android:id="@+id/startProgress"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/primary"
+        android:visibility="visible" />
+    
+    <!-- 
+    <ImageView
+        android:id="@+id/debugItem"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:visibility="visible"
+        android:contentDescription="@null"
+        android:background="@drawable/duplicate_item_left_bg" />
+    -->
+   
+    <include
+        android:id="@+id/scanHintHeaderContainer"
+        layout="@layout/fragment_duplicate_scan_progress"
+        android:visibility="invisible" />
+    
+</RelativeLayout>

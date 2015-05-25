@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activity_background_color"
+    android:orientation="vertical" >
+        
+    <TextView
+        android:id="@+id/total_delete_file_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="25dp"
+        android:textSize="50sp"
+        android:textColor="@color/text_black_444E53" />
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="25dp"
+        android:textSize="14sp"
+        android:textColor="@color/text_black_545E63"
+        android:text="@string/slide_menu_hint_total_handle" />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+    
+    <RelativeLayout
+        android:id="@+id/duplicate_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/slide_menu_btn_color"
+        android:orientation="horizontal" >
+        
+        <ImageView
+            android:id="@+id/scan_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_duplicate_scan_normal"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/scan_icon"
+            android:layout_alignBottom="@id/scan_icon"
+            android:layout_toRightOf="@id/scan_icon"
+            android:layout_toEndOf="@id/scan_icon"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            android:text="@string/slide_menu_duplicate_scan"
+            android:gravity="center" />
+        
+    </RelativeLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+    
+    <RelativeLayout
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/slide_menu_btn_color"
+        android:orientation="horizontal" >
+        
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_delete_normal"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/icon"
+            android:layout_alignBottom="@id/icon"
+            android:layout_toRightOf="@id/icon"
+            android:layout_toEndOf="@id/icon"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            android:text="@string/recycle"
+            android:gravity="center" />
+        
+    </RelativeLayout>
+    
+    <!-- 
+    <com.gc.materialdesign.views.ButtonFlat
+        android:id="@+id/recycle_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textColor="@color/text_black_444E53"
+        android:textSize="50sp"
+        android:text="@string/recycle" />
+    -->
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+    
+    <RelativeLayout
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/slide_menu_btn_color"
+        android:orientation="horizontal" >
+        
+        <ImageView
+            android:id="@+id/feedback_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_feedback_normal"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/feedback_icon"
+            android:layout_alignBottom="@id/feedback_icon"
+            android:layout_toRightOf="@id/feedback_icon"
+            android:layout_toEndOf="@id/feedback_icon"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            android:text="@string/feedback"
+            android:gravity="center" />
+        
+    </RelativeLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+    
+</LinearLayout>

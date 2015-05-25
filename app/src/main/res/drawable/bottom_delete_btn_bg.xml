@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">   
+    <!--连框颜色值-->
+    <item>   
+        <shape android:shape="rectangle" >
+            <corners 
+                android:topLeftRadius="2dp"
+                android:topRightRadius="2dp"
+                android:bottomLeftRadius="2dp"
+                android:bottomRightRadius="2dp"/>
+        
+            <!-- 这是半透明，还可以设置全透明，那就是白色边框的效果了-->
+            <solid android:color="@color/bottom_delete_btn_color" />
+        </shape>   
+    </item>
+</layer-list>  
