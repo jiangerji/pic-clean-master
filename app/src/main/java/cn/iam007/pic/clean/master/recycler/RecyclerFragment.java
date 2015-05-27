@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.recycler;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,6 @@ import java.io.File;
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
-import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
@@ -46,9 +46,11 @@ public class RecyclerFragment extends Fragment {
             initView(mRootView);
         }
 
-        if (SharedPreferenceUtil.getBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, false)){
+        if (SharedPreferenceUtil.getBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE,
+                false)) {
             mRecyclerImageAdapter.clear();
-            SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, false);
+            SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE,
+                    false);
         }
         startScanRecycler();
         return mRootView;
@@ -80,14 +82,16 @@ public class RecyclerFragment extends Fragment {
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final DeleteRecyclerConfirmDialog dialog = DeleteRecyclerConfirmDialog.builder(getActivity());
-            dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startToDelete();
-                    dialog.dismiss();
-                }
-            });
+            final DeleteRecyclerConfirmDialog dialog =
+                    DeleteRecyclerConfirmDialog.builder(getActivity(), mRecyclerImageAdapter.getSelectedItem());
+            dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startToDelete();
+                            dialog.dismiss();
+                        }
+                    });
             dialog.show();
         }
     };
@@ -189,4 +193,44 @@ public class RecyclerFragment extends Fragment {
         }
     }
 
+    private String SELECTED_RECYCLER_IMAGE_TOTAL_SIZE =
+            SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+                @Override
+                public void onSharedPreferenceChanged(
+                        SharedPreferences sharedPreferences, String key) {
+                    if (key.equalsIgnoreCase(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE)) {
+                        if (mDeleteBtn != null) {
+                            long count = sharedPreferences.getLong(key, 0);
+                            if (count <= 0) {
+                                mRestoreBtn.setEnabled(false);
+                                mDeleteBtn.setEnabled(false);
+                            } else {
+                                mRestoreBtn.setEnabled(true);
+                                mDeleteBtn.setEnabled(true);
+                            }
+                        }
+                    }
+
+                }
+            };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE,
+                mSharedPreferenceChangeListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
+                SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSharedPreferenceChangeListener);
+    }
 }

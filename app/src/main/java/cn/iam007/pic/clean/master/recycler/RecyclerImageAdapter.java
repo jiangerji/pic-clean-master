@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
 
@@ -21,21 +22,17 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         return mItems.size();
     }
 
-    public void addItems(ArrayList<RecyclerImageItem> items) {
-        mItems.addAll(items);
-    }
-
     public void addItem(RecyclerImageItem item) {
         mItems.add(item);
+        item.setAdapter(this);
     }
 
-    public void clear(){
+    public void clear() {
         mItems.clear();
     }
 
     @Override
-    public RecyclerViewHolder
-    onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_recycler_item_image, parent, false);
 
@@ -53,18 +50,33 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         holder.bindView(item);
     }
 
-    private int mSelectedItem = 0;
+    private long mSelectedItem = 0;
+
+    // 主要用于更新已选择的数量
+    public void updateItem(RecyclerImageItem item) {
+        if (item != null) {
+            if (item.isSelected()) {
+                mSelectedItem++;
+            } else {
+                mSelectedItem--;
+            }
+        }
+
+        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+    }
 
     public void selectAll(boolean select, GridLayoutManager layoutManager) {
         for (RecyclerImageItem item : mItems) {
-            item.setSelected(select);
+            item.setSelected(select, false);
         }
 
-        if (select){
+        if (select) {
             mSelectedItem = mItems.size();
         } else {
             mSelectedItem = 0;
         }
+
+        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
 
         if (layoutManager == null) {
             notifyDataSetChanged();
@@ -100,9 +112,10 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
 
     /**
      * 获取当前选中的图片数量
+     *
      * @return
      */
-    public int getSelectedItem() {
+    public long getSelectedItem() {
         return mSelectedItem;
     }
 }

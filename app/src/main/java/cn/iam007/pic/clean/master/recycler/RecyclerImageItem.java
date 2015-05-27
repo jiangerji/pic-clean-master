@@ -3,6 +3,9 @@ package cn.iam007.pic.clean.master.recycler;
 import com.lidroid.xutils.db.annotation.Column;
 import com.lidroid.xutils.db.annotation.Id;
 
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
+
 import cn.iam007.pic.clean.master.utils.CryptoUtil;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
@@ -43,18 +46,25 @@ public class RecyclerImageItem {
         return isSelected;
     }
 
+    private WeakReference<RecyclerImageAdapter> mAdapter = null;
+
+    public void setAdapter(RecyclerImageAdapter adapter){
+        mAdapter = new WeakReference<>(adapter);
+    }
+
     /**
      * @param isSelected the isSelected to set
+     * @param updateView 是否需要新fragment上的view
      */
-    public void setSelected(boolean isSelected) {
+    public void setSelected(boolean isSelected, boolean updateView) {
         if (isSelected != this.isSelected) {
             this.isSelected = isSelected;
 
-//            if (this.isSelected) {
-//                SharedPreferenceUtil.addSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 1L);
-//            } else {
-//                SharedPreferenceUtil.subSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 1L);
-//            }
+            if (updateView){
+                if (mAdapter != null && mAdapter.get() != null){
+                    mAdapter.get().updateItem(this);
+                }
+            }
         }
     }
 

@@ -25,7 +25,7 @@ public class RecyclerViewHolder extends ViewHolder {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mItem != null) {
-                    mItem.setSelected(isChecked);
+                    mItem.setSelected(isChecked, true);
                 }
             }
         });

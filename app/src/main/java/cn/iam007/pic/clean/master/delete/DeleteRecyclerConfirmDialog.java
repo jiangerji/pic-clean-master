@@ -12,14 +12,21 @@ import cn.iam007.pic.clean.master.R;
  */
 public class DeleteRecyclerConfirmDialog extends MaterialDialog {
 
-    public static DeleteRecyclerConfirmDialog builder(Context context) {
+    /**
+     * 构造确认删除的对话框
+     *
+     * @param context 上下文
+     * @param count   需要删除的文件的数量
+     * @return
+     */
+    public static DeleteRecyclerConfirmDialog builder(Context context, long count) {
         Builder builder = new MaterialDialog.Builder(context);
 
         builder.title(R.string.recycle)
                 .theme(Theme.LIGHT)
                 .positiveText(R.string.delete_confirm)
                 .negativeText(R.string.cancel)
-                .content(context.getString(R.string.recycler_delete_message, 5));
+                .content(context.getString(R.string.recycler_delete_message, count));
 
         // 设置字体颜色
         //        new MaterialDialog.Builder(this)

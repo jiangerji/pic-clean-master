@@ -90,7 +90,7 @@ public class RecyclerManager {
             try {
                 mDbUtils.delete(item);
             } catch (DbException e) {
-                LogUtil.d("Delete Recycler Exception:" + e.toString());
+//                LogUtil.d("Delete Recycler Exception:" + e.toString());
             }
 
             File file = new File(item.getRecyclerPath());
