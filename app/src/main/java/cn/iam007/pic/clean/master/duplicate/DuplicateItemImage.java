@@ -2,6 +2,10 @@ package cn.iam007.pic.clean.master.duplicate;
 
 import java.io.File;
 
+import cn.iam007.pic.clean.master.recycler.RecyclerManager;
+import cn.iam007.pic.clean.master.utils.CryptoUtil;
+import cn.iam007.pic.clean.master.utils.FileUtil;
+
 public class DuplicateItemImage extends DuplicateItem {
 
     // 用于显示的图片
@@ -18,7 +22,7 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 返回图片的地址
-     * 
+     *
      * @return the imageUrl
      */
     public String getImageUrl() {
@@ -31,7 +35,7 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 返回图片的绝对路径
-     * 
+     *
      * @return
      */
     public String getImageRealPath() {
@@ -54,9 +58,8 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 设置显示图片的地址
-     * 
-     * @param imageUrl
-     *            the imageUrl to set
+     *
+     * @param imageUrl the imageUrl to set
      */
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
@@ -64,7 +67,7 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 是否被选中
-     * 
+     *
      * @return the isSelected
      */
     public boolean isSelected() {
@@ -73,12 +76,9 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 设置图片是否被选中删除
-     * 
-     * @param isSelected
-     *            the isSelected to set
-     * 
-     * @param updateTotalCount
-     *            是否将需要删除的图片文件总大小更新保存到SharedPreference中
+     *
+     * @param isSelected       the isSelected to set
+     * @param updateTotalCount 是否将需要删除的图片文件总大小更新保存到SharedPreference中
      */
     public void setSelected(boolean isSelected, boolean updateTotalCount) {
         this.isSelected = isSelected;
@@ -93,7 +93,7 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 获取该部件所属头部件
-     * 
+     *
      * @return the item header
      */
     public DuplicateItemHeader getItemHeader() {
@@ -102,12 +102,15 @@ public class DuplicateItemImage extends DuplicateItem {
 
     /**
      * 设置该部件所属头部件
-     * 
-     * @param itemHeader
-     *            the header item to set
+     *
+     * @param itemHeader the header item to set
      */
     public void setItemHeader(DuplicateItemHeader itemHeader) {
         this.itemHeader = itemHeader;
     }
 
+
+    public void delete() {
+        RecyclerManager.getInstance().deleteToRecycler(imageUrl);
+    }
 }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -44,6 +45,7 @@ import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.tonicartos.superslim.LayoutManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DuplicateScanFragment extends Fragment {
@@ -215,12 +217,17 @@ public class DuplicateScanFragment extends Fragment {
         }
     };
 
+    private File mCameraDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+
     @SuppressLint("SdCardPath")
     private void startDuplicateImageFindTask() {
         DuplicateImageFindTask mDuplicateImageFindTask = new DuplicateImageFindTask(mDuplicateFindCallback);
 
-        String rootDir = "/sdcard/DCIM/nexus";
-        mDuplicateImageFindTask.execute(rootDir);
+        if (mCameraDir != null) {
+            String rootDir = mCameraDir.getAbsolutePath();//"/sdcard/DCIM/nexus";
+            LogUtil.d("Start scan " + rootDir);
+            mDuplicateImageFindTask.execute(rootDir);
+        }
     }
 
     @SuppressLint("RtlHardcoded")
@@ -451,9 +458,9 @@ public class DuplicateScanFragment extends Fragment {
 
         if (mDuplicateImageScanFinished) {
             mAutoSelect.setVisible(true);
-            if (mAutoSelected){
+            if (mAutoSelected) {
                 mAutoSelect.setTitle(R.string.cancel_auto_select);
-            }else {
+            } else {
                 mAutoSelect.setTitle(R.string.auto_select);
             }
         } else {

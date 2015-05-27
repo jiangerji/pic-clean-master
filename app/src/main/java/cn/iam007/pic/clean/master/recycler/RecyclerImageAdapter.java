@@ -31,7 +31,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
 
     @Override
     public RecyclerViewHolder
-            onCreateViewHolder(ViewGroup parent, int viewType) {
+    onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_recycler_item_image, parent, false);
 
@@ -49,9 +49,17 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         holder.bindView(item);
     }
 
+    private int mSelectedItemCount = 0;
+
     public void selectAll(boolean select, GridLayoutManager layoutManager) {
         for (RecyclerImageItem item : mItems) {
             item.setSelected(select);
+        }
+
+        if (select){
+            mSelectedItemCount = mItems.size();
+        } else {
+            mSelectedItemCount = 0;
         }
 
         if (layoutManager == null) {
@@ -61,10 +69,36 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
             int lastPos = layoutManager.findLastVisibleItemPosition();
             RecyclerImageItem item = null;
             while (startPos <= lastPos) {
-                item = mItems.get(startPos);
-                item.getViewHolder().setChecked(select);
+                if (startPos >= 0 && startPos < mItems.size()) {
+                    item = mItems.get(startPos);
+                    item.getViewHolder().setChecked(select);
+                }
                 startPos++;
             }
         }
+    }
+
+    /**
+     * 删除选中的图片
+     */
+    public void deleteItems() {
+        ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
+        for (RecyclerImageItem item : mItems) {
+            if (item.isSelected()) {
+                RecyclerManager.getInstance().delete(item);
+                deleteItems.add(item);
+            }
+        }
+
+        mItems.removeAll(deleteItems);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 获取当前选中的图片数量
+     * @return
+     */
+    public int getSelectedItem() {
+        return mSelectedItemCount;
     }
 }

@@ -3,23 +3,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <LinearLayout
+        android:id="@+id/btn_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/restore_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@drawable/bottom_restore_btn_bg"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_light_FAFAFA"
+            android:text="@string/restore" />
+
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:background="@drawable/bottom_delete_btn_bg"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_light_FAFAFA"
+            android:text="@string/delete" />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_images"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:clipToPadding="false"
-        android:layout_height="wrap_content" />
-    
-    <Button
-        android:id="@+id/delete_btn"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        android:background="@drawable/bottom_delete_btn_bg"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white_light_FAFAFA"
-        android:text="@string/delete" />
+        android:layout_above="@id/btn_group"/>
     
 </RelativeLayout>

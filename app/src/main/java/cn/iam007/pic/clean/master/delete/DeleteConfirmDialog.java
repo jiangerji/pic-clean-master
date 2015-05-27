@@ -1,6 +1,5 @@
 package cn.iam007.pic.clean.master.delete;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -24,10 +23,11 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
+import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
-import cn.iam007.pic.clean.master.utils.LogUtil;
 
 public class DeleteConfirmDialog extends MaterialDialog {
 
@@ -76,11 +76,6 @@ public class DeleteConfirmDialog extends MaterialDialog {
         super.show();
     }
 
-    /**
-     * 设置需要删除的文件绝对路径
-     * 
-     * @param files
-     */
     private void loadDisplayDeleteItems() {
         // 总共删除的文件数量
         mDeleteItemCount = mDuplicateItemImages.size();
@@ -95,7 +90,7 @@ public class DeleteConfirmDialog extends MaterialDialog {
             String recycle = getContext().getString(R.string.recycle);
 
             String content = getContext().getString(R.string.delete_message,
-                    mDeleteItemCount);
+                    mDeleteItemCount, recycle);
             SpannableStringBuilder style = new SpannableStringBuilder(content);
             int startIndex = content.indexOf(recycle);
             style.setSpan(new ForegroundColorSpan(Color.RED),
@@ -224,9 +219,7 @@ public class DeleteConfirmDialog extends MaterialDialog {
                 try {
                     if (mDuplicateItemImages != null) {
                         for (DuplicateItemImage image : mDuplicateItemImages) {
-                            File file = new File(image.getImageRealPath());
-                            //                        file.delete();
-                            LogUtil.d("delete " + file.getAbsolutePath());
+                            image.delete();
                         }
                     }
                 } catch (Exception e) {
@@ -267,15 +260,14 @@ public class DeleteConfirmDialog extends MaterialDialog {
         }
     }
 
-    public static interface OnDeleteStatusListener {
-        public void onDeleteFinish();
+    public interface OnDeleteStatusListener {
+        void onDeleteFinish();
     }
 
     private OnDeleteStatusListener mOnDeleteStatusListener = null;
 
     /**
-     * @param mOnDeleteStatusListener
-     *            the mOnDeleteStatusListener to set
+     * @param onDeleteStatusListener the onDeleteStatusListener to set
      */
     public void setOnDeleteStatusListener(
             OnDeleteStatusListener onDeleteStatusListener) {

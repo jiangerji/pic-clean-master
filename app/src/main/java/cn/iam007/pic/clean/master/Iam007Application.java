@@ -2,6 +2,7 @@ package cn.iam007.pic.clean.master;
 
 import android.app.Application;
 
+import cn.iam007.pic.clean.master.recycler.RecyclerManager;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 
 public class Iam007Application extends Application {
@@ -13,6 +14,8 @@ public class Iam007Application extends Application {
         super.onCreate();
 
         ImageUtils.init(this);
+        Constants.init(this);
+        RecyclerManager.getInstance().init(this);
 
         mApplication = this;
     }

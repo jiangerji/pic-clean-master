@@ -25,7 +25,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
     protected Long doInBackground(String... folders) {
         if (folders.length > 0) {
             String rootDir = folders[0];
-            parseDirectory(rootDir);
+            File root = new File(rootDir);
+            parseDirectory(root);
         }
 
         // 扫描结束
@@ -41,8 +42,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
     private int mTotalFileCount = 0; // 总共文件数量
     private long mTotalFileSize = 0; // 总共文件大小
 
-    private void parseDirectory(String directory) {
-        File root = new File(directory);
+    private void parseDirectory(File root) {
+//        File root = new File(directory);
 
         ArrayList<ImageHolder> holders = new ArrayList<ImageHolder>();
         if (root.isDirectory()) {
@@ -50,6 +51,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             for (File f : files) {
                 if (f.isDirectory()) {
                     // 暂时什么都不做
+                    parseDirectory(f);
                 } else {
                     if (ImageUtils.isImage(f.getName())) {
                         String dateTime = getDateTime(f);
@@ -72,7 +74,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
         // 开始进行查找回调
         if (mCallback != null) {
-            mCallback.onDuplicateFindStart(directory, holders.size());
+            mCallback.onDuplicateFindStart(root.getAbsolutePath(), holders.size());
         }
 
         // 按时间排序

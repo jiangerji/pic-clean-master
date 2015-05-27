@@ -371,7 +371,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             int lastVisiblePos = layoutManager.findLastVisibleItemPosition();
 
             while (startVisiblePos <= lastVisiblePos) {
-                item = mItems.get(startVisiblePos);
+                item = mItems.get(startVisiblePos - mCustomHeaderCount);
                 if (item.getViewHolder() != null) {
                     item.getViewHolder().refresh();
                 }

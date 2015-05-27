@@ -11,6 +11,7 @@ public class SharedPreferenceUtil {
      * 当前选中需要删除的图片中的文件大小
      */
     public final static String SELECTED_DELETE_IMAGE_TOTAL_SIZE = "SELECTED_DELETE_IMAGE_TOTAL_SIZE";
+    public final static String SELECTED_RECYCLER_IMAGE_TOTAL_SIZE = "SELECTED_RECYCLER_IMAGE_TOTAL_SIZE";
 
     public static void setSharedPreference(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
