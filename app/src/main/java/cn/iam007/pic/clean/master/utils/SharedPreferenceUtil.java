@@ -13,6 +13,26 @@ public class SharedPreferenceUtil {
     public final static String SELECTED_DELETE_IMAGE_TOTAL_SIZE = "SELECTED_DELETE_IMAGE_TOTAL_SIZE";
     public final static String SELECTED_RECYCLER_IMAGE_TOTAL_SIZE = "SELECTED_RECYCLER_IMAGE_TOTAL_SIZE";
 
+    // 用于表示是否有清理相似图片
+    public final static String HAS_DELETE_SOME_DUPLICATE_IMAGE = "HAS_DELETE_SOME_DUPLICATE_IMAGE";
+
+    public static void setBoolean(String key, Boolean value){
+        SharedPreferences sp = Iam007Application.getApplication()
+                .getSharedPreferences(key, 0);
+
+        if (value != sp.getBoolean(key, false)) {
+            Editor editor = sp.edit();
+            editor.putBoolean(key, value);
+            editor.commit();
+        }
+    }
+
+    public static boolean getBoolean(String key, Boolean defaultValue){
+        SharedPreferences sp = Iam007Application.getApplication()
+                .getSharedPreferences(key, 0);
+        return sp.getBoolean(key, defaultValue);
+    }
+
     public static void setSharedPreference(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(key, 0);

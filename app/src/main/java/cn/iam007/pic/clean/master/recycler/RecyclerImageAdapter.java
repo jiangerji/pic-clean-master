@@ -29,6 +29,10 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         mItems.add(item);
     }
 
+    public void clear(){
+        mItems.clear();
+    }
+
     @Override
     public RecyclerViewHolder
     onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -24,6 +24,7 @@ import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerFragment extends Fragment {
     private View mRootView = null;
@@ -45,7 +46,11 @@ public class RecyclerFragment extends Fragment {
             initView(mRootView);
         }
 
-
+        if (SharedPreferenceUtil.getBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, false)){
+            mRecyclerImageAdapter.clear();
+            SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, false);
+        }
+        startScanRecycler();
         return mRootView;
     }
 
@@ -70,8 +75,6 @@ public class RecyclerFragment extends Fragment {
 
         mRecyclerImageAdapter = new RecyclerImageAdapter();
         mRecyclerImageContainer.setAdapter(mRecyclerImageAdapter);
-
-        startScanRecycler();
     }
 
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {

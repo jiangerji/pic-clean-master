@@ -28,6 +28,7 @@ import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class DeleteConfirmDialog extends MaterialDialog {
 
@@ -230,6 +231,8 @@ public class DeleteConfirmDialog extends MaterialDialog {
                 if (mOnDeleteStatusListener != null) {
                     mOnDeleteStatusListener.onDeleteFinish();
                 }
+
+                SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, true);
             }
         }).start();
     }
