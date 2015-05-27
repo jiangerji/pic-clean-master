@@ -37,7 +37,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     /**
      * 添加section
-     * 
+     *
      * @param header
      * @param images
      */
@@ -92,7 +92,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     /**
      * 添加可头部对象
-     * 
+     *
      * @param layout
      */
     public View addCustomHeader(int layout) {
@@ -167,8 +167,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         return type;
     }
 
-    private void
-            onBindViewHeader(DuplicateViewHolder holder, int position) {
+    private void onBindViewHeader(DuplicateViewHolder holder, int position) {
         View itemView = holder.itemView;
 
         LayoutParams lp = (LayoutManager.LayoutParams) itemView.getLayoutParams();
@@ -218,59 +217,59 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         DuplicateViewHolder holder = null;
 
         switch (viewType) {
-        case DuplicateViewHolder.VIEW_TYPE_HEADER:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.duplicate_item_header, parent, false);
-            holder = new DuplicateViewHolderHeader(view);
-            break;
+            case DuplicateViewHolder.VIEW_TYPE_HEADER:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.duplicate_item_header, parent, false);
+                holder = new DuplicateViewHolderHeader(view);
+                break;
 
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT:
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT_BOTTOM:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.duplicate_item_image_left, parent, false);
-            holder = new DuplicateViewHolderImage(view,
-                    DuplicateViewHolderImage.ImagePos.LEFT);
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT:
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT_BOTTOM:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.duplicate_item_image_left, parent, false);
+                holder = new DuplicateViewHolderImage(view,
+                        DuplicateViewHolderImage.ImagePos.LEFT);
 
-            if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT_BOTTOM) {
-                view.findViewById(R.id.background)
-                        .setBackgroundResource(R.drawable.duplicate_item_left_bottom_bg);
-            }
-            break;
+                if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT_BOTTOM) {
+                    view.findViewById(R.id.background)
+                            .setBackgroundResource(R.drawable.duplicate_item_left_bottom_bg);
+                }
+                break;
 
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE:
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE_BOTTOM:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.duplicate_item_image_middle,
-                            parent,
-                            false);
-            holder = new DuplicateViewHolderImage(view,
-                    DuplicateViewHolderImage.ImagePos.MIDDLE);
-            if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE_BOTTOM) {
-                view.setBackgroundResource(R.drawable.duplicate_item_middle_bottom_bg);
-            }
-            break;
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT:
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT_BOTTOM:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.duplicate_item_image_right, parent, false);
-            holder = new DuplicateViewHolderImage(view,
-                    DuplicateViewHolderImage.ImagePos.RIGHT);
-            if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT_BOTTOM) {
-                view.findViewById(R.id.background)
-                        .setBackgroundResource(R.drawable.duplicate_item_right_bottom_bg);
-            }
-            break;
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE:
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE_BOTTOM:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.duplicate_item_image_middle,
+                                parent,
+                                false);
+                holder = new DuplicateViewHolderImage(view,
+                        DuplicateViewHolderImage.ImagePos.MIDDLE);
+                if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE_BOTTOM) {
+                    view.setBackgroundResource(R.drawable.duplicate_item_middle_bottom_bg);
+                }
+                break;
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT:
+            case DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT_BOTTOM:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.duplicate_item_image_right, parent, false);
+                holder = new DuplicateViewHolderImage(view,
+                        DuplicateViewHolderImage.ImagePos.RIGHT);
+                if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT_BOTTOM) {
+                    view.findViewById(R.id.background)
+                            .setBackgroundResource(R.drawable.duplicate_item_right_bottom_bg);
+                }
+                break;
 
-        default:
-            int layout = mCustomHeaderLayout.get((viewType & CUSTOM_HEADER_MASK) - 1);
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(layout, parent, false);
-            if (mHeaderViewCallback != null) {
-                mHeaderViewCallback.onHeaderViewCreated(layout, view);
-            }
+            default:
+                int layout = mCustomHeaderLayout.get((viewType & CUSTOM_HEADER_MASK) - 1);
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(layout, parent, false);
+                if (mHeaderViewCallback != null) {
+                    mHeaderViewCallback.onHeaderViewCreated(layout, view);
+                }
 
-            holder = new DuplicateViewHolder(view, viewType);
-            break;
+                holder = new DuplicateViewHolder(view, viewType);
+                break;
         }
 
         holder.setAdapter(this);
@@ -279,7 +278,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     /**
      * 删除某一组相似图片
-     * 
+     *
      * @param duplicateImageItem
      */
     public void deleteSection(DuplicateItem duplicateImageItem) {
@@ -347,8 +346,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
                         ((DuplicateItemImage) bestItem).setSelected(true, false);
                         totalCount += ((DuplicateItemImage) bestItem).getFileSize();
                         bestItem = item;
-                        ((DuplicateItemImage) bestItem).setSelected(false,
-                                false);
+                        ((DuplicateItemImage) bestItem).setSelected(false, false);
                     } else {
                         ((DuplicateItemImage) item).setSelected(true, false);
                         totalCount += ((DuplicateItemImage) item).getFileSize();
@@ -370,13 +368,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             startVisiblePos = Math.max(mCustomHeaderCount, startVisiblePos);
             int lastVisiblePos = layoutManager.findLastVisibleItemPosition();
 
-            while (startVisiblePos <= lastVisiblePos) {
-                item = mItems.get(startVisiblePos - mCustomHeaderCount);
-                if (item.getViewHolder() != null) {
-                    item.getViewHolder().refresh();
-                }
-                startVisiblePos++;
-            }
+            notifyItemRangeChanged(startVisiblePos, lastVisiblePos);
         }
     }
 
@@ -401,29 +393,21 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             startVisiblePos = Math.max(mCustomHeaderCount, startVisiblePos);
             int lastVisiblePos = layoutManager.findLastVisibleItemPosition();
 
-            DuplicateItem item;
-            while (startVisiblePos <= lastVisiblePos) {
-                item = mItems.get(startVisiblePos);
-                if (item.getViewHolder() != null) {
-                    item.getViewHolder().refresh();
-                }
-                startVisiblePos++;
-            }
+            notifyItemRangeChanged(startVisiblePos, lastVisiblePos);
         }
     }
 
     private HeaderViewCallback mHeaderViewCallback = null;
 
     /**
-     * @param headerViewCallback
-     *            the mHeaderViewCallback to set
+     * @param headerViewCallback the mHeaderViewCallback to set
      */
     public void setHeaderViewCallback(HeaderViewCallback headerViewCallback) {
         this.mHeaderViewCallback = headerViewCallback;
     }
 
     public interface HeaderViewCallback {
-        public void onHeaderViewCreated(int layout, View view);
+        void onHeaderViewCreated(int layout, View view);
     }
 
 }

@@ -49,13 +49,6 @@ public class DuplicateViewHolder extends ViewHolder {
     }
 
     /**
-     * 刷新绑定view
-     */
-    public void refresh() {
-        bindView(mDuplicateImageItem);
-    }
-
-    /**
      * 找到某个UI item
      * 
      * @param id

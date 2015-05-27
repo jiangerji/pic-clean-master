@@ -85,7 +85,6 @@ public class DuplicateItemImage extends DuplicateItem {
 
         if (itemHeader != null) {
             itemHeader.setItemImageSelected(this, isSelected, updateTotalCount);
-            itemHeader.refresh();
         }
     }
 
