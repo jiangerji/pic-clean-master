@@ -49,7 +49,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         holder.bindView(item);
     }
 
-    private int mSelectedItemCount = 0;
+    private int mSelectedItem = 0;
 
     public void selectAll(boolean select, GridLayoutManager layoutManager) {
         for (RecyclerImageItem item : mItems) {
@@ -57,9 +57,9 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         }
 
         if (select){
-            mSelectedItemCount = mItems.size();
+            mSelectedItem = mItems.size();
         } else {
-            mSelectedItemCount = 0;
+            mSelectedItem = 0;
         }
 
         if (layoutManager == null) {
@@ -99,6 +99,6 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
      * @return
      */
     public int getSelectedItem() {
-        return mSelectedItemCount;
+        return mSelectedItem;
     }
 }
