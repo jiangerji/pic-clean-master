@@ -9,6 +9,7 @@ import java.util.Date;
 
 import android.media.ExifInterface;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
@@ -37,15 +38,11 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
         return 0L;
     }
 
-//    private int mTotalHandleCount = 0;
-
     private int mTotalFileCount = 0; // 总共文件数量
     private long mTotalFileSize = 0; // 总共文件大小
 
     private void parseDirectory(File root) {
-//        File root = new File(directory);
-
-        ArrayList<ImageHolder> holders = new ArrayList<ImageHolder>();
+        ArrayList<ImageHolder> holders = new ArrayList<>();
         if (root.isDirectory()) {
             File files[] = root.listFiles();
             for (File f : files) {
@@ -60,7 +57,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                         mTotalFileSize += fileSize;
                         mTotalFileCount++;
 
-                        //                        Log.d(TAG, "file:" + f + ", " + dateTime);
+//                        LogUtil.d("file:" + f + ", " + dateTime);
                         if (dateTime != null) {
                             ImageHolder holder = new ImageHolder(f.getAbsolutePath(),
                                     dateTime,
@@ -85,7 +82,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
         // 查找可能相同的图片
         if (objs.length > 1) {
             ImageHolder preImage = (ImageHolder) objs[0];
-            ArrayList<ImageHolder> duplicateImagesSection = new ArrayList<ImageHolder>();
+            ArrayList<ImageHolder> duplicateImagesSection = new ArrayList<>();
             duplicateImagesSection.add(preImage);
             ImageHolder imageHolder;
             for (int i = 1; i < objs.length; i++) {
@@ -95,7 +92,6 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                 if (mCallback != null) {
                     mCallback.onDuplicateFindExecute(imageHolder.imagePath,
                             imageHolder.imageSize);
-                    //                    calcProgress(mTotalHandleCount++)
                     mCallback.onDuplicateFindProgressUpdate(((double) i)
                             / objs.length);
                 }
@@ -114,25 +110,26 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                         mCallback.onDuplicateSectionFind(sectionItem);
                     }
 
-                    // just for debug
-                    try {
-                        //                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    duplicateImagesSection = new ArrayList<ImageHolder>();
+                    duplicateImagesSection = new ArrayList<>();
                     duplicateImagesSection.add(imageHolder);
                 }
 
                 preImage = imageHolder;
+            }
+
+            // 处理还没有处理的，找到的duplicate section
+            if (mCallback != null && duplicateImagesSection.size() > 1) {
+                imageHolder = duplicateImagesSection.get(0);
+                SectionItem sectionItem = new SectionItem(imageHolder.getImageDate(),
+                        duplicateImagesSection);
+                mCallback.onDuplicateSectionFind(sectionItem);
             }
         }
     }
 
     /**
      * 计算当前进度
-     * 
+     *
      * @param i
      * @return
      */
@@ -172,62 +169,53 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
     /**
      * 查找相似图片的回调接口
-     * 
+     *
      * @author Administrator
-     * 
      */
-    public static interface DuplicateFindCallback {
+    public interface DuplicateFindCallback {
         /**
          * 查找过程开始
-         * 
-         * @param folder
-         *            查找的目录
-         * @param count
-         *            目录下的文件数量
+         *
+         * @param folder 查找的目录
+         * @param count  目录下的文件数量
          */
-        public void onDuplicateFindStart(String folder, int count);
+        void onDuplicateFindStart(String folder, int count);
 
         /**
          * 正在查找比较图片文件
-         * 
-         * @param file
-         *            文件绝对路径
-         * @param size
-         *            文件大小
+         *
+         * @param file 文件绝对路径
+         * @param size 文件大小
          */
-        public void onDuplicateFindExecute(String file, long size);
+        void onDuplicateFindExecute(String file, long size);
 
         /**
          * 当前查找进程的进度
-         * 
-         * @param progress
-         *            当前进度，[0, 1)
+         *
+         * @param progress 当前进度，[0, 1)
          */
-        public void onDuplicateFindProgressUpdate(double progress);
+        void onDuplicateFindProgressUpdate(double progress);
 
         /**
          * 该次查找过程结束
-         * 
-         * @param fileCount
-         *            总共扫描多少文件
-         * @param fileSize
-         *            总共扫描文件的大小，单位为字节
+         *
+         * @param fileCount 总共扫描多少文件
+         * @param fileSize  总共扫描文件的大小，单位为字节
          */
-        public void onDuplicateFindFinished(int fileCount, long fileSize);
+        void onDuplicateFindFinished(int fileCount, long fileSize);
 
         /**
          * 找到一组相似图片的信息
-         * 
+         *
          * @param sectionItem
          */
-        public void onDuplicateSectionFind(SectionItem sectionItem);
+        void onDuplicateSectionFind(SectionItem sectionItem);
     }
 
     /**
      * 用于ImageHolder进行排序
-     * 
+     *
      * @author Administrator
-     * 
      */
     class MyComparator implements Comparator<Object> {
 
@@ -238,9 +226,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
     /**
      * 获取图片文件的拍摄时间
-     * 
-     * @param file
-     *            图片文件
+     *
+     * @param file 图片文件
      * @return
      */
     private String getDateTime(File file) {
@@ -258,9 +245,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
     /**
      * 用于保存扫描的图片信息
-     * 
+     *
      * @author Administrator
-     * 
      */
     public static class ImageHolder {
         public ImageHolder(String imagePath, String dateTime, long fileSize) {
@@ -268,18 +254,18 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             this.imagePath = imagePath;
             this.imageSize = fileSize;
 
-            String[] formats = { "yyyy:MM:dd HH:mm:ss", "yyyy:MM:dd HH:mm::ss" };
+            String[] formats = {"yyyy:MM:dd HH:mm:ss", "yyyy:MM:dd HH:mm::ss"};
 
             for (String _format : formats) {
                 try {
                     SimpleDateFormat format = new SimpleDateFormat(_format);
                     Date date = format.parse(dateTime);
-                    System.out.print("Format To times:" + date.getTime());
                     imageTS = date.getTime();
+                    LogUtil.d("Format To times:" + dateTime + " " + imageTS);
                     break;
                 } catch (Exception e) {
-                    //                    Log.d("" + e);
-                    // 没有找到日期，暂时不春丽
+                    LogUtil.d("" + e);
+                    // 没有找到日期，暂时不处理
                 }
             }
 
@@ -287,7 +273,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
         /**
          * 获取图片文件大小
-         * 
+         *
          * @return the imageSize
          */
         public long getImageSize() {
@@ -296,7 +282,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
         /**
          * 获取图片的绝对路径
-         * 
+         *
          * @return the imagePath
          */
         public String getImagePath() {
@@ -305,7 +291,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
         /**
          * 获取图片的拍摄时间
-         * 
+         *
          * @return the imageDate
          */
         public String getImageDate() {
@@ -314,7 +300,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
         /**
          * 获取图片的拍摄时间戳
-         * 
+         *
          * @return the imageTS
          */
         public Long getImageTS() {
