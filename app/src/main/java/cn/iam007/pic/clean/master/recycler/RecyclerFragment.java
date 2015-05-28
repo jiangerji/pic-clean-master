@@ -41,9 +41,11 @@ public class RecyclerFragment extends Fragment {
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        boolean needScan = false;
         if (mRootView == null) {
             mRootView = inflater.inflate(R.layout.fragment_recycler, null);
             initView(mRootView);
+            needScan = true;
         }
 
         if (SharedPreferenceUtil.getBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE,
@@ -51,8 +53,20 @@ public class RecyclerFragment extends Fragment {
             mRecyclerImageAdapter.clear();
             SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE,
                     false);
+            needScan = true;
         }
-        startScanRecycler();
+
+        if (needScan) {
+            startScanRecycler();
+        }
+
+        if (mRecyclerImageAdapter.getSelectedItem() <= 0) {
+            mRestoreBtn.setEnabled(false);
+            mDeleteBtn.setEnabled(false);
+        } else {
+            mRestoreBtn.setEnabled(true);
+            mDeleteBtn.setEnabled(true);
+        }
         return mRootView;
     }
 
@@ -184,12 +198,8 @@ public class RecyclerFragment extends Fragment {
     private void applySelectState() {
         if (mSelectAll) {
             mSelectAllMenuItem.setTitle(R.string.cancel_select_all);
-            mRestoreBtn.setEnabled(true);
-            mDeleteBtn.setEnabled(true);
         } else {
             mSelectAllMenuItem.setTitle(R.string.select_all);
-            mRestoreBtn.setEnabled(false);
-            mDeleteBtn.setEnabled(false);
         }
     }
 
