@@ -1,5 +1,12 @@
 package cn.iam007.pic.clean.master.duplicate;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.media.ExifInterface;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images.Media;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -7,19 +14,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
-import android.media.ExifInterface;
-import android.os.AsyncTask;
-import android.util.Log;
-
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 
 public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
 
     private DuplicateFindCallback mCallback = null;
+    private Context mContext;
 
-    public DuplicateImageFindTask(DuplicateFindCallback callback) {
+    public DuplicateImageFindTask(DuplicateFindCallback callback, Context context) {
         mCallback = callback;
+        mContext = context;
     }
 
     @Override
@@ -35,13 +40,59 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             mCallback.onDuplicateFindFinished(mTotalFileCount, mTotalFileSize);
         }
 
+//        scanMediaStore();
+
         return 0L;
+    }
+
+    private void scanMediaStore() {
+        //指定获取的列
+        String columns[] = new String[]{
+                Media.DATA, Media._ID, Media.TITLE, Media.DISPLAY_NAME, Media.SIZE
+        };
+
+        Cursor cursor =
+                mContext.getContentResolver().query(Media.EXTERNAL_CONTENT_URI, columns, null, null,
+                        null);
+        int photoIndex = cursor.getColumnIndexOrThrow(Media.DATA);
+        int titleIndex = cursor.getColumnIndexOrThrow(Media.TITLE);
+        int sizeIndex = cursor.getColumnIndexOrThrow(Media.SIZE);
+        int nameIndex = cursor.getColumnIndexOrThrow(Media.DISPLAY_NAME);
+
+        String photoPath;
+        long size;
+        String name;
+        String title;
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                photoPath = cursor.getString(photoIndex);
+                size = cursor.getLong(sizeIndex);
+                title = cursor.getString(titleIndex);
+                name = cursor.getString(nameIndex);
+                LogUtil.d("name=" + name);
+                LogUtil.d("  photoPath = " + photoPath);
+                LogUtil.d("  size      = " + size);
+                LogUtil.d("  title     = " + title);
+
+                cursor.moveToNext();
+            }
+
+        }
     }
 
     private int mTotalFileCount = 0; // 总共文件数量
     private long mTotalFileSize = 0; // 总共文件大小
 
     private void parseDirectory(File root) {
+        if (root != null && root.isDirectory() && root.isHidden()){
+            LogUtil.d("Hidden directory: ignore.");
+            return;
+        }
+        // 开始进行查找回调
+        if (mCallback != null) {
+            mCallback.onDuplicateFindStart(root.getAbsolutePath(), 0);
+        }
+
         ArrayList<ImageHolder> holders = new ArrayList<>();
         if (root.isDirectory()) {
             File files[] = root.listFiles();
@@ -57,6 +108,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                         mTotalFileSize += fileSize;
                         mTotalFileCount++;
 
+                        mCallback.onDuplicateFindProgressUpdate(calcProgress(mTotalFileCount));
+
 //                        LogUtil.d("file:" + f + ", " + dateTime);
                         if (dateTime != null) {
                             ImageHolder holder = new ImageHolder(f.getAbsolutePath(),
@@ -67,11 +120,6 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                     }
                 }
             }
-        }
-
-        // 开始进行查找回调
-        if (mCallback != null) {
-            mCallback.onDuplicateFindStart(root.getAbsolutePath(), holders.size());
         }
 
         // 按时间排序
@@ -92,8 +140,6 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                 if (mCallback != null) {
                     mCallback.onDuplicateFindExecute(imageHolder.imagePath,
                             imageHolder.imageSize);
-                    mCallback.onDuplicateFindProgressUpdate(((double) i)
-                            / objs.length);
                 }
 
                 if (imageHolder.imageTS == 0) {
@@ -134,15 +180,14 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
      * @return
      */
     private double calcProgress(int i) {
-        double progress = 0.0f;
+        double progress;
         if (i <= 100) {
             progress = Math.atan(-0.0001 * i * i + 0.02 * i) * 2
                     / Math.PI;
         } else {
             progress = Math.atan(i * 0.01) * 2 / Math.PI;
         }
-        LogUtil.d("" + i + ":"
-                + progress);
+//        LogUtil.d("" + i + ":" + progress);
         return progress;
     }
 
@@ -177,7 +222,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
          * 查找过程开始
          *
          * @param folder 查找的目录
-         * @param count  目录下的文件数量
+         * @param count  目录下的文件数量，当前该参数无效
          */
         void onDuplicateFindStart(String folder, int count);
 
@@ -261,7 +306,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                     SimpleDateFormat format = new SimpleDateFormat(_format);
                     Date date = format.parse(dateTime);
                     imageTS = date.getTime();
-                    LogUtil.d("Format To times:" + dateTime + " " + imageTS);
+//                    LogUtil.d("Format To times:" + dateTime + " " + imageTS);
                     break;
                 } catch (Exception e) {
                     LogUtil.d("" + e);

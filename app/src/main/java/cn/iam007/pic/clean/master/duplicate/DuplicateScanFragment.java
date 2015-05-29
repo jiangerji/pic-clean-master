@@ -36,6 +36,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter.HeaderViewCall
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.DuplicateFindCallback;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
+import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
@@ -87,12 +88,14 @@ public class DuplicateScanFragment extends Fragment {
     private void initView(View rootView) {
         mScanHintHeaderContainer = rootView.findViewById(R.id.scanHintHeaderContainer);
         mScanHintHeader = (TextView) mScanHintHeaderContainer.findViewById(R.id.scanHint);
-        mScanHintHeaderProgressBar = (ProgressBar) mScanHintHeaderContainer.findViewById(R.id.scanProgress);
+        mScanHintHeaderProgressBar =
+                (ProgressBar) mScanHintHeaderContainer.findViewById(R.id.scanProgress);
 
         // 初始化recyclerView
         mLayoutManager = new LayoutManager(getActivity());
 
-        mDuplicateImageContainer = (CustomRecyclerView) rootView.findViewById(R.id.duplicate_images);
+        mDuplicateImageContainer =
+                (CustomRecyclerView) rootView.findViewById(R.id.duplicate_images);
         mDuplicateImageContainer.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mDuplicateImageContainer.setLayoutManager(mLayoutManager);
         mDuplicateImageContainer.setOnScrollListener(new OnScrollListener() {
@@ -125,7 +128,8 @@ public class DuplicateScanFragment extends Fragment {
         mDuplicateImageAdapter.addCustomHeader(R.layout.fragment_duplicate_scan_progress);
         mDuplicateImageContainer.setAdapter(mDuplicateImageAdapter);
 
-        mStartProgress = (ProgressBarCircularIndeterminate) rootView.findViewById(R.id.startProgress);
+        mStartProgress =
+                (ProgressBarCircularIndeterminate) rootView.findViewById(R.id.startProgress);
         mStartProgress.setOnClickListener(startBtnOnClickListener);
 
         mDeleteBtnContainer = rootView.findViewById(R.id.delete_btn_container);
@@ -217,17 +221,21 @@ public class DuplicateScanFragment extends Fragment {
         }
     };
 
-    private File mCameraDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+    private File mCameraDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 
     @SuppressLint("SdCardPath")
     private void startDuplicateImageFindTask() {
-        DuplicateImageFindTask mDuplicateImageFindTask = new DuplicateImageFindTask(mDuplicateFindCallback);
+        DuplicateImageFindTask mDuplicateImageFindTask =
+                new DuplicateImageFindTask(mDuplicateFindCallback, getActivity());
 
         if (mCameraDir != null) {
             String rootDir = mCameraDir.getAbsolutePath();//"/sdcard/DCIM/nexus";
             LogUtil.d("Start scan " + rootDir);
             mDuplicateImageFindTask.execute(rootDir);
         }
+
+        mUpdateHandler.post(mUpdateRunnable);
     }
 
     @SuppressLint("RtlHardcoded")
@@ -297,6 +305,37 @@ public class DuplicateScanFragment extends Fragment {
     @SuppressLint("RtlHardcoded")
     private int mScanHintGravity = Gravity.LEFT;
 
+    private int mCurrentProgress = 0;
+
+
+    private Handler mUpdateHandler = new Handler();
+    private Runnable mUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mScanHint != null) {
+                mScanHint.setText(mScanHintText);
+                mScanHint.setGravity(mScanHintGravity);
+            }
+
+            if (mScanHintHeader != null) {
+                mScanHintHeader.setText(mScanHintText);
+                mScanHintHeader.setGravity(mScanHintGravity);
+            }
+
+            if (mScanProgressBar != null) {
+                mScanProgressBar.setProgress(mCurrentProgress);
+            }
+
+            if (mScanHintHeaderProgressBar != null) {
+                mScanHintHeaderProgressBar.setProgress(mCurrentProgress);
+            }
+
+            if (!mDuplicateImageScanFinished){
+                mUpdateHandler.postDelayed(mUpdateRunnable, 33);
+            }
+        }
+    };
+
     private final static int SCAN_HINT_UPDATE = 0x01;
     private final static int SCAN_PROGRESS_UPDATE = 0x02;
     private final static int SCAN_DUPLICATE_SECTION_FIND = 0x03; // 找到一组相似图片
@@ -307,27 +346,12 @@ public class DuplicateScanFragment extends Fragment {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case SCAN_HINT_UPDATE:
-                    if (mScanHint != null) {
-                        mScanHintText = (String) msg.obj;
-                        mScanHintGravity = msg.arg1;
-                        mScanHint.setText(mScanHintText);
-                        mScanHint.setGravity(mScanHintGravity);
-
-                        if (mScanHintHeader != null) {
-                            mScanHintHeader.setText(mScanHintText);
-                            mScanHintHeader.setGravity(mScanHintGravity);
-                        }
-                    }
+                    mScanHintText = (String) msg.obj;
+                    mScanHintGravity = msg.arg1;
                     break;
 
                 case SCAN_PROGRESS_UPDATE:
-                    if (mScanProgressBar != null) {
-                        mScanProgressBar.setProgress(msg.arg1);
-                    }
-
-                    if (mScanHintHeaderProgressBar != null) {
-                        mScanHintHeaderProgressBar.setProgress(msg.arg1);
-                    }
+                    mCurrentProgress = msg.arg1;
                     break;
 
                 case SCAN_DUPLICATE_SECTION_FIND:
@@ -495,27 +519,29 @@ public class DuplicateScanFragment extends Fragment {
         return true;
     }
 
-    private String SELECTED_DELETE_IMAGE_TOTAL_SIZE = SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
+    private String SELECTED_DELETE_IMAGE_TOTAL_SIZE =
+            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
 
-    private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+    private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
+            new OnSharedPreferenceChangeListener() {
 
-        @Override
-        public void onSharedPreferenceChanged(
-                SharedPreferences sharedPreferences, String key) {
-            if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_SIZE)) {
-                if (mDeleteBtn != null) {
-                    long count = sharedPreferences.getLong(key, 0);
-                    if (count <= 0) {
-                        mDeleteBtn.setText(R.string.delete);
-                    } else {
-                        mDeleteBtn.setText(getString(R.string.delete_with_size,
-                                StringUtils.convertFileSize(count)));
+                @Override
+                public void onSharedPreferenceChanged(
+                        SharedPreferences sharedPreferences, String key) {
+                    if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_SIZE)) {
+                        if (mDeleteBtn != null) {
+                            long count = sharedPreferences.getLong(key, 0);
+                            if (count <= 0) {
+                                mDeleteBtn.setText(R.string.delete);
+                            } else {
+                                mDeleteBtn.setText(getString(R.string.delete_with_size,
+                                        StringUtils.convertFileSize(count)));
+                            }
+                        }
                     }
-                }
-            }
 
-        }
-    };
+                }
+            };
 
     @Override
     public void onResume() {
@@ -525,8 +551,6 @@ public class DuplicateScanFragment extends Fragment {
                 SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 mSharedPreferenceChangeListener);
     }
-
-    ;
 
     @Override
     public void onPause() {

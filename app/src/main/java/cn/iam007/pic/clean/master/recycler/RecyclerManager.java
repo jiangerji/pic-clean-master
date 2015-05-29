@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQuery;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.exception.DbException;
@@ -38,7 +40,8 @@ public class RecyclerManager {
 
     public void init(Context context) {
         mContext = context;
-        mDbUtils = DbUtils.create(mContext, Constants.getRecyclerPath().getAbsolutePath(), RECYCLER_DB_NAME);
+        mDbUtils = DbUtils.create(mContext, Constants.getRecyclerPath().getAbsolutePath(),
+                RECYCLER_DB_NAME);
         LogUtil.d("Init Finished!");
 
         validate();
@@ -59,6 +62,11 @@ public class RecyclerManager {
         }
     }
 
+    /**
+     * 将filePath指定的文件移除回收站中
+     *
+     * @param filePath 需要移除到回收站的文件的绝对路径
+     */
     public void deleteToRecycler(String filePath) {
         if (filePath != null) {
             // 删除到回收站中
@@ -68,7 +76,8 @@ public class RecyclerManager {
             String recyclerFileName = file.getName() + "_" + id + "." + ext;
             File recyclerFile = new File(Constants.getRecyclerPath(), recyclerFileName);
 
-            RecyclerImageItem item = new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath);
+            RecyclerImageItem item =
+                    new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath);
             try {
                 mDbUtils.save(item);
             } catch (Exception e) {
@@ -76,17 +85,19 @@ public class RecyclerManager {
             }
 
             FileUtil.moveTo(file, recyclerFile);
-        }
 
+            MediaScannerConnection.scanFile(mContext, new String[]{filePath}, null, null);
+        }
 
     }
 
     /**
      * 永久删除回收站的文件
+     *
      * @param item
      */
-    public void delete(RecyclerImageItem item){
-        if (item != null){
+    public void delete(RecyclerImageItem item) {
+        if (item != null) {
             try {
                 mDbUtils.delete(item);
             } catch (DbException e) {

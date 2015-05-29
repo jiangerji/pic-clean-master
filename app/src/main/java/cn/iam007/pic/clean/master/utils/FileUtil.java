@@ -34,7 +34,7 @@ public class FileUtil {
      * 移动文件
      *
      * @param file       需要移动的文件
-     * @param targetPath 移动文件的目标地址
+     * @param targetFile 移动文件的目标地址
      * @return 返回是否移动文件成功
      */
     public static boolean moveTo(File file, File targetFile) {
