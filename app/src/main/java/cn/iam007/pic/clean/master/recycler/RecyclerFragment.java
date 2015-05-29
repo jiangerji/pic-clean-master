@@ -3,6 +3,7 @@ package cn.iam007.pic.clean.master.recycler;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -142,11 +143,21 @@ public class RecyclerFragment extends Fragment {
 
     }
 
+    private Handler mUpdateHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            mRecyclerImageAdapter.notifyDataSetChanged();
+            return false;
+        }
+    });
+
     private void startDeleteTask(final MaterialDialog progressDialog) {
         new Thread(new Runnable() {
             public void run() {
                 mRecyclerImageAdapter.deleteItems();
                 progressDialog.dismiss();
+                mUpdateHandler.sendEmptyMessage(1);
+
             }
         }).start();
     }
@@ -163,7 +174,7 @@ public class RecyclerFragment extends Fragment {
                 } else {
                     if (ImageUtils.isImage(f.getName())) {
                         item = new RecyclerImageItem(f.getAbsolutePath(),
-                                f.getAbsolutePath());
+                                f.getAbsolutePath(), f.getName());
                         mRecyclerImageAdapter.addItem(item);
                     }
                 }
@@ -236,15 +247,13 @@ public class RecyclerFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 }

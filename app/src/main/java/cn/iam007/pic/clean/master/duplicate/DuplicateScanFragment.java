@@ -330,7 +330,7 @@ public class DuplicateScanFragment extends Fragment {
                 mScanHintHeaderProgressBar.setProgress(mCurrentProgress);
             }
 
-            if (!mDuplicateImageScanFinished){
+            if (!mDuplicateImageScanFinished) {
                 mUpdateHandler.postDelayed(mUpdateRunnable, 33);
             }
         }
@@ -547,18 +547,14 @@ public class DuplicateScanFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
 }

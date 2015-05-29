@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQuery;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.util.Log;
 
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.exception.DbException;
@@ -73,15 +74,15 @@ public class RecyclerManager {
             File file = new File(filePath);
             String ext = FileUtil.getFileExt(filePath);
             String id = CryptoUtil.getMD5String(filePath);
-            String recyclerFileName = file.getName() + "_" + id + "." + ext;
+            String recyclerFileName = id + "." + ext;
             File recyclerFile = new File(Constants.getRecyclerPath(), recyclerFileName);
 
             RecyclerImageItem item =
-                    new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath);
+                    new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath, recyclerFileName);
             try {
                 mDbUtils.save(item);
             } catch (Exception e) {
-                e.printStackTrace();
+                LogUtil.d("Save Recycler Exception:" + e.toString());
             }
 
             FileUtil.moveTo(file, recyclerFile);
@@ -100,11 +101,12 @@ public class RecyclerManager {
         if (item != null) {
             try {
                 mDbUtils.delete(item);
+                LogUtil.d("Delete Recycler Item:" + item.getId());
             } catch (DbException e) {
-//                LogUtil.d("Delete Recycler Exception:" + e.toString());
+                LogUtil.d("Delete Recycler Exception:" + e.toString());
             }
 
-            File file = new File(item.getRecyclerPath());
+            File file = new File(item.getRealRecyclerPath());
             file.delete();
         }
     }

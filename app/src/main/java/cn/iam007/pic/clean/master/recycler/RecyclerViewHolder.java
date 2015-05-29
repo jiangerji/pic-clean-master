@@ -35,7 +35,7 @@ public class RecyclerViewHolder extends ViewHolder {
 
     public void bindView(RecyclerImageItem item) {
         mItem = item;
-        String imageUrl = item.getSourcePath();
+        String imageUrl = item.getRecyclerPath();
         if (imageUrl != null) {
             ImageUtils.showImageByUrl(imageUrl, mImageView);
             mImageView.setVisibility(View.VISIBLE);

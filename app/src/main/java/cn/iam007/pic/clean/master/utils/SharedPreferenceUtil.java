@@ -87,15 +87,14 @@ public class SharedPreferenceUtil {
     }
 
     public static void setOnSharedPreferenceChangeListener(
-            String key, OnSharedPreferenceChangeListener listener) {
+            OnSharedPreferenceChangeListener listener) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
 
         sp.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public static void clearOnSharedPreferenceChangeListener(
-            String key, OnSharedPreferenceChangeListener listener) {
+    public static void clearOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
 

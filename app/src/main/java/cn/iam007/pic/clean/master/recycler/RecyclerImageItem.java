@@ -2,6 +2,7 @@ package cn.iam007.pic.clean.master.recycler;
 
 import com.lidroid.xutils.db.annotation.Column;
 import com.lidroid.xutils.db.annotation.Id;
+import com.lidroid.xutils.db.annotation.Transient;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
@@ -13,22 +14,30 @@ public class RecyclerImageItem {
     @Id
     private String id; // 用于保存到数据库中的index
 
-    @Column(column = "name")
+    @Column(column = "sourcePath")
     private String sourcePath;
 
+    @Column(column = "recyclerPath")
     private String recyclerPath;
+
+    @Transient
     private boolean isSelected;
 
     private RecyclerViewHolder viewHolder;
 
-    public RecyclerImageItem(){
+    public RecyclerImageItem() {
     }
 
-    public RecyclerImageItem(String recyclerPath, String sourcePath) {
-        this.sourcePath = "file://" + sourcePath;
+    /**
+     * @param recyclerPath 回收站文件路径
+     * @param sourcePath   回收站文件原始文件路径
+     * @param id           回收站id, 用于在数据库中查看
+     */
+    public RecyclerImageItem(String recyclerPath, String sourcePath, String id) {
+        this.sourcePath = sourcePath;
         this.recyclerPath = recyclerPath;
         this.isSelected = false;
-        this.id = CryptoUtil.getMD5String(sourcePath);
+        this.id = id;
     }
 
     @Override
@@ -43,6 +52,8 @@ public class RecyclerImageItem {
     }
 
     /**
+     * 该item是否被选择
+     *
      * @return the isSelected
      */
     public boolean isSelected() {
@@ -51,7 +62,7 @@ public class RecyclerImageItem {
 
     private WeakReference<RecyclerImageAdapter> mAdapter = null;
 
-    public void setAdapter(RecyclerImageAdapter adapter){
+    public void setAdapter(RecyclerImageAdapter adapter) {
         mAdapter = new WeakReference<>(adapter);
     }
 
@@ -63,8 +74,8 @@ public class RecyclerImageItem {
         if (isSelected != this.isSelected) {
             this.isSelected = isSelected;
 
-            if (updateView){
-                if (mAdapter != null && mAdapter.get() != null){
+            if (updateView) {
+                if (mAdapter != null && mAdapter.get() != null) {
                     mAdapter.get().updateItem(this);
                 }
             }
@@ -72,6 +83,8 @@ public class RecyclerImageItem {
     }
 
     /**
+     * 获取回收站图片原始路径
+     *
      * @return the sourcePath
      */
     public String getSourcePath() {
@@ -79,9 +92,20 @@ public class RecyclerImageItem {
     }
 
     /**
+     * 获取图片在回收站的路径，加入file:///
+     *
      * @return the recyclerPath
      */
     public String getRecyclerPath() {
+        return "file://" + recyclerPath;
+    }
+
+    /**
+     * 获取图片在回收站的路径
+     *
+     * @return the recyclerPath
+     */
+    public String getRealRecyclerPath(){
         return recyclerPath;
     }
 
@@ -103,4 +127,7 @@ public class RecyclerImageItem {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 }
