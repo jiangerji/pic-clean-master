@@ -22,8 +22,8 @@ public class FileUtil {
         if (filePath != null) {
             int lastDotIndex = filePath.lastIndexOf(".");
             int lastSplashIndex = filePath.lastIndexOf(File.separatorChar);
-            if (lastDotIndex > lastSplashIndex){
-                ext = filePath.substring(lastDotIndex);
+            if (lastDotIndex > lastSplashIndex) {
+                ext = filePath.substring(lastDotIndex + 1);
             }
         }
 
@@ -48,7 +48,8 @@ public class FileUtil {
 
                 // 删除原文件
                 succ = file.delete();
-                LogUtil.d("Move " + file.getAbsolutePath() + " to " + toFile.getAbsolutePath() + " " + succ);
+                LogUtil.d(
+                        "Move " + file.getAbsolutePath() + " to " + toFile.getAbsolutePath() + " " + succ);
             }
         } catch (Exception e) {
 

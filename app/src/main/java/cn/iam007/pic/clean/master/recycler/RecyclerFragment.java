@@ -124,8 +124,12 @@ public class RecyclerFragment extends Fragment {
                 .negativeColorRes(R.color.black_light_333333)
                 .backgroundColorRes(R.color.white_light_FAFAFA);
         final MaterialDialog deleteProgressDialog = builder.build();
-        deleteProgressDialog.setCancelable(false);
-        deleteProgressDialog.show();
+        deleteProgressDialog.setCancelable(true);
+        try{
+            deleteProgressDialog.show();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -134,7 +138,7 @@ public class RecyclerFragment extends Fragment {
             public void run() {
                 startDeleteTask(deleteProgressDialog);
             }
-        }, 500);
+        }, 1000);
 
     }
 

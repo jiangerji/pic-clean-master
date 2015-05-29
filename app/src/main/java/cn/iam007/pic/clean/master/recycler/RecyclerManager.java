@@ -81,7 +81,7 @@ public class RecyclerManager {
             try {
                 mDbUtils.save(item);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
             FileUtil.moveTo(file, recyclerFile);

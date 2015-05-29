@@ -21,6 +21,9 @@ public class RecyclerImageItem {
 
     private RecyclerViewHolder viewHolder;
 
+    public RecyclerImageItem(){
+    }
+
     public RecyclerImageItem(String recyclerPath, String sourcePath) {
         this.sourcePath = "file://" + sourcePath;
         this.recyclerPath = recyclerPath;
