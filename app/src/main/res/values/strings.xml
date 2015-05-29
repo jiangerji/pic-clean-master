@@ -14,6 +14,7 @@
     <string name="recycle">图片回收站</string>
     <string name="feedback">意见反馈</string>
     <string name="deleting_progress">正在删除相似图片&#8230;</string>
+    <string name="restoring_progress">正在恢复图片&#8230;</string>
     <string name="need_handle">需要处理</string>
     <string name="auto_select">智能选择</string>
     <string name="cancel_auto_select">取消智能选择</string>
@@ -30,6 +31,7 @@
     <string name="delete_message">删除共%1$d张照片？7天内可在%2$s找回</string>
 
     <string name="recycler_delete_message">确定永久删除这%1$d张图片？</string>
+    <string name="recycler_restore_message">共%1$d张照片将被恢复。</string>
     
     <string name="scanning">正在扫描：%s</string>
     

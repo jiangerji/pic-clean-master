@@ -25,6 +25,7 @@ import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerFragment extends Fragment {
@@ -80,6 +81,7 @@ public class RecyclerFragment extends Fragment {
 
     private void initView(View rootView) {
         mRestoreBtn = (Button) rootView.findViewById(R.id.restore_btn);
+        mRestoreBtn.setOnClickListener(mRestoreBtnClickListener);
         mDeleteBtn = (Button) rootView.findViewById(R.id.delete_btn);
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
 
@@ -98,7 +100,8 @@ public class RecyclerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             final DeleteRecyclerConfirmDialog dialog =
-                    DeleteRecyclerConfirmDialog.builder(getActivity(), mRecyclerImageAdapter.getSelectedItem());
+                    DeleteRecyclerConfirmDialog.builder(getActivity(),
+                            mRecyclerImageAdapter.getSelectedItem());
             dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -126,9 +129,9 @@ public class RecyclerFragment extends Fragment {
                 .backgroundColorRes(R.color.white_light_FAFAFA);
         final MaterialDialog deleteProgressDialog = builder.build();
         deleteProgressDialog.setCancelable(true);
-        try{
+        try {
             deleteProgressDialog.show();
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -162,6 +165,79 @@ public class RecyclerFragment extends Fragment {
         }).start();
     }
 
+    private View.OnClickListener mRestoreBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+
+            builder.title(R.string.recycle)
+                    .theme(Theme.LIGHT)
+                    .positiveText(R.string.restore)
+                    .negativeText(R.string.cancel)
+                    .content(getActivity().getString(R.string.recycler_restore_message,
+                            mRecyclerImageAdapter.getSelectedItem()));
+
+            builder.titleColorRes(R.color.title)
+                    .dividerColorRes(R.color.divider)
+                    .positiveColorRes(R.color.red_light_EB5347)
+                    .negativeColorRes(R.color.black_light_333333)
+                    .backgroundColorRes(R.color.white_light_FAFAFA);
+
+            builder.callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    startToRestore();
+                }
+            });
+
+            builder.show();
+
+        }
+    };
+
+    public void startToRestore() {
+        String content = getActivity().getString(R.string.restoring_progress);
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
+                .title(R.string.recycle)
+                .content(content)
+                .theme(Theme.LIGHT)
+                .progress(true, 0);
+
+        builder.titleColorRes(R.color.title)
+                .dividerColorRes(R.color.divider)
+                .positiveColorRes(R.color.red_light_EB5347)
+                .negativeColorRes(R.color.black_light_333333)
+                .backgroundColorRes(R.color.white_light_FAFAFA);
+        final MaterialDialog deleteProgressDialog = builder.build();
+        deleteProgressDialog.setCancelable(true);
+        try {
+            deleteProgressDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                startRestoreTask(deleteProgressDialog);
+            }
+        }, 1000);
+
+    }
+
+    private void startRestoreTask(final MaterialDialog progressDialog) {
+        new Thread(new Runnable() {
+            public void run() {
+                mRecyclerImageAdapter.restoreItems();
+                progressDialog.dismiss();
+                mUpdateHandler.sendEmptyMessage(1);
+
+            }
+        }).start();
+    }
+
     private File mRecyclerPath = Constants.getRecyclerPath();
 
     private void startScanRecycler() {
@@ -173,9 +249,14 @@ public class RecyclerFragment extends Fragment {
                     // 暂时什么都不做
                 } else {
                     if (ImageUtils.isImage(f.getName())) {
-                        item = new RecyclerImageItem(f.getAbsolutePath(),
-                                f.getAbsolutePath(), f.getName());
-                        mRecyclerImageAdapter.addItem(item);
+//                        item = new RecyclerImageItem(f.getAbsolutePath(),
+//                                f.getAbsolutePath(), f.getName());
+                        item = RecyclerManager.getInstance().findSourcePath(f.getName());
+//                        item.setSourcePath(sourcePath);
+                        if (item != null) {
+                            LogUtil.d("recycler:" + item);
+                            mRecyclerImageAdapter.addItem(item);
+                        }
                     }
                 }
             }

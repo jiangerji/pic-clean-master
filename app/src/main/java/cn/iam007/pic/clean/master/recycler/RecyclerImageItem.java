@@ -46,7 +46,7 @@ public class RecyclerImageItem {
         builder.append("Recycler Image Item:\n");
         builder.append("  id       = " + getId() + "\n");
         builder.append("  source   = " + getSourcePath() + "\n");
-        builder.append("  recycler = " + getRecyclerPath() + "\n");
+        builder.append("  recycler = " + getRealRecyclerPath() + "\n");
 
         return super.toString();
     }
@@ -91,12 +91,16 @@ public class RecyclerImageItem {
         return sourcePath;
     }
 
+    public void setSourcePath(String sourcePath){
+        this.sourcePath = sourcePath;
+    }
+
     /**
      * 获取图片在回收站的路径，加入file:///
      *
      * @return the recyclerPath
      */
-    public String getRecyclerPath() {
+    public String getImageRecyclerPath() {
         return "file://" + recyclerPath;
     }
 

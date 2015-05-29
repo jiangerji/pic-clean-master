@@ -118,6 +118,25 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
     }
 
     /**
+     * 将选择的回收站图片恢复到原始路径
+     */
+    public void restoreItems(){
+        ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
+        for (RecyclerImageItem item : mItems) {
+            if (item.isSelected()) {
+                RecyclerManager.getInstance().restore(item);
+                deleteItems.add(item);
+            }
+        }
+
+        mSelectedItem = 0;
+        SharedPreferenceUtil.setSharedPreference(
+                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+
+        mItems.removeAll(deleteItems);
+    }
+
+    /**
      * 获取当前选中的图片数量
      *
      * @return

@@ -78,7 +78,8 @@ public class RecyclerManager {
             File recyclerFile = new File(Constants.getRecyclerPath(), recyclerFileName);
 
             RecyclerImageItem item =
-                    new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath, recyclerFileName);
+                    new RecyclerImageItem(recyclerFile.getAbsolutePath(), filePath,
+                            recyclerFileName);
             try {
                 mDbUtils.save(item);
             } catch (Exception e) {
@@ -111,4 +112,41 @@ public class RecyclerManager {
         }
     }
 
+    /**
+     * 将item的回收站图片恢复到原始路径上
+     *
+     * @param item
+     */
+    public void restore(RecyclerImageItem item) {
+        if (item != null) {
+            String sourcePath = item.getSourcePath();
+            String recyclerPath = item.getRealRecyclerPath();
+            FileUtil.moveTo(new File(recyclerPath), new File(sourcePath));
+
+            MediaScannerConnection.scanFile(mContext, new String[]{sourcePath}, null, null);
+
+            try {
+                mDbUtils.delete(item);
+                LogUtil.d("Delete Recycler Item:" + item.getId());
+            } catch (DbException e) {
+                LogUtil.d("Delete Recycler Exception:" + e.toString());
+            }
+        }
+    }
+
+    public RecyclerImageItem findSourcePath(String id) {
+        String sourcePath = "";
+        RecyclerImageItem item = null;
+
+        try {
+            item = mDbUtils.findById(RecyclerImageItem.class, id);
+            if (item != null){
+                sourcePath = item.getSourcePath();
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return item;
+    }
 }

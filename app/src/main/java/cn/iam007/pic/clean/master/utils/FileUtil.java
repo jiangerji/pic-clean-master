@@ -52,7 +52,8 @@ public class FileUtil {
                         "Move " + file.getAbsolutePath() + " to " + toFile.getAbsolutePath() + " " + succ);
             }
         } catch (Exception e) {
-
+            LogUtil.d(
+                    "Move " + file.getAbsolutePath() + " to " + toFile.getAbsolutePath() + " exception:" + e.getMessage());
         }
 
         return succ;
