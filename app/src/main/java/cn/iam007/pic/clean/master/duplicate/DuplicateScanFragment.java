@@ -3,7 +3,6 @@ package cn.iam007.pic.clean.master.duplicate;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,6 +26,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
+import com.tonicartos.superslim.LayoutManager;
+
+import java.io.File;
+import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.widget.CustomRecyclerView;
@@ -36,19 +41,11 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter.HeaderViewCall
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.DuplicateFindCallback;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
-import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
 import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
-
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
-import com.tonicartos.superslim.LayoutManager;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class DuplicateScanFragment extends Fragment {
 
@@ -241,7 +238,7 @@ public class DuplicateScanFragment extends Fragment {
         @Override
         public void onDuplicateFindStart(final String folder, int count) {
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scanning), folder);
+            msg.obj = String.format(getString(R.string.scanning), folder, "");
             msg.arg1 = Gravity.LEFT;
             mHandler.sendMessage(msg);
             LogUtil.d("Find start:" + folder + ", " + count);
@@ -250,7 +247,8 @@ public class DuplicateScanFragment extends Fragment {
         @Override
         public void onDuplicateFindExecute(final String file, long size) {
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scanning), file);
+            File aFile = new File(file);
+            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(), aFile.getName());
             msg.arg1 = Gravity.LEFT;
             mHandler.sendMessage(msg);
         }

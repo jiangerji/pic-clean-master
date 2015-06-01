@@ -37,7 +37,7 @@
     <string name="recycler_delete_message">确定永久删除这%1$d张图片？</string>
     <string name="recycler_restore_message">共%1$d张照片将被恢复。</string>
     
-    <string name="scanning">正在扫描：%s</string>
+    <string name="scanning">正在扫描：%1$s %2$s</string>
     
     <string name="scan_result_progress_hint">共扫描%1$d张图片，发现%2$d张相似照片</string>
 
