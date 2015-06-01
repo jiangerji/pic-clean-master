@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
-import cn.iam007.pic.clean.master.recycler.RecyclerImageItem;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
@@ -106,6 +105,10 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         return view;
     }
 
+    public ArrayList<DuplicateItem> getItems() {
+        return mItems;
+    }
+
     @Override
     public int getItemCount() {
         return mItems.size() + mCustomHeaderCount;
@@ -113,6 +116,14 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     public int getRealItemCount() {
         return mItems.size();
+    }
+
+    public int getCustomHeaderCount() {
+        return mCustomHeaderCount;
+    }
+
+    public int getSelectedImageCount() {
+        return 0;
     }
 
     public DuplicateItem getItem(int pos) {
@@ -228,7 +239,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.duplicate_item_image_left, parent, false);
                 holder = new DuplicateViewHolderImage(view,
-                        DuplicateViewHolderImage.ImagePos.LEFT);
+                        DuplicateViewHolderImage.ImagePos.LEFT, mItemClickListener);
 
                 if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT_BOTTOM) {
                     view.findViewById(R.id.background)
@@ -243,7 +254,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
                                 parent,
                                 false);
                 holder = new DuplicateViewHolderImage(view,
-                        DuplicateViewHolderImage.ImagePos.MIDDLE);
+                        DuplicateViewHolderImage.ImagePos.MIDDLE, mItemClickListener);
                 if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE_BOTTOM) {
                     view.setBackgroundResource(R.drawable.duplicate_item_middle_bottom_bg);
                 }
@@ -253,7 +264,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.duplicate_item_image_right, parent, false);
                 holder = new DuplicateViewHolderImage(view,
-                        DuplicateViewHolderImage.ImagePos.RIGHT);
+                        DuplicateViewHolderImage.ImagePos.RIGHT, mItemClickListener);
                 if (viewType == DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT_BOTTOM) {
                     view.findViewById(R.id.background)
                             .setBackgroundResource(R.drawable.duplicate_item_right_bottom_bg);
@@ -408,6 +419,21 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     public interface HeaderViewCallback {
         void onHeaderViewCreated(int layout, View view);
+    }
+
+    public interface MyItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public MyItemClickListener mItemClickListener;
+
+    /**
+     * 设置Item点击监听
+     *
+     * @param listener
+     */
+    public void setOnItemClickListener(MyItemClickListener listener) {
+        this.mItemClickListener = listener;
     }
 
 }

@@ -74,4 +74,13 @@ public abstract class DuplicateItem {
         this.sectionFirstPosition = sectionFirstPosition;
     }
 
+    /**
+     * 更新当前绑定view
+     */
+    public final void refresh() {
+        if (this.viewHolder != null) {
+            this.viewHolder.refresh();
+        }
+    }
+
 }

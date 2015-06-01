@@ -1,7 +1,5 @@
 package cn.iam007.pic.clean.master.duplicate.gallery;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -15,14 +13,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.iam007.find.image.R;
-import com.iam007.find.image.duplicate.DuplicateImageAdapter;
-import com.iam007.find.image.duplicate.DuplicateItem;
-import com.iam007.find.image.duplicate.DuplicateItemImage;
-import com.iam007.find.image.duplicate.DuplicateViewHolder;
-import com.iam007.find.image.duplicate.gallery.PhotoAdapter.MyViewHolder;
-import com.iam007.find.image.utils.ImageUtils;
-import com.iam007.find.image.utils.PlatformUtils;
+import java.util.ArrayList;
+
+import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItem;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
+import cn.iam007.pic.clean.master.duplicate.DuplicateViewHolder;
+import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
+
 
 public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
 
@@ -139,16 +139,9 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
                         CompoundButton buttonView, boolean isChecked) {
                     DuplicateItem item = mDuplicateImageItem;
 
-                    // 设置header的删除按钮状态
-                    if (mDuplicateImageAdapter != null) {
-                        mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) item,
-                                isChecked);
-                    }
-
                     if (item != null && (item instanceof DuplicateItemImage)) {
-                        ((DuplicateItemImage) item).setSelected(isChecked);
+                        ((DuplicateItemImage) item).setSelected(isChecked, true);
                         item.refresh();
-
                     }
 
                     if (mOnItemSelectedListener != null) {
@@ -166,8 +159,7 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
             if (item instanceof DuplicateItemImage) {
                 String imageUrl = ((DuplicateItemImage) item).getImageUrl();
                 if (imageUrl != null) {
-                    ImageUtils.showImageByUrl("file://"
-                            + imageUrl,
+                    ImageUtils.showImageByUrl(imageUrl,
                             mImageView);
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(PlatformUtils.getScreenWidth(mContext)
                             - (int) (PlatformUtils.getDensity(mContext) * 10),
@@ -207,6 +199,6 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
     }
 
     public interface OnItemSelectedListener {
-        public void onSelected(boolean isChecked);
+        void onSelected(boolean isChecked);
     }
 }

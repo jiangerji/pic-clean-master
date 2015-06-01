@@ -31,17 +31,25 @@
         android:layout_alignBottom="@+id/textView1"
         android:layout_toEndOf="@+id/textView1"
         android:layout_toRightOf="@+id/textView1"
-        android:text=" 1 "
+        android:text="1"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:background="@drawable/bottom_num_text_bg"
+        android:textSize="20dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <Button
         android:id="@+id/delbutton"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
-        android:text="Delete" />
+        android:background="@drawable/bottom_delete_btn_bg"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/white_light_FAFAFA"
+        android:text="删除" />
 
 </RelativeLayout>

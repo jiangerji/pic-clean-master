@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -27,7 +26,7 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
-        Log.d("center", "Scrolle  newState: " + newState);
+//        Log.d("center", "Scrolle  newState: " + newState);
         LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         if (!autoSet) {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -36,7 +35,7 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
                 if (view != null) {
                     int scrollXNeeded = (int) (SCREEN_CENTER_X -
                             (view.getLeft() + view.getRight()) / 2);//compute scroll from center
-                    Log.d("center", "Scrolle  scrollXNeeded: " + scrollXNeeded);
+//                    Log.d("center", "Scrolle  scrollXNeeded: " + scrollXNeeded);
                     recyclerView.smoothScrollBy(scrollXNeeded
                             * (view.getRight() < SCREEN_CENTER_X ? 1 : -1), 0);
                     autoSet = true;

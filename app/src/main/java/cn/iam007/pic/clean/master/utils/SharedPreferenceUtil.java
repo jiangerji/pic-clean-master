@@ -33,6 +33,13 @@ public class SharedPreferenceUtil {
         return sp.getBoolean(key, defaultValue);
     }
 
+    public static long getSharedPreference(String key, Long value) {
+        SharedPreferences sp = Iam007Application.getApplication()
+                .getSharedPreferences(key, 0);
+
+        return sp.getLong(key, value);
+    }
+
     public static void setSharedPreference(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(key, 0);

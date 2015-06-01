@@ -66,6 +66,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:screenOrientation="portrait" >
+        </activity>
+
     </application>
 
 </manifest>
