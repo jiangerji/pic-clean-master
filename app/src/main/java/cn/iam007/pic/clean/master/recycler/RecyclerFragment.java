@@ -26,6 +26,7 @@ import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerFragment extends Fragment {
@@ -69,6 +70,8 @@ public class RecyclerFragment extends Fragment {
             mRestoreBtn.setEnabled(true);
             mDeleteBtn.setEnabled(true);
         }
+
+        PlatformUtils.applyFonts(mRootView);
         return mRootView;
     }
 

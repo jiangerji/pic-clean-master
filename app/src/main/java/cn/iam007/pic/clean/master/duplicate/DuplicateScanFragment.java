@@ -38,6 +38,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
 import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
 import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
@@ -135,6 +136,10 @@ public class DuplicateScanFragment extends Fragment {
         mDeleteBtnContainer = rootView.findViewById(R.id.delete_btn_container);
         mDeleteBtn = (Button) rootView.findViewById(R.id.delete_btn);
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
+
+        if (rootView != null) {
+            PlatformUtils.applyFonts(rootView);
+        }
     }
 
     private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
@@ -179,14 +184,14 @@ public class DuplicateScanFragment extends Fragment {
                 mScanHeaderView = view;
 
                 mScanCount = (TextView) view.findViewById(R.id.scanCount);
-                Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-                        "fonts/cm_main_percent.ttf");
-                mScanCount.setTypeface(typeFace);
+//                Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
+//                        "fonts/cm_main_percent.ttf");
+//                mScanCount.setTypeface(typeFace);
 
                 mScanCountUnit = (TextView) view.findViewById(R.id.scanCountUnit);
-                typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-                        "fonts/unit.ttf");
-                mScanCountUnit.setTypeface(typeFace);
+//                typeFace = Typeface.createFromAsset(getActivity().getAssets(),
+//                        "fonts/unit.ttf");
+//                mScanCountUnit.setTypeface(typeFace);
 
                 mScanResultHint = (TextView) view.findViewById(R.id.scanResultHint);
 
@@ -446,7 +451,7 @@ public class DuplicateScanFragment extends Fragment {
                 float value = (Float) valueAnimator.getAnimatedValue();
 
                 // 修改header高度
-                int newHeight = (int) (scanHeaderViewHeight * value);
+                int newHeight = (int) (scanHeaderViewHeight * Math.sqrt(value));
                 LayoutParams layoutParams = mScanHeaderView.getLayoutParams();
                 if (layoutParams.height != newHeight) {
                     layoutParams.height = newHeight;
@@ -454,17 +459,16 @@ public class DuplicateScanFragment extends Fragment {
                 }
 
                 // 修改header中字体大小
-                value = (float) Math.sqrt(value);
+                float nValue = (float) (0.2 + 0.8 * value);
+                mScanCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, scanCountTextSize * nValue);
 
-                float newTextSize = scanCountTextSize * value;
-                //                LogUtil.d("new text size:" + newTextSize);
-                mScanCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, newTextSize);
-
+                nValue = (float) (0.6 + 0.4 * value);
                 mScanCountUnit.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        scanCountUnitTextSize * value);
+                        scanCountUnitTextSize * nValue);
 
+                nValue = (float) (0.2 + 0.8 * value);
                 mScanResultHint.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        scanResultHintTextSize * value);
+                        scanResultHintTextSize * nValue);
                 mScanResultHint.setVisibility(View.VISIBLE);
             }
         });

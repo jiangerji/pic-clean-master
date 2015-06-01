@@ -1,18 +1,25 @@
 package cn.iam007.pic.clean.master.base;
 
 import android.annotation.TargetApi;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.baidu.mobstat.StatService;
+
+import cn.iam007.pic.clean.master.Iam007Application;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.widget.SystemBarTintManager;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
 public class BaseActivity extends AppCompatActivity {
     protected final static String TAG = "BaseActivity";
@@ -128,5 +135,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         View.inflate(this, layoutResID, mContainer);
+        PlatformUtils.applyFonts(mContainer);
     }
 }

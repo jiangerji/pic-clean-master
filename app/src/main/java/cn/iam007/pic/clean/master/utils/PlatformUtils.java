@@ -11,9 +11,16 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Typeface;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
+
+import cn.iam007.pic.clean.master.Iam007Application;
 
 public class PlatformUtils {
     private static int mScreenWidth = 0;
@@ -40,7 +47,7 @@ public class PlatformUtils {
 
     /**
      * 获取屏幕宽度，单位像素
-     * 
+     *
      * @param context
      * @return
      */
@@ -64,7 +71,7 @@ public class PlatformUtils {
 
     /**
      * 获取屏幕宽度，单位像素
-     * 
+     *
      * @param context
      * @return
      */
@@ -88,10 +95,9 @@ public class PlatformUtils {
 
     /**
      * 获取当前应用的version code
-     * 
+     *
      * @param context
-     * @return
-     *         返回应用的version code, 如果为-1, 表示获取时发生异常
+     * @return 返回应用的version code, 如果为-1, 表示获取时发生异常
      */
     public static int getVersionCode(Context context) {
         //获取版本号(内部识别号)
@@ -106,13 +112,11 @@ public class PlatformUtils {
 
     /**
      * 通过key值获取<mete-data /> 标签中的值
-     * 
-     * @param mContext
-     *            运行上下文
-     * @param key
-     *            对应的key 值
+     *
+     * @param mContext 运行上下文
+     * @param key      对应的key 值
      * @return data key对应的value 值
-     * */
+     */
     public static String getMeteDataByKey(Context mContext, String key) {
         try {
             ApplicationInfo appInfo = mContext
@@ -138,7 +142,9 @@ public class PlatformUtils {
         return "";
     }
 
-    /**************************** UUID框架 ***********************************/
+    /**
+     * ************************* UUID框架 **********************************
+     */
     private static String sID = null;// 作为设备的唯一标识符
     private static final String INSTALLATION = "INSTALLATION";
 
@@ -166,9 +172,8 @@ public class PlatformUtils {
         return new String(bytes);
     }
 
-    private static
-            void writeInstallationFile(Context context, File installation)
-                    throws IOException {
+    private static void writeInstallationFile(Context context, File installation)
+            throws IOException {
         FileOutputStream out = new FileOutputStream(installation);
 
         String id = null;
@@ -202,4 +207,36 @@ public class PlatformUtils {
         return mUid;
     }
 
+    /**
+     * 设置字体
+     *
+     * @param v
+     * @param fontToSet
+     */
+    public static void applyFonts(final View v, Typeface fontToSet) {
+        try {
+            if (v instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) v;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    applyFonts(child, fontToSet);
+                }
+            } else if (v instanceof TextView) {
+                ((TextView) v).setTypeface(fontToSet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 为当前ViewGroup中控件字体
+     *
+     * @param view
+     */
+    public static void applyFonts(View view) {
+        Typeface font = Typeface.createFromAsset(Iam007Application.getApplication().getAssets(),
+                "fonts/RobotoCondensed-Light.ttf");
+        applyFonts(view, font);
+    }
 }
