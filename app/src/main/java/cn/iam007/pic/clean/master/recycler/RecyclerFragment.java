@@ -17,13 +17,12 @@ import android.widget.Button;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 
 import java.io.File;
 
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
+import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -97,14 +96,20 @@ public class RecyclerFragment extends Fragment {
 
         mRecyclerImageAdapter = new RecyclerImageAdapter();
         mRecyclerImageContainer.setAdapter(mRecyclerImageAdapter);
+
+        PlatformUtils.applyFonts(rootView);
     }
 
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final DeleteRecyclerConfirmDialog dialog =
-                    DeleteRecyclerConfirmDialog.builder(getActivity(),
-                            mRecyclerImageAdapter.getSelectedItem());
+            DialogBuilder builder = new DialogBuilder(getActivity());
+            builder.title(R.string.recycle)
+                    .positiveText(R.string.delete_confirm)
+                    .negativeText(R.string.cancel)
+                    .content(getString(R.string.recycler_delete_message,
+                            mRecyclerImageAdapter.getSelectedItem()));
+            final MaterialDialog dialog = builder.build();
             dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -119,17 +124,12 @@ public class RecyclerFragment extends Fragment {
 
     public void startToDelete() {
         String content = getActivity().getString(R.string.deleting_progress);
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
-                .title(R.string.delete)
+
+        DialogBuilder builder = new DialogBuilder(getActivity());
+        builder.title(R.string.delete)
                 .content(content)
-                .theme(Theme.LIGHT)
                 .progress(true, 0);
 
-        builder.titleColorRes(R.color.title)
-                .dividerColorRes(R.color.divider)
-                .positiveColorRes(R.color.red_light_EB5347)
-                .negativeColorRes(R.color.black_light_333333)
-                .backgroundColorRes(R.color.white_light_FAFAFA);
         final MaterialDialog deleteProgressDialog = builder.build();
         deleteProgressDialog.setCancelable(true);
         try {
@@ -153,6 +153,8 @@ public class RecyclerFragment extends Fragment {
         @Override
         public boolean handleMessage(Message msg) {
             mRecyclerImageAdapter.notifyDataSetChanged();
+            mSelectAll = false;
+            mSelectAllMenuItem.setTitle(R.string.select_all);
             return false;
         }
     });
@@ -171,46 +173,30 @@ public class RecyclerFragment extends Fragment {
     private View.OnClickListener mRestoreBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+            DialogBuilder builder = new DialogBuilder(getActivity());
 
             builder.title(R.string.recycle)
-                    .theme(Theme.LIGHT)
                     .positiveText(R.string.restore)
                     .negativeText(R.string.cancel)
                     .content(getActivity().getString(R.string.recycler_restore_message,
                             mRecyclerImageAdapter.getSelectedItem()));
-
-            builder.titleColorRes(R.color.title)
-                    .dividerColorRes(R.color.divider)
-                    .positiveColorRes(R.color.red_light_EB5347)
-                    .negativeColorRes(R.color.black_light_333333)
-                    .backgroundColorRes(R.color.white_light_FAFAFA);
-
             builder.callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {
                     startToRestore();
                 }
             });
-
             builder.show();
-
         }
     };
 
     public void startToRestore() {
         String content = getActivity().getString(R.string.restoring_progress);
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
-                .title(R.string.recycle)
+        DialogBuilder builder = new DialogBuilder(getActivity());
+        builder.title(R.string.recycle)
                 .content(content)
-                .theme(Theme.LIGHT)
                 .progress(true, 0);
 
-        builder.titleColorRes(R.color.title)
-                .dividerColorRes(R.color.divider)
-                .positiveColorRes(R.color.red_light_EB5347)
-                .negativeColorRes(R.color.black_light_333333)
-                .backgroundColorRes(R.color.white_light_FAFAFA);
         final MaterialDialog deleteProgressDialog = builder.build();
         deleteProgressDialog.setCancelable(true);
         try {

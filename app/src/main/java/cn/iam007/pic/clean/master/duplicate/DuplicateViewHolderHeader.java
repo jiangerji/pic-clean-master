@@ -75,7 +75,7 @@ public class DuplicateViewHolderHeader extends DuplicateViewHolder {
                     handler.post(new Runnable() {
                         public void run() {
                             getAdapter().deleteSection(getDuplicateImageItem());
-                            SharedPreferenceUtil.subSharedPreference(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+                            SharedPreferenceUtil.subLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                                     size);
                         }
                     });

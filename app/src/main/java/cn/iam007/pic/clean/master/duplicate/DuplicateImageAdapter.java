@@ -358,7 +358,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             index++;
         }
 
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 totalCount);
 
@@ -384,7 +384,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             }
         }
 
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 0L);
 

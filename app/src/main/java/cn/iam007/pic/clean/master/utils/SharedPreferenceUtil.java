@@ -20,6 +20,9 @@ public class SharedPreferenceUtil {
     // 用于表示是否有清理相似图片, boolean
     public final static String HAS_DELETE_SOME_DUPLICATE_IMAGE = "HAS_DELETE_SOME_DUPLICATE_IMAGE";
 
+    // 已经清理相似图片的总数
+    public final static String HANDLED_DUPLICATE_IMAGES_COUNT = "HANDLED_DUPLICATE_IMAGES_COUNT";
+
     private final static String PREDERENCE_NAME = "pic.clean.master";
 
     public static void init(Context context) {
@@ -28,6 +31,7 @@ public class SharedPreferenceUtil {
         editor.putLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0);
         editor.putLong(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 0);
         editor.putBoolean(HAS_DELETE_SOME_DUPLICATE_IMAGE, false);
+        editor.commit();
     }
 
     public static void setBoolean(String key, Boolean value) {
@@ -47,7 +51,7 @@ public class SharedPreferenceUtil {
         return sp.getBoolean(key, defaultValue);
     }
 
-    public static void setSharedPreference(String key, Long value) {
+    public static void setLong(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
 
@@ -58,13 +62,19 @@ public class SharedPreferenceUtil {
         }
     }
 
+    public static long getLong(String key, Long defaultValue) {
+        SharedPreferences sp = Iam007Application.getApplication()
+                .getSharedPreferences(PREDERENCE_NAME, 0);
+        return sp.getLong(key, defaultValue);
+    }
+
     /**
      * 在当前保存的值上增加value值
      *
      * @param key
      * @param value
      */
-    public static void addSharedPreference(String key, Long value) {
+    public static void addLong(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
         Editor editor = sp.edit();
@@ -78,7 +88,7 @@ public class SharedPreferenceUtil {
      * @param key
      * @param value
      */
-    public static void subSharedPreference(String key, Long value) {
+    public static void subLong(String key, Long value) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
         Editor editor = sp.edit();
@@ -94,7 +104,8 @@ public class SharedPreferenceUtil {
         sp.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public static void clearOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+    public static void clearOnSharedPreferenceChangeListener(
+            OnSharedPreferenceChangeListener listener) {
         SharedPreferences sp = Iam007Application.getApplication()
                 .getSharedPreferences(PREDERENCE_NAME, 0);
 

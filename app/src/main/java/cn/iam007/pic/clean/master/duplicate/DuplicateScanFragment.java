@@ -184,15 +184,7 @@ public class DuplicateScanFragment extends Fragment {
                 mScanHeaderView = view;
 
                 mScanCount = (TextView) view.findViewById(R.id.scanCount);
-//                Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-//                        "fonts/cm_main_percent.ttf");
-//                mScanCount.setTypeface(typeFace);
-
                 mScanCountUnit = (TextView) view.findViewById(R.id.scanCountUnit);
-//                typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-//                        "fonts/unit.ttf");
-//                mScanCountUnit.setTypeface(typeFace);
-
                 mScanResultHint = (TextView) view.findViewById(R.id.scanResultHint);
 
                 Unit unit = StringUtils.convertFileSize(mDuplicateImageFilesSize);
@@ -423,7 +415,7 @@ public class DuplicateScanFragment extends Fragment {
 
     private void startFinishAnimation() {
         // 使用sharedpreference来获取当前选中图片的大小
-        SharedPreferenceUtil.setSharedPreference(SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+        SharedPreferenceUtil.setLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 0L);
 
         // 显示menu

@@ -64,7 +64,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         }
 
         LogUtil.d("updateItem:" + mSelectedItem);
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
     }
 
@@ -79,7 +79,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
             mSelectedItem = 0;
         }
 
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
 
         if (layoutManager == null) {
@@ -111,7 +111,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         }
 
         mSelectedItem = 0;
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
 
         mItems.removeAll(deleteItems);
@@ -130,7 +130,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         }
 
         mSelectedItem = 0;
-        SharedPreferenceUtil.setSharedPreference(
+        SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
 
         mItems.removeAll(deleteItems);
