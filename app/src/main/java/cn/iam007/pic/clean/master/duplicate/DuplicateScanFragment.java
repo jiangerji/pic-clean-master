@@ -24,6 +24,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -139,6 +140,8 @@ public class DuplicateScanFragment extends Fragment {
         }
     }
 
+    private Toast mDeleteHint = null;
+
     private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
 
         @Override
@@ -148,22 +151,35 @@ public class DuplicateScanFragment extends Fragment {
             int index = 0;
             DuplicateItem item = null;
             ArrayList<DuplicateItemImage> items = null;
+            int count = 0;
             while (index < mDuplicateImageAdapter.getRealItemCount()) {
                 item = mDuplicateImageAdapter.getItem(index);
                 if (item.isHeader()) {
                     items = ((DuplicateItemHeader) item).getSelectedItem();
                     dialog.addDeleteItems(items);
+                    count += items.size();
                 }
                 index++;
             }
 
-            dialog.show();
-            dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
+            if (count > 0) {
+                dialog.show();
+                dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
 
-                @Override
-                public void onDeleteFinish() {
+                    @Override
+                    public void onDeleteFinish() {
+                        mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
+                    }
+                });
+            } else {
+                if (mDeleteHint != null) {
+                    mDeleteHint.cancel();
                 }
-            });
+
+                mDeleteHint =
+                        Toast.makeText(getActivity(), R.string.delete_hint, Toast.LENGTH_SHORT);
+                mDeleteHint.show();
+            }
         }
     };
     protected View mScanHeaderView;
@@ -248,7 +264,8 @@ public class DuplicateScanFragment extends Fragment {
         public void onDuplicateFindExecute(final String file, long size) {
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
             File aFile = new File(file);
-            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(), aFile.getName());
+            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(),
+                    aFile.getName());
             msg.arg1 = Gravity.LEFT;
             mHandler.sendMessage(msg);
         }
@@ -335,6 +352,7 @@ public class DuplicateScanFragment extends Fragment {
     private final static int SCAN_PROGRESS_UPDATE = 0x02;
     private final static int SCAN_DUPLICATE_SECTION_FIND = 0x03; // 找到一组相似图片
     private final static int SCAN_DUPLICATE_FIND_FINISHED = 0x04; // 查找相似图片结束
+    private final static int DELETE_DUPLICATE_FINISHED = 0x05; // 删除完成
     private Handler mHandler = new Handler(new Callback() {
 
         @Override
@@ -370,6 +388,11 @@ public class DuplicateScanFragment extends Fragment {
                             }
                         }
                     }, 50);
+                    break;
+
+                case DELETE_DUPLICATE_FINISHED:
+                    mDuplicateImageAdapter.clear();
+                    mDuplicateImageAdapter.notifyDataSetChanged();
                     break;
 
                 default:

@@ -153,7 +153,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
         LogUtil.d("Finish sort:" + objs.length);
 
         index = 0;
-        threshold = 2;
+        threshold = 5;
         // 查找可能相同的图片
         if (objs.length > 1) {
             ImageHolder preImage = (ImageHolder) objs[0];
@@ -162,6 +162,10 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             ImageHolder imageHolder;
             for (int i = 1; i < objs.length; i++) {
                 imageHolder = (ImageHolder) objs[i];
+
+                if (mCallback != null) {
+                    mCallback.onDuplicateFindExecute(imageHolder.getImagePath(), imageHolder.getImageSize());
+                }
 
                 index++;
                 if (index == threshold) {

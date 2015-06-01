@@ -41,4 +41,6 @@
     
     <string name="scan_result_progress_hint">共扫描%1$d张图片，发现%2$d张相似照片</string>
 
+    <string name="delete_hint">请选择需要删除的文件</string>
+
 </resources>

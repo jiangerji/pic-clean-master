@@ -82,6 +82,10 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         addSection(sectionItem.getHeader(), imagesPath);
     }
 
+    public void clear() {
+        mItems.clear();
+    }
+
     private int mCustomHeaderCount = 0;
     // 用于获取custom header对应position的mask
     private final static int CUSTOM_HEADER_MASK = 0x00FF;
