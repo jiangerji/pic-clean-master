@@ -1,27 +1,24 @@
 package cn.iam007.pic.clean.master.main;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.tonicartos.superslim.LayoutManager;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
+import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
-import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
-
-import com.tonicartos.superslim.LayoutManager;
 
 public class MainActivity extends BaseActivity {
 
@@ -88,6 +85,49 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        mExitHintToast = null;
+    }
+
+    @Override
+    protected  void onPause() {
+        super.onPause();
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
+    }
+
+    // 上次按下返回键的时间
+    private long mPreBackPressedTS = 0;
+    private Toast mExitHintToast = null;
+
+    private Handler mToastHandler = new Handler();
+
+    @Override
+    public void onBackPressed() {
+        LogUtil.d("onBackPressed!");
+        long currentTS = System.currentTimeMillis();
+        if (currentTS - mPreBackPressedTS < 3000){
+            super.onBackPressed();
+        }
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
+        mExitHintToast = Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT);
+        mExitHintToast.show();
+        mPreBackPressedTS = currentTS;
+
+        mToastHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mExitHintToast != null) {
+                    mExitHintToast.cancel();
+                    mExitHintToast = null;
+                }
+            }
+        }, 3000);
     }
 
     private OnClickListener mDrawLayoutOnClickListener = new OnClickListener() {
