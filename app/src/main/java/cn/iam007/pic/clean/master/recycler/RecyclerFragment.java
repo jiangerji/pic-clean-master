@@ -22,13 +22,14 @@ import java.io.File;
 
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class RecyclerFragment extends Fragment {
+public class RecyclerFragment extends BaseFragment {
     private View mRootView = null;
 
     @Override

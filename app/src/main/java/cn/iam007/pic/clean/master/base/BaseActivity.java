@@ -118,18 +118,12 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         StatService.onResume(this);
-
-        mExitHintToast = null;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         StatService.onPause(this);
-
-        if (mExitHintToast != null){
-            mExitHintToast.cancel();
-        }
     }
 
     @Override
@@ -141,37 +135,5 @@ public class BaseActivity extends AppCompatActivity {
     public void setContentView(int layoutResID) {
         View.inflate(this, layoutResID, mContainer);
         PlatformUtils.applyFonts(mContainer);
-    }
-
-    // 上次按下返回键的时间
-    private long mPreBackPressedTS = 0;
-    private Toast mExitHintToast = null;
-
-    private Handler mToastHandler = new Handler();
-
-    @Override
-    public void onBackPressed() {
-        LogUtil.d("onBackPressed!");
-        long currentTS = System.currentTimeMillis();
-        if (currentTS - mPreBackPressedTS < 3000){
-            super.onBackPressed();
-        }
-
-        if (mExitHintToast != null){
-            mExitHintToast.cancel();
-        }
-        mExitHintToast = Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT);
-        mExitHintToast.show();
-        mPreBackPressedTS = currentTS;
-
-        mToastHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mExitHintToast != null){
-                    mExitHintToast.cancel();
-                    mExitHintToast = null;
-                }
-            }
-        }, 3000);
     }
 }

@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.base.widget.CustomRecyclerView;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog.OnDeleteStatusListener;
@@ -51,7 +52,7 @@ import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
 import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
 
-public class DuplicateScanFragment extends Fragment {
+public class DuplicateScanFragment extends BaseFragment {
 
     private View mRootView;
 

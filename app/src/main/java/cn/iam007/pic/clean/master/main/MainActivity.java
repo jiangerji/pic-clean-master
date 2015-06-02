@@ -1,27 +1,22 @@
 package cn.iam007.pic.clean.master.main;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
+import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
-import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
-
-import com.tonicartos.superslim.LayoutManager;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,7 +31,6 @@ public class MainActivity extends BaseActivity {
     }
 
     DrawerLayout mDrawerLayout = null;
-    LayoutManager mLayoutManager = null;
 
     private void initView() {
         mToolbar = getToolbar();
@@ -62,19 +56,6 @@ public class MainActivity extends BaseActivity {
         // Handle different Drawer States :D
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-
-//        long count = SharedPreferenceUtil.getLong(SharedPreferenceUtil.HANDLED_DUPLICATE_IMAGES_COUNT, 0L);
-//        mCountTextView = (TextView) findViewById(R.id.total_delete_file_count);
-//        String content = getString(R.string.slide_menu_already_handled_pic_count, count);
-//
-//        SpannableStringBuilder style = new SpannableStringBuilder(content);
-//        int startIndex = content.length() - 1;
-//        style.setSpan(new AbsoluteSizeSpan(16, true),
-//                startIndex,
-//                startIndex + 1,
-//                Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //设置指定位置textview的背景颜色
-//        mCountTextView.setText(style);
-
         View scan = findViewById(R.id.duplicate_scan);
         scan.setOnClickListener(mDrawLayoutOnClickListener);
 
@@ -88,6 +69,17 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        mExitHintToast = null;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
     }
 
     private OnClickListener mDrawLayoutOnClickListener = new OnClickListener() {
@@ -157,4 +149,35 @@ public class MainActivity extends BaseActivity {
         setFragment(DUPLICATE_SCAN_FRAGMENT);
     }
 
+    // 上次按下返回键的时间
+    private long mPreBackPressedTS = 0;
+    private Toast mExitHintToast = null;
+
+    private Handler mToastHandler = new Handler();
+
+    @Override
+    public void onBackPressed() {
+        LogUtil.d("onBackPressed!");
+        long currentTS = System.currentTimeMillis();
+        if (currentTS - mPreBackPressedTS < 3000){
+            super.onBackPressed();
+        }
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
+        mExitHintToast = Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT);
+        mExitHintToast.show();
+        mPreBackPressedTS = currentTS;
+
+        mToastHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mExitHintToast != null) {
+                    mExitHintToast.cancel();
+                    mExitHintToast = null;
+                }
+            }
+        }, 3000);
+    }
 }
