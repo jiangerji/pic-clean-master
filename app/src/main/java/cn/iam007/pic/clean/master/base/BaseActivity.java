@@ -1,21 +1,29 @@
 package cn.iam007.pic.clean.master.base;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.baidu.mobstat.StatService;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.avos.avoscloud.AVAnalytics;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.feedback.Comment;
+import com.avos.avoscloud.feedback.FeedbackAgent;
+import com.avos.avoscloud.feedback.FeedbackThread;
+
+import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.widget.SystemBarTintManager;
+import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
+import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
@@ -26,6 +34,7 @@ public class BaseActivity extends AppCompatActivity {
      * 是否是debug模式，如果不是，所有debug开头的函数不会执行
      */
     protected static boolean DEBUG_MODE = true;
+
     static {
         DEBUG_MODE = false;
     }
@@ -53,6 +62,51 @@ public class BaseActivity extends AppCompatActivity {
         mContainer = (FrameLayout) findViewById(R.id.container);
 
         initView();
+
+        final FeedbackAgent agent = new FeedbackAgent(this);
+        final int originalCount = agent.getDefaultThread().getCommentsList().size();
+        agent.getDefaultThread().sync(new FeedbackThread.SyncCallback() {
+            @Override
+            public void onCommentsSend(List<Comment> list, AVException e) {
+
+            }
+
+            @Override
+            public void onCommentsFetch(List<Comment> list, AVException e) {
+                LogUtil.d("count=" + list.size() + " " + originalCount + " " + BaseActivity.this);
+                if (originalCount < list.size()) {
+                    if (!(BaseActivity.this instanceof FeedbackActivity)) {
+                        openFeedbackDialog();
+                    }
+                }
+            }
+        });
+    }
+
+    private void openFeedbackDialog() {
+        MaterialDialog.ButtonCallback callback = new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                super.onPositive(dialog);
+                openFeedback();
+            }
+        };
+
+        DialogBuilder builder = new DialogBuilder(this);
+        builder.title(R.string.open_feedback_dialog_title).content(
+                R.string.open_feedback_dialog_content).positiveText(
+                R.string.open_feedback_dialog_positive).negativeText(
+                R.string.cancel).callback(callback).build().show();
+    }
+
+    /**
+     * 打开反馈页面
+     */
+    protected final void openFeedback() {
+        Intent intent = new Intent(this, FeedbackActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
     }
 
     private void initView() {
@@ -80,7 +134,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 获取activity的toolbar实例
-     * 
+     *
      * @return
      */
     public final Toolbar getToolbar() {
@@ -89,7 +143,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 设置状态栏的背景颜色
-     * 
+     *
      * @param color
      */
     public final void setStatusBarTintColor(int color) {
@@ -98,7 +152,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 设置工具栏的背景颜色
-     * 
+     *
      * @param color
      */
     public final void setToolbarBackgroundColor(int color) {
@@ -107,7 +161,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * 设置导航栏背景颜色
-     * 
+     *
      * @param color
      */
     public final void setNavigationBarTintColor(int color) {
@@ -117,13 +171,13 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        StatService.onResume(this);
+        AVAnalytics.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        StatService.onPause(this);
+        AVAnalytics.onPause(this);
     }
 
     @Override

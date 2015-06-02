@@ -49,4 +49,8 @@
 
     <string name="delete_hint">请选择需要删除的文件</string>
 
+    <string name="open_feedback_dialog_title">友情提示</string>
+    <string name="open_feedback_dialog_content">您的反馈有新的回复</string>
+    <string name="open_feedback_dialog_positive">去查看</string>
+
 </resources>

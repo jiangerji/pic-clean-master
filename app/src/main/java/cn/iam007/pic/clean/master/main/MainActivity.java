@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -11,9 +12,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.avos.avoscloud.feedback.FeedbackAgent;
+import com.avos.avoscloud.feedback.ThreadActivity;
+
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
+import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -77,7 +82,7 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
 
-        if (mExitHintToast != null){
+        if (mExitHintToast != null) {
             mExitHintToast.cancel();
         }
     }
@@ -88,19 +93,20 @@ public class MainActivity extends BaseActivity {
         public void onClick(View v) {
             int pos = -1;
             switch (v.getId()) {
-            case R.id.duplicate_scan:
-                pos = DUPLICATE_SCAN_FRAGMENT;
-                break;
+                case R.id.duplicate_scan:
+                    pos = DUPLICATE_SCAN_FRAGMENT;
+                    break;
 
-            case R.id.recycler:
-                pos = RECYCLER_FRAGMENT;
-                break;
+                case R.id.recycler:
+                    pos = RECYCLER_FRAGMENT;
+                    break;
 
-            case R.id.feedback:
-                break;
+                case R.id.feedback:
+                    openFeedback();
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
 
             setFragment(pos);
@@ -120,22 +126,22 @@ public class MainActivity extends BaseActivity {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = null;
             switch (pos) {
-            case DUPLICATE_SCAN_FRAGMENT:
-                if (mDuplicateScanFragment == null) {
-                    mDuplicateScanFragment = new DuplicateScanFragment();
-                }
-                fragment = mDuplicateScanFragment;
-                break;
+                case DUPLICATE_SCAN_FRAGMENT:
+                    if (mDuplicateScanFragment == null) {
+                        mDuplicateScanFragment = new DuplicateScanFragment();
+                    }
+                    fragment = mDuplicateScanFragment;
+                    break;
 
-            case RECYCLER_FRAGMENT:
-                if (mRecyclerFragment == null) {
-                    mRecyclerFragment = new RecyclerFragment();
-                }
-                fragment = mRecyclerFragment;
-                break;
+                case RECYCLER_FRAGMENT:
+                    if (mRecyclerFragment == null) {
+                        mRecyclerFragment = new RecyclerFragment();
+                    }
+                    fragment = mRecyclerFragment;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
             if (fragment != null) {
                 mCurrentFragment = pos;
@@ -159,11 +165,11 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         LogUtil.d("onBackPressed!");
         long currentTS = System.currentTimeMillis();
-        if (currentTS - mPreBackPressedTS < 3000){
+        if (currentTS - mPreBackPressedTS < 3000) {
             super.onBackPressed();
         }
 
-        if (mExitHintToast != null){
+        if (mExitHintToast != null) {
             mExitHintToast.cancel();
         }
         mExitHintToast = Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT);
