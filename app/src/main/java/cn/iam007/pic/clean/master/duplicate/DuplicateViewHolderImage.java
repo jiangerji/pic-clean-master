@@ -1,6 +1,5 @@
 package cn.iam007.pic.clean.master.duplicate;
 
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -19,9 +18,11 @@ public class DuplicateViewHolderImage extends DuplicateViewHolder {
     }
 
     private ImageView mDuplicateImage;
-    private CheckBox mCheckBox;;
+    private CheckBox mCheckBox;
+    private DuplicateImageAdapter.MyItemClickListener mListener;
 
-    public DuplicateViewHolderImage(View itemView, ImagePos pos) {
+    public DuplicateViewHolderImage(View itemView, ImagePos pos,
+                                    DuplicateImageAdapter.MyItemClickListener listener) {
         super(itemView, DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT);
 
         int type;
@@ -41,6 +42,7 @@ public class DuplicateViewHolderImage extends DuplicateViewHolder {
         }
 
         setViewType(type);
+        mListener = listener;
     }
 
     @Override
@@ -51,6 +53,7 @@ public class DuplicateViewHolderImage extends DuplicateViewHolder {
             @Override
             public void onClick(View v) {
                 LogUtil.d("debug", "click on " + mDuplicateImage);
+                mListener.onItemClick(mDuplicateImage, getAdapterPosition());
             }
         });
 

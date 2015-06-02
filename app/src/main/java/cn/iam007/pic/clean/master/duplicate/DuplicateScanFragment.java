@@ -1,6 +1,7 @@
 package cn.iam007.pic.clean.master.duplicate;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter.HeaderViewCall
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.DuplicateFindCallback;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
+import cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
@@ -126,6 +129,27 @@ public class DuplicateScanFragment extends Fragment {
         mDuplicateImageAdapter.addCustomHeader(R.layout.fragment_duplicate_scan_header);
         mDuplicateImageAdapter.addCustomHeader(R.layout.fragment_duplicate_scan_progress);
         mDuplicateImageContainer.setAdapter(mDuplicateImageAdapter);
+        mDuplicateImageAdapter.setOnItemClickListener(new DuplicateImageAdapter.MyItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position) {
+                Log.d("debug",
+                        "click item postion: "
+                                + (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                //                Toast.makeText(DuplicateScanActivity.this,
+                //                        "click : "
+                //                                + (postion - mDuplicateImageAdapter.getCustomHeaderCount()),
+                //                        Toast.LENGTH_SHORT)
+                //                        .show();
+                DuplicateHoldAdapter holdAdapter = DuplicateHoldAdapter.getInstance();
+                holdAdapter.setHoldAdapter(mDuplicateImageAdapter);
+                Intent intent = new Intent(getActivity(),
+                        PhotoActivity.class);
+                intent.putExtra("position",
+                        (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                getActivity().startActivity(intent);
+            }
+        });
 
         mStartProgress =
                 (ProgressBarCircularIndeterminate) rootView.findViewById(R.id.startProgress);
@@ -595,6 +619,13 @@ public class DuplicateScanFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
+        if (count <= 0) {
+            mDeleteBtn.setText(R.string.delete);
+        } else {
+            mDeleteBtn.setText(getString(R.string.delete_with_size,
+                    StringUtils.convertFileSize(count)));
+        }
         SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
