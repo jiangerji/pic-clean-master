@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 
 import java.io.File;
@@ -31,8 +30,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
     protected Long doInBackground(String... folders) {
         if (folders.length > 0) {
             String rootDir = folders[0];
-            File root = new File(rootDir);
-            parseDirectory(root);
+            parseDirectory(rootDir);
         }
 
         // 扫描结束
@@ -83,8 +81,22 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
     private int mTotalFileCount = 0; // 总共文件数量
     private long mTotalFileSize = 0; // 总共文件大小
 
-    private void parseDirectory(File root) {
-        if (root != null && root.isDirectory() && root.isHidden()){
+    private int mCurrentProgress = 0; // 当前的进度
+
+    private ArrayList<String> mParseFolders = new ArrayList<>();
+
+    private void parseDirectory(String root) {
+        mParseFolders.add(root);
+
+        String directory = null;
+        while (mParseFolders.size() > 0) {
+            directory = mParseFolders.remove(0);
+            _parseDirectory(new File(directory));
+        }
+    }
+
+    private void _parseDirectory(File root) {
+        if (root != null && root.isDirectory() && root.isHidden()) {
             LogUtil.d("Hidden directory: ignore.");
             return;
         }
@@ -94,12 +106,14 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
         }
 
         ArrayList<ImageHolder> holders = new ArrayList<>();
+        int index = 0;
+        int threshold = 20;
         if (root.isDirectory()) {
             File files[] = root.listFiles();
             for (File f : files) {
                 if (f.isDirectory()) {
                     // 暂时什么都不做
-                    parseDirectory(f);
+                    mParseFolders.add(f.getAbsolutePath());
                 } else {
                     if (ImageUtils.isImage(f.getName())) {
                         String dateTime = getDateTime(f);
@@ -108,7 +122,18 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                         mTotalFileSize += fileSize;
                         mTotalFileCount++;
 
-                        mCallback.onDuplicateFindProgressUpdate(calcProgress(mTotalFileCount));
+                        index++;
+                        if (index == threshold) {
+                            mCurrentProgress += 1;
+                            index = 0;
+
+                            // 扫描图片回调
+                            if (mCallback != null) {
+                                mCallback.onDuplicateFindExecute(f.getAbsolutePath(), f.length());
+                                mCallback.onDuplicateFindProgressUpdate(
+                                        calcProgress(mCurrentProgress));
+                            }
+                        }
 
 //                        LogUtil.d("file:" + f + ", " + dateTime);
                         if (dateTime != null) {
@@ -127,6 +152,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
         java.util.Arrays.sort(objs, new MyComparator());
         LogUtil.d("Finish sort:" + objs.length);
 
+        index = 0;
+        threshold = 5;
         // 查找可能相同的图片
         if (objs.length > 1) {
             ImageHolder preImage = (ImageHolder) objs[0];
@@ -136,10 +163,20 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             for (int i = 1; i < objs.length; i++) {
                 imageHolder = (ImageHolder) objs[i];
 
-                // 扫描图片回调
                 if (mCallback != null) {
-                    mCallback.onDuplicateFindExecute(imageHolder.imagePath,
-                            imageHolder.imageSize);
+                    mCallback.onDuplicateFindExecute(imageHolder.getImagePath(), imageHolder.getImageSize());
+                }
+
+                index++;
+                if (index == threshold) {
+                    index = 0;
+                    mCurrentProgress += threshold;
+                    mCallback.onDuplicateFindProgressUpdate(calcProgress(mCurrentProgress));
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (imageHolder.imageTS == 0) {

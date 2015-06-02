@@ -28,7 +28,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     public DuplicateImageAdapter(Context context) {
         mContext = context;
-        mItems = new ArrayList<DuplicateItem>();
+        mItems = new ArrayList<>();
     }
 
     private int mHeaderCount = 0;
@@ -74,12 +74,16 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
     }
 
     public void addSection(SectionItem sectionItem) {
-        ArrayList<String> imagesPath = new ArrayList<String>();
+        ArrayList<String> imagesPath = new ArrayList<>();
         for (ImageHolder image : sectionItem.getImages()) {
             imagesPath.add(image.getImagePath());
         }
 
         addSection(sectionItem.getHeader(), imagesPath);
+    }
+
+    public void clear() {
+        mItems.clear();
     }
 
     private int mCustomHeaderCount = 0;
@@ -102,6 +106,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         View view = LayoutInflater.from(mContext).inflate(layout, null, false);
         mCustomHeaderView.add(view);
 
+        PlatformUtils.applyFonts(view);
         return view;
     }
 
@@ -142,8 +147,9 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
         DuplicateItem item = mItems.get(position - mCustomHeaderCount);
 
-        DuplicateItemHeader headerItem = (DuplicateItemHeader) mItems.get(item.getSectionFirstPosition()
-                - mCustomHeaderCount);
+        DuplicateItemHeader headerItem =
+                (DuplicateItemHeader) mItems.get(item.getSectionFirstPosition()
+                        - mCustomHeaderCount);
         int totalCount = headerItem.getItemCount() / 3 * 3;
 
         int type = -1;
@@ -368,7 +374,8 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             index++;
         }
 
-        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 totalCount);
 
         if (layoutManager == null) {
@@ -393,7 +400,8 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
             }
         }
 
-        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 0L);
 
         if (layoutManager == null) {

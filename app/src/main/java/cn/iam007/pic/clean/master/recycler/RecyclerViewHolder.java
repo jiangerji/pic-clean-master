@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerViewHolder extends ViewHolder {
@@ -29,13 +30,15 @@ public class RecyclerViewHolder extends ViewHolder {
                 }
             }
         });
+
+        PlatformUtils.applyFonts(itemView);
     }
 
     private RecyclerImageItem mItem;
 
     public void bindView(RecyclerImageItem item) {
         mItem = item;
-        String imageUrl = item.getSourcePath();
+        String imageUrl = item.getImageRecyclerPath();
         if (imageUrl != null) {
             ImageUtils.showImageByUrl(imageUrl, mImageView);
             mImageView.setVisibility(View.VISIBLE);

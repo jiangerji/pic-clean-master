@@ -49,12 +49,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
             android:layout_alignTop="@id/scan_icon"
             android:layout_alignBottom="@id/scan_icon"
             android:layout_toRightOf="@id/scan_icon"
             android:layout_toEndOf="@id/scan_icon"
             android:textColor="@color/primary"
-            android:textSize="20sp"
+            android:textSize="@dimen/slide_menu_text_size"
             android:text="@string/slide_menu_duplicate_scan"
             android:gravity="center" />
         
@@ -86,12 +87,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
             android:layout_alignTop="@id/icon"
             android:layout_alignBottom="@id/icon"
             android:layout_toRightOf="@id/icon"
             android:layout_toEndOf="@id/icon"
             android:textColor="@color/primary"
-            android:textSize="20sp"
+            android:textSize="@dimen/slide_menu_text_size"
             android:text="@string/recycle"
             android:gravity="center" />
         
@@ -135,12 +137,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
             android:layout_alignTop="@id/feedback_icon"
             android:layout_alignBottom="@id/feedback_icon"
             android:layout_toRightOf="@id/feedback_icon"
             android:layout_toEndOf="@id/feedback_icon"
             android:textColor="@color/primary"
-            android:textSize="20sp"
+            android:textSize="@dimen/slide_menu_text_size"
             android:text="@string/feedback"
             android:gravity="center" />
         

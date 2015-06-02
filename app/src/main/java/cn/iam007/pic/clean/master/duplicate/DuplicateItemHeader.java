@@ -70,13 +70,13 @@ public class DuplicateItemHeader extends DuplicateItem {
                     if (isSelected) {
                         selectedCount++;
                         if (setSharedPreference) {
-                            SharedPreferenceUtil.addSharedPreference(key,
+                            SharedPreferenceUtil.addLong(key,
                                     item.getFileSize());
                         }
                     } else {
                         selectedCount--;
                         if (setSharedPreference) {
-                            SharedPreferenceUtil.subSharedPreference(key,
+                            SharedPreferenceUtil.subLong(key,
                                     item.getFileSize());
                         }
                     }

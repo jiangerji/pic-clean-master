@@ -10,7 +10,7 @@ public class StringUtils {
 
         public String toString() {
             return count + unit;
-        };
+        }
 
         /**
          * @return the count
@@ -32,7 +32,7 @@ public class StringUtils {
 
     /**
      * 将字节数转换为单位类
-     * 
+     *
      * @param size
      * @return
      */
@@ -42,7 +42,7 @@ public class StringUtils {
          * 几百KB
          * 几点几几MB
          * 十几点几MB
-         * 几十MB
+         * 几十点几MB
          * 几百MB
          * 几点几GB
          * 十几GB
@@ -60,6 +60,10 @@ public class StringUtils {
         } else if (size < 1024 * 1024 * 10) {
             // 小于10M
             count = String.format("%.2f", size / (1024.0 * 1024.0));
+            unit = "MB";
+        } else if (size < 1024 * 1024 * 100) {
+            // 小于100M
+            count = String.format("%.1f", size / (1024.0 * 1024.0));
             unit = "MB";
         } else if (size < 1024 * 1024 * 1024) {
             // 小于1GB

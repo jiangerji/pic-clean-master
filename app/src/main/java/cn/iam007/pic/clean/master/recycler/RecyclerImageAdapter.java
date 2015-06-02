@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
@@ -62,7 +63,9 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
             }
         }
 
-        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+        LogUtil.d("updateItem:" + mSelectedItem);
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
     }
 
     public void selectAll(boolean select, GridLayoutManager layoutManager) {
@@ -76,7 +79,8 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
             mSelectedItem = 0;
         }
 
-        SharedPreferenceUtil.setSharedPreference(SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
 
         if (layoutManager == null) {
             notifyDataSetChanged();
@@ -106,8 +110,30 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
             }
         }
 
+        mSelectedItem = 0;
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+
         mItems.removeAll(deleteItems);
-        notifyDataSetChanged();
+    }
+
+    /**
+     * 将选择的回收站图片恢复到原始路径
+     */
+    public void restoreItems(){
+        ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
+        for (RecyclerImageItem item : mItems) {
+            if (item.isSelected()) {
+                RecyclerManager.getInstance().restore(item);
+                deleteItems.add(item);
+            }
+        }
+
+        mSelectedItem = 0;
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
+
+        mItems.removeAll(deleteItems);
     }
 
     /**

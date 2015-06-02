@@ -4,6 +4,7 @@ import android.app.Application;
 
 import cn.iam007.pic.clean.master.recycler.RecyclerManager;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class Iam007Application extends Application {
 
@@ -12,12 +13,12 @@ public class Iam007Application extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        mApplication = this;
 
         ImageUtils.init(this);
         Constants.init(this);
+        SharedPreferenceUtil.init(this);
         RecyclerManager.getInstance().init(this);
-
-        mApplication = this;
     }
 
     public static Iam007Application getApplication() {

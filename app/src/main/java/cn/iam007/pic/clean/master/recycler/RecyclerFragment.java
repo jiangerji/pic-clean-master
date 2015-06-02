@@ -3,6 +3,7 @@ package cn.iam007.pic.clean.master.recycler;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,14 +17,15 @@ import android.widget.Button;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 
 import java.io.File;
 
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.delete.DeleteRecyclerConfirmDialog;
+import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerFragment extends Fragment {
@@ -67,6 +69,8 @@ public class RecyclerFragment extends Fragment {
             mRestoreBtn.setEnabled(true);
             mDeleteBtn.setEnabled(true);
         }
+
+        PlatformUtils.applyFonts(mRootView);
         return mRootView;
     }
 
@@ -79,6 +83,7 @@ public class RecyclerFragment extends Fragment {
 
     private void initView(View rootView) {
         mRestoreBtn = (Button) rootView.findViewById(R.id.restore_btn);
+        mRestoreBtn.setOnClickListener(mRestoreBtnClickListener);
         mDeleteBtn = (Button) rootView.findViewById(R.id.delete_btn);
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
 
@@ -91,13 +96,20 @@ public class RecyclerFragment extends Fragment {
 
         mRecyclerImageAdapter = new RecyclerImageAdapter();
         mRecyclerImageContainer.setAdapter(mRecyclerImageAdapter);
+
+        PlatformUtils.applyFonts(rootView);
     }
 
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final DeleteRecyclerConfirmDialog dialog =
-                    DeleteRecyclerConfirmDialog.builder(getActivity(), mRecyclerImageAdapter.getSelectedItem());
+            DialogBuilder builder = new DialogBuilder(getActivity());
+            builder.title(R.string.recycle)
+                    .positiveText(R.string.delete_confirm)
+                    .negativeText(R.string.cancel)
+                    .content(getString(R.string.recycler_delete_message,
+                            mRecyclerImageAdapter.getSelectedItem()));
+            final MaterialDialog dialog = builder.build();
             dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -112,20 +124,19 @@ public class RecyclerFragment extends Fragment {
 
     public void startToDelete() {
         String content = getActivity().getString(R.string.deleting_progress);
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
-                .title(R.string.delete)
+
+        DialogBuilder builder = new DialogBuilder(getActivity());
+        builder.title(R.string.delete)
                 .content(content)
-                .theme(Theme.LIGHT)
                 .progress(true, 0);
 
-        builder.titleColorRes(R.color.title)
-                .dividerColorRes(R.color.divider)
-                .positiveColorRes(R.color.red_light_EB5347)
-                .negativeColorRes(R.color.black_light_333333)
-                .backgroundColorRes(R.color.white_light_FAFAFA);
         final MaterialDialog deleteProgressDialog = builder.build();
-        deleteProgressDialog.setCancelable(false);
-        deleteProgressDialog.show();
+        deleteProgressDialog.setCancelable(true);
+        try {
+            deleteProgressDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -134,15 +145,84 @@ public class RecyclerFragment extends Fragment {
             public void run() {
                 startDeleteTask(deleteProgressDialog);
             }
-        }, 500);
+        }, 1000);
 
     }
+
+    private Handler mUpdateHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            mRecyclerImageAdapter.notifyDataSetChanged();
+            mSelectAll = false;
+            mSelectAllMenuItem.setTitle(R.string.select_all);
+            return false;
+        }
+    });
 
     private void startDeleteTask(final MaterialDialog progressDialog) {
         new Thread(new Runnable() {
             public void run() {
                 mRecyclerImageAdapter.deleteItems();
                 progressDialog.dismiss();
+                mUpdateHandler.sendEmptyMessage(1);
+
+            }
+        }).start();
+    }
+
+    private View.OnClickListener mRestoreBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogBuilder builder = new DialogBuilder(getActivity());
+
+            builder.title(R.string.recycle)
+                    .positiveText(R.string.restore)
+                    .negativeText(R.string.cancel)
+                    .content(getActivity().getString(R.string.recycler_restore_message,
+                            mRecyclerImageAdapter.getSelectedItem()));
+            builder.callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    startToRestore();
+                }
+            });
+            builder.show();
+        }
+    };
+
+    public void startToRestore() {
+        String content = getActivity().getString(R.string.restoring_progress);
+        DialogBuilder builder = new DialogBuilder(getActivity());
+        builder.title(R.string.recycle)
+                .content(content)
+                .progress(true, 0);
+
+        final MaterialDialog deleteProgressDialog = builder.build();
+        deleteProgressDialog.setCancelable(true);
+        try {
+            deleteProgressDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                startRestoreTask(deleteProgressDialog);
+            }
+        }, 1000);
+
+    }
+
+    private void startRestoreTask(final MaterialDialog progressDialog) {
+        new Thread(new Runnable() {
+            public void run() {
+                mRecyclerImageAdapter.restoreItems();
+                progressDialog.dismiss();
+                mUpdateHandler.sendEmptyMessage(1);
+
             }
         }).start();
     }
@@ -158,9 +238,14 @@ public class RecyclerFragment extends Fragment {
                     // 暂时什么都不做
                 } else {
                     if (ImageUtils.isImage(f.getName())) {
-                        item = new RecyclerImageItem(f.getAbsolutePath(),
-                                f.getAbsolutePath());
-                        mRecyclerImageAdapter.addItem(item);
+//                        item = new RecyclerImageItem(f.getAbsolutePath(),
+//                                f.getAbsolutePath(), f.getName());
+                        item = RecyclerManager.getInstance().findSourcePath(f.getName());
+//                        item.setSourcePath(sourcePath);
+                        if (item != null) {
+                            LogUtil.d("recycler:" + item);
+                            mRecyclerImageAdapter.addItem(item);
+                        }
                     }
                 }
             }
@@ -232,15 +317,13 @@ public class RecyclerFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 }

@@ -1,6 +1,5 @@
 package cn.iam007.pic.clean.master.main;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +18,9 @@ import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
+
 import com.tonicartos.superslim.LayoutManager;
 
 public class MainActivity extends BaseActivity {
@@ -47,9 +49,10 @@ public class MainActivity extends BaseActivity {
     private void _initSlideMenu() {
         // Handle DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        PlatformUtils.applyFonts(mDrawerLayout);
 
         // Handle ActionBarDrawerToggle
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
+        ActionBarDrawerToggle actionBarDrawerToggle = new CustomDrawerToggle(this,
                 mDrawerLayout,
                 mToolbar,
                 R.string.drawer_open,
@@ -59,19 +62,18 @@ public class MainActivity extends BaseActivity {
         // Handle different Drawer States :D
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        TextView count = (TextView) findViewById(R.id.total_delete_file_count);
-        Typeface typeFace = Typeface.createFromAsset(getAssets(),
-                "fonts/cm_main_percent.ttf");
-        count.setTypeface(typeFace);
 
-        String content = "173张";
-        SpannableStringBuilder style = new SpannableStringBuilder(content);
-        int startIndex = content.length() - 1;
-        style.setSpan(new AbsoluteSizeSpan(16, true),
-                startIndex,
-                startIndex + 1,
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //设置指定位置textview的背景颜色
-        count.setText(style);
+//        long count = SharedPreferenceUtil.getLong(SharedPreferenceUtil.HANDLED_DUPLICATE_IMAGES_COUNT, 0L);
+//        mCountTextView = (TextView) findViewById(R.id.total_delete_file_count);
+//        String content = getString(R.string.slide_menu_already_handled_pic_count, count);
+//
+//        SpannableStringBuilder style = new SpannableStringBuilder(content);
+//        int startIndex = content.length() - 1;
+//        style.setSpan(new AbsoluteSizeSpan(16, true),
+//                startIndex,
+//                startIndex + 1,
+//                Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //设置指定位置textview的背景颜色
+//        mCountTextView.setText(style);
 
         View scan = findViewById(R.id.duplicate_scan);
         scan.setOnClickListener(mDrawLayoutOnClickListener);
@@ -83,6 +85,11 @@ public class MainActivity extends BaseActivity {
         feedback.setOnClickListener(mDrawLayoutOnClickListener);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     private OnClickListener mDrawLayoutOnClickListener = new OnClickListener() {
 
         @Override
@@ -90,26 +97,14 @@ public class MainActivity extends BaseActivity {
             int pos = -1;
             switch (v.getId()) {
             case R.id.duplicate_scan:
-                Toast.makeText(MainActivity.this,
-                        "scan",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 pos = DUPLICATE_SCAN_FRAGMENT;
                 break;
 
             case R.id.recycler:
-                Toast.makeText(MainActivity.this,
-                        "recycler",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 pos = RECYCLER_FRAGMENT;
                 break;
 
             case R.id.feedback:
-                Toast.makeText(MainActivity.this,
-                        "feedback",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 break;
 
             default:

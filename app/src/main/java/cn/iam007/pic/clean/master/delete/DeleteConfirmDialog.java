@@ -26,39 +26,24 @@ import com.afollestad.materialdialogs.Theme;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
+import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class DeleteConfirmDialog extends MaterialDialog {
+public class DeleteConfirmDialog {
 
     public static DeleteConfirmDialog builder(Context context) {
-        Builder builder = new MaterialDialog.Builder(context);
+        DialogBuilder builder = new DialogBuilder(context);
 
         builder.title(R.string.delete)
-                .theme(Theme.LIGHT)
                 .positiveText(R.string.delete_confirm)
                 .negativeText(R.string.cancel)
                 .customView(R.layout.fragment_duplicate_delete_dialog, true);
 
-        // 设置字体颜色
-        //        new MaterialDialog.Builder(this)
-        //        .titleColorRes(R.color.material_red_500)
-        //        .contentColor(Color.WHITE) // notice no 'res' postfix for literal color
-        //        .dividerColorRes(R.color.material_pink_500)
-        //        .backgroundColorRes(R.color.material_blue_grey_800)
-        //        .positiveColorRes(R.color.material_red_500)
-        //        .neutralColorRes(R.color.material_red_500)
-        //        .negativeColorRes(R.color.material_red_500)
-        //        .widgetColorRes(R.color.material_red_500)
-        //        .show();
-        builder.titleColorRes(R.color.title)
-                .dividerColorRes(R.color.divider)
-                .positiveColorRes(R.color.red_light_EB5347)
-                .negativeColorRes(R.color.black_light_333333)
-                .backgroundColorRes(R.color.white_light_FAFAFA);
-
-        return new DeleteConfirmDialog(builder);
+        DeleteConfirmDialog dialog = new DeleteConfirmDialog(builder);
+        return dialog;
     }
 
     private ArrayList<DuplicateItemImage> mDuplicateItemImages;
@@ -71,10 +56,9 @@ public class DeleteConfirmDialog extends MaterialDialog {
         mDuplicateItemImages.addAll(items);
     }
 
-    @Override
     public void show() {
         loadDisplayDeleteItems();
-        super.show();
+        mDialog.show();
     }
 
     private void loadDisplayDeleteItems() {
@@ -85,12 +69,12 @@ public class DeleteConfirmDialog extends MaterialDialog {
         }
 
         // 设置dialog自定义内容
-        View view = getCustomView();
+        View view = mDialog.getCustomView();
         if (view != null) {
             TextView textView = (TextView) view.findViewById(R.id.text);
-            String recycle = getContext().getString(R.string.recycle);
+            String recycle = mDialog.getContext().getString(R.string.recycle);
 
-            String content = getContext().getString(R.string.delete_message,
+            String content = mDialog.getContext().getString(R.string.delete_message,
                     mDeleteItemCount, recycle);
             SpannableStringBuilder style = new SpannableStringBuilder(content);
             int startIndex = content.indexOf(recycle);
@@ -152,55 +136,49 @@ public class DeleteConfirmDialog extends MaterialDialog {
     private ImageView forth;
     private int mDeleteItemCount = 0;
 
-    private DeleteConfirmDialog(Builder builder) {
-        super(builder);
+    private MaterialDialog mDialog = null;
 
-        first = (ImageView) findViewById(R.id.first);
-        second = (ImageView) findViewById(R.id.second);
-        third = (ImageView) findViewById(R.id.third);
-        forth = (ImageView) findViewById(R.id.forth);
+    private DeleteConfirmDialog(DialogBuilder builder) {
+        mDialog = builder.build();
 
-        View deleteConfirm = getActionButton(DialogAction.POSITIVE);
-        deleteConfirm.setOnClickListener(new View.OnClickListener() {
+        first = (ImageView) mDialog.findViewById(R.id.first);
+        second = (ImageView) mDialog.findViewById(R.id.second);
+        third = (ImageView) mDialog.findViewById(R.id.third);
+        forth = (ImageView) mDialog.findViewById(R.id.forth);
 
-            @Override
-            public void onClick(View v) {
-                startToDelete();
-                dismiss();
-            }
-        });
+//        View deleteConfirm = getActionButton(DialogAction.POSITIVE);
+//        deleteConfirm.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                startToDelete();
+//                dismiss();
+//            }
+//        });
 
-        builder.callback(new ButtonCallback() {
+        builder.callback(new MaterialDialog.ButtonCallback() {
             @Override
             public void onPositive(MaterialDialog dialog) {
-                Toast.makeText(getContext(), "on positive", Toast.LENGTH_SHORT)
-                        .show();
+                startToDelete();
             }
 
             @Override
             public void onNegative(MaterialDialog dialog) {
-                Toast.makeText(getContext(), "on negative", Toast.LENGTH_SHORT)
-                        .show();
             }
         });
     }
 
     public void startToDelete() {
-        String content = getContext().getString(R.string.deleting_progress,
+        String content = mDialog.getContext().getString(R.string.deleting_progress,
                 0,
                 mDeleteItemCount);
-        Builder builder = new MaterialDialog.Builder(getContext())
-                .title(R.string.delete)
+        DialogBuilder builder = new DialogBuilder(mDialog.getContext());
+        builder.title(R.string.delete)
                 .content(content)
                 .progress(true, 0);
 
-        builder.titleColorRes(R.color.title)
-                .dividerColorRes(R.color.divider)
-                .positiveColorRes(R.color.red_light_EB5347)
-                .negativeColorRes(R.color.black_light_333333)
-                .backgroundColorRes(R.color.white_light_FAFAFA);
-        //        deleteProgressDialog.setCancelable(false);
         final MaterialDialog deleteProgressDialog = builder.build();
+        deleteProgressDialog.setCancelable(false);
         deleteProgressDialog.show();
 
         Handler handler = new Handler();
@@ -217,14 +195,20 @@ public class DeleteConfirmDialog extends MaterialDialog {
     private void startDeleteTask(final MaterialDialog progressDialog) {
         new Thread(new Runnable() {
             public void run() {
-                try {
-                    if (mDuplicateItemImages != null) {
-                        for (DuplicateItemImage image : mDuplicateItemImages) {
+
+                if (mDuplicateItemImages != null) {
+                    for (DuplicateItemImage image : mDuplicateItemImages) {
+                        try {
                             image.delete();
+                        } catch (Exception e) {
                         }
                     }
-                } catch (Exception e) {
+
+                    SharedPreferenceUtil.addLong(
+                            SharedPreferenceUtil.HANDLED_DUPLICATE_IMAGES_COUNT,
+                            (long) mDuplicateItemImages.size());
                 }
+
 
                 progressDialog.dismiss();
 
@@ -232,7 +216,8 @@ public class DeleteConfirmDialog extends MaterialDialog {
                     mOnDeleteStatusListener.onDeleteFinish();
                 }
 
-                SharedPreferenceUtil.setBoolean(SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, true);
+                SharedPreferenceUtil.setBoolean(
+                        SharedPreferenceUtil.HAS_DELETE_SOME_DUPLICATE_IMAGE, true);
             }
         }).start();
     }
@@ -255,7 +240,7 @@ public class DeleteConfirmDialog extends MaterialDialog {
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(translate);
 
-        first.startAnimation(AnimationUtils.loadAnimation(getContext(),
+        first.startAnimation(AnimationUtils.loadAnimation(mDialog.getContext(),
                 R.anim.slide_out_left));
 
         if (mDeleteItemCount > 1) {

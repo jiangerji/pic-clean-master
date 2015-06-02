@@ -3,6 +3,8 @@ package cn.iam007.pic.clean.master.duplicate;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
+
 public class DuplicateViewHolder extends ViewHolder {
 
     public static final int VIEW_TYPE_HEADER = 0x01;
@@ -23,6 +25,11 @@ public class DuplicateViewHolder extends ViewHolder {
         mItemView = itemView;
 
         onInit(mItemView);
+
+        // 设置字体
+        if (mItemView != null) {
+            PlatformUtils.applyFonts(mItemView);
+        }
     }
 
     private DuplicateItem mDuplicateImageItem = null;

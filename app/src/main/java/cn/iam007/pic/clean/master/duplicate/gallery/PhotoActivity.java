@@ -93,7 +93,7 @@ public class PhotoActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
 
-        long count = SharedPreferenceUtil.getSharedPreference(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
+        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
         if (count <= 0) {
             mDeleteBtn.setText(R.string.delete);
         } else {
@@ -101,7 +101,6 @@ public class PhotoActivity extends BaseActivity {
                     StringUtils.convertFileSize(count)));
         }
         SharedPreferenceUtil.setOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 mSharedPreferenceChangeListener);
     }
 
@@ -110,7 +109,6 @@ public class PhotoActivity extends BaseActivity {
         super.onPause();
 
         SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 mSharedPreferenceChangeListener);
     }
 

@@ -5,4 +5,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     
     <dimen name="grid_column_width">96dp</dimen>
+
+    <dimen name="slide_menu_text_size">15sp</dimen>
 </resources>

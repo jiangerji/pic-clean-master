@@ -3,16 +3,21 @@ package cn.iam007.pic.clean.master.base;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
+
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.widget.SystemBarTintManager;
+import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
 public class BaseActivity extends AppCompatActivity {
     protected final static String TAG = "BaseActivity";
@@ -55,6 +60,7 @@ public class BaseActivity extends AppCompatActivity {
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            PlatformUtils.applyFonts(mToolbar);
         }
     }
 
@@ -112,12 +118,18 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         StatService.onResume(this);
+
+        mExitHintToast = null;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         StatService.onPause(this);
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
     }
 
     @Override
@@ -128,5 +140,38 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         View.inflate(this, layoutResID, mContainer);
+        PlatformUtils.applyFonts(mContainer);
+    }
+
+    // 上次按下返回键的时间
+    private long mPreBackPressedTS = 0;
+    private Toast mExitHintToast = null;
+
+    private Handler mToastHandler = new Handler();
+
+    @Override
+    public void onBackPressed() {
+        LogUtil.d("onBackPressed!");
+        long currentTS = System.currentTimeMillis();
+        if (currentTS - mPreBackPressedTS < 3000){
+            super.onBackPressed();
+        }
+
+        if (mExitHintToast != null){
+            mExitHintToast.cancel();
+        }
+        mExitHintToast = Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT);
+        mExitHintToast.show();
+        mPreBackPressedTS = currentTS;
+
+        mToastHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mExitHintToast != null){
+                    mExitHintToast.cancel();
+                    mExitHintToast = null;
+                }
+            }
+        }, 3000);
     }
 }

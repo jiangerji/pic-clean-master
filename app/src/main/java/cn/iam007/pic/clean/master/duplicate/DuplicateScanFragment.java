@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,6 +26,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -46,6 +46,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
 import cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity;
 import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
 import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
@@ -157,7 +158,13 @@ public class DuplicateScanFragment extends Fragment {
         mDeleteBtnContainer = rootView.findViewById(R.id.delete_btn_container);
         mDeleteBtn = (Button) rootView.findViewById(R.id.delete_btn);
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
+
+        if (rootView != null) {
+            PlatformUtils.applyFonts(rootView);
+        }
     }
+
+    private Toast mDeleteHint = null;
 
     private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
 
@@ -168,22 +175,35 @@ public class DuplicateScanFragment extends Fragment {
             int index = 0;
             DuplicateItem item = null;
             ArrayList<DuplicateItemImage> items = null;
+            int count = 0;
             while (index < mDuplicateImageAdapter.getRealItemCount()) {
                 item = mDuplicateImageAdapter.getItem(index);
                 if (item.isHeader()) {
                     items = ((DuplicateItemHeader) item).getSelectedItem();
                     dialog.addDeleteItems(items);
+                    count += items.size();
                 }
                 index++;
             }
 
-            dialog.show();
-            dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
+            if (count > 0) {
+                dialog.show();
+                dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
 
-                @Override
-                public void onDeleteFinish() {
+                    @Override
+                    public void onDeleteFinish() {
+                        mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
+                    }
+                });
+            } else {
+                if (mDeleteHint != null) {
+                    mDeleteHint.cancel();
                 }
-            });
+
+                mDeleteHint =
+                        Toast.makeText(getActivity(), R.string.delete_hint, Toast.LENGTH_SHORT);
+                mDeleteHint.show();
+            }
         }
     };
     protected View mScanHeaderView;
@@ -201,15 +221,7 @@ public class DuplicateScanFragment extends Fragment {
                 mScanHeaderView = view;
 
                 mScanCount = (TextView) view.findViewById(R.id.scanCount);
-                Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-                        "fonts/cm_main_percent.ttf");
-                mScanCount.setTypeface(typeFace);
-
                 mScanCountUnit = (TextView) view.findViewById(R.id.scanCountUnit);
-                typeFace = Typeface.createFromAsset(getActivity().getAssets(),
-                        "fonts/unit.ttf");
-                mScanCountUnit.setTypeface(typeFace);
-
                 mScanResultHint = (TextView) view.findViewById(R.id.scanResultHint);
 
                 Unit unit = StringUtils.convertFileSize(mDuplicateImageFilesSize);
@@ -266,7 +278,7 @@ public class DuplicateScanFragment extends Fragment {
         @Override
         public void onDuplicateFindStart(final String folder, int count) {
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scanning), folder);
+            msg.obj = String.format(getString(R.string.scanning), folder, "");
             msg.arg1 = Gravity.LEFT;
             mHandler.sendMessage(msg);
             LogUtil.d("Find start:" + folder + ", " + count);
@@ -275,7 +287,9 @@ public class DuplicateScanFragment extends Fragment {
         @Override
         public void onDuplicateFindExecute(final String file, long size) {
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scanning), file);
+            File aFile = new File(file);
+            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(),
+                    aFile.getName());
             msg.arg1 = Gravity.LEFT;
             mHandler.sendMessage(msg);
         }
@@ -352,7 +366,7 @@ public class DuplicateScanFragment extends Fragment {
                 mScanHintHeaderProgressBar.setProgress(mCurrentProgress);
             }
 
-            if (!mDuplicateImageScanFinished){
+            if (!mDuplicateImageScanFinished) {
                 mUpdateHandler.postDelayed(mUpdateRunnable, 33);
             }
         }
@@ -362,6 +376,7 @@ public class DuplicateScanFragment extends Fragment {
     private final static int SCAN_PROGRESS_UPDATE = 0x02;
     private final static int SCAN_DUPLICATE_SECTION_FIND = 0x03; // 找到一组相似图片
     private final static int SCAN_DUPLICATE_FIND_FINISHED = 0x04; // 查找相似图片结束
+    private final static int DELETE_DUPLICATE_FINISHED = 0x05; // 删除完成
     private Handler mHandler = new Handler(new Callback() {
 
         @Override
@@ -397,6 +412,11 @@ public class DuplicateScanFragment extends Fragment {
                             }
                         }
                     }, 50);
+                    break;
+
+                case DELETE_DUPLICATE_FINISHED:
+                    mDuplicateImageAdapter.clear();
+                    mDuplicateImageAdapter.notifyDataSetChanged();
                     break;
 
                 default:
@@ -440,7 +460,7 @@ public class DuplicateScanFragment extends Fragment {
 
     private void startFinishAnimation() {
         // 使用sharedpreference来获取当前选中图片的大小
-        SharedPreferenceUtil.setSharedPreference(SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+        SharedPreferenceUtil.setLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 0L);
 
         // 显示menu
@@ -468,7 +488,7 @@ public class DuplicateScanFragment extends Fragment {
                 float value = (Float) valueAnimator.getAnimatedValue();
 
                 // 修改header高度
-                int newHeight = (int) (scanHeaderViewHeight * value);
+                int newHeight = (int) (scanHeaderViewHeight * Math.sqrt(value));
                 LayoutParams layoutParams = mScanHeaderView.getLayoutParams();
                 if (layoutParams.height != newHeight) {
                     layoutParams.height = newHeight;
@@ -476,17 +496,16 @@ public class DuplicateScanFragment extends Fragment {
                 }
 
                 // 修改header中字体大小
-                value = (float) Math.sqrt(value);
+                float nValue = (float) (0.2 + 0.8 * value);
+                mScanCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, scanCountTextSize * nValue);
 
-                float newTextSize = scanCountTextSize * value;
-                //                LogUtil.d("new text size:" + newTextSize);
-                mScanCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, newTextSize);
-
+                nValue = (float) (0.6 + 0.4 * value);
                 mScanCountUnit.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        scanCountUnitTextSize * value);
+                        scanCountUnitTextSize * nValue);
 
+                nValue = (float) (0.2 + 0.8 * value);
                 mScanResultHint.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        scanResultHintTextSize * value);
+                        scanResultHintTextSize * nValue);
                 mScanResultHint.setVisibility(View.VISIBLE);
             }
         });
@@ -569,25 +588,21 @@ public class DuplicateScanFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        long count = SharedPreferenceUtil.getSharedPreference(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
+        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
         if (count <= 0) {
             mDeleteBtn.setText(R.string.delete);
         } else {
             mDeleteBtn.setText(getString(R.string.delete_with_size,
                     StringUtils.convertFileSize(count)));
         }
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                SELECTED_DELETE_IMAGE_TOTAL_SIZE,
-                mSharedPreferenceChangeListener);
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
 }
