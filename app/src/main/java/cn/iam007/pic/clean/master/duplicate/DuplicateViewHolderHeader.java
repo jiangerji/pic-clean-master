@@ -71,6 +71,16 @@ public class DuplicateViewHolderHeader extends DuplicateViewHolder {
             dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
 
                 @Override
+                public void onDeleteStart() {
+
+                }
+
+                @Override
+                public void onDeleteImage(String filePath) {
+
+                }
+
+                @Override
                 public void onDeleteFinish() {
                     handler.post(new Runnable() {
                         public void run() {
