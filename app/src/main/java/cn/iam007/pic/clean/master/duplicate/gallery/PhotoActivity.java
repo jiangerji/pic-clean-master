@@ -3,7 +3,6 @@ package cn.iam007.pic.clean.master.duplicate.gallery;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -12,15 +11,17 @@ import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateHoldAdapter;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItem;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 
 public class PhotoActivity extends BaseActivity {
 
-    private Toolbar mToolbar = null;
     private LinearLayoutManager layoutManager;
     private RecyclerView mRecyclerView;
     private PhotoAdapter mAdapter;
     private DuplicateImageAdapter mDuplicateImageAdapter;
     private TextView mTextView;
+    private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class PhotoActivity extends BaseActivity {
 
     private void initView() {
 
-        int position = getIntent().getIntExtra("position", 1);
+        mPosition = getIntent().getIntExtra("position", 1);
         mDuplicateImageAdapter = DuplicateHoldAdapter.getInstance()
                 .getHoldAdapter();
 
@@ -54,8 +55,14 @@ public class PhotoActivity extends BaseActivity {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this));
-        mRecyclerView.scrollToPosition(position);
+        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this, new CenterLockListener.CenterItemListener() {
+            @Override
+            public void onCenterItem(int position) {
+                mPosition = position;
+                invalidateOptionsMenu();
+            }
+        }));
+        mRecyclerView.scrollToPosition(mPosition);
     }
 
     @Override
@@ -68,11 +75,28 @@ public class PhotoActivity extends BaseActivity {
         super.onPause();
     }
 
-
+    private MenuItem mSelected = null;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_menu, menu);
+        mSelected = menu.findItem(R.id.action_item_select);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        DuplicateItem item = mDuplicateImageAdapter.getItem(mPosition);
+        if (item instanceof DuplicateItemImage) {
+            if (((DuplicateItemImage) item).isSelected()){
+                mSelected.setChecked(true);
+                mSelected.setIcon(R.drawable.ic_checkbox_checked);
+            } else {
+                mSelected.setChecked(false);
+                mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
+            }
+            return true;
+        }
+        return false; // Return false if nothing is done
     }
 
     @Override
@@ -81,6 +105,21 @@ public class PhotoActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 break;
+            case R.id.action_item_select:
+                DuplicateItem duplicateItem = mDuplicateImageAdapter.getItem(mPosition);
+                if (duplicateItem instanceof DuplicateItemImage) {
+                    if (((DuplicateItemImage) duplicateItem).isSelected()){
+                        mSelected.setChecked(false);
+                        mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
+                        ((DuplicateItemImage) duplicateItem).setSelected(false, true);
+                    } else {
+                        mSelected.setChecked(true);
+                        mSelected.setIcon(R.drawable.ic_checkbox_checked);
+                        ((DuplicateItemImage) duplicateItem).setSelected(true, true);
+                    }
+                    duplicateItem.refresh();
+                    return true;
+                }
             default:
                 break;
         }

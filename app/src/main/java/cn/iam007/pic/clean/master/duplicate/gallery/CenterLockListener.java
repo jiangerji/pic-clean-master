@@ -13,14 +13,17 @@ import android.view.WindowManager;
 public class CenterLockListener extends RecyclerView.OnScrollListener {
     boolean autoSet = true;//To avoid recursive calls
     int SCREEN_CENTER_X;
+    public CenterItemListener mCenterItemListener;
 
-    public CenterLockListener(Context context) {
+    public CenterLockListener(Context context, CenterItemListener listener) {
 
         DisplayMetrics dm = new DisplayMetrics();
         // 取得窗口属性
         ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getMetrics(dm);
         SCREEN_CENTER_X = dm.widthPixels / 2;
+
+        mCenterItemListener = listener;
     }
 
     @Override
@@ -30,14 +33,17 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
         LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
         if (!autoSet) {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                //ScrollStoppped
-                View view = findCenterView(lm);//get the view nearest to center
+                //ScrollStopppep
+                int position = findCenterView(lm);
+                View view = lm.findViewByPosition(position);//get the view nearest to center
                 if (view != null) {
                     int scrollXNeeded = (int) (SCREEN_CENTER_X -
                             (view.getLeft() + view.getRight()) / 2);//compute scroll from center
 //                    Log.d("center", "Scrolle  scrollXNeeded: " + scrollXNeeded);
                     recyclerView.smoothScrollBy(scrollXNeeded
                             * (view.getRight() < SCREEN_CENTER_X ? 1 : -1), 0);
+
+                    mCenterItemListener.onCenterItem(position);
                     autoSet = true;
                 }
             }
@@ -51,13 +57,13 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-
     }
 
-    private View findCenterView(LinearLayoutManager lm) {
-        int mindist = 0;
-        View view = null, retview = null;
+    private int findCenterView(LinearLayoutManager lm) {
+        int mindist = Integer.MAX_VALUE;
+        View view = null;
         boolean notfound = true;
+        int position = 0;
         for (int i = lm.findFirstVisibleItemPosition(); i <= lm.findLastVisibleItemPosition()
                 && notfound; i++) {
             view = lm.findViewByPosition(i);
@@ -66,19 +72,18 @@ public class CenterLockListener extends RecyclerView.OnScrollListener {
                 int leastdiff = Math.abs(SCREEN_CENTER_X
                         - (view.getLeft() + view.getRight()) / 2);
 
-                if (leastdiff <= mindist
-                        || i == lm.findFirstVisibleItemPosition())
-                {
+                if (leastdiff <= mindist){
                     mindist = leastdiff;
-                    retview = view;
-                }
-                else
-                {
+                    position = i;
+                }else {
                     notfound = false;
-
                 }
             }
         }
-        return retview != null ? retview : view;
+        return position;
+    }
+
+    public interface CenterItemListener {
+        void onCenterItem(int position);
     }
 }

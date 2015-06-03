@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <item android:id="@+id/action_item_select"
-        android:icon="@drawable/ic_delete_normal"
+        android:icon="@drawable/check_box_photo"
         android:title=""
+        android:checkable="true"
         app:showAsAction="always" />
-
 </menu>
