@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -168,6 +169,8 @@ public class DeleteConfirmDialog {
         });
     }
 
+    private MaterialDialog mDeleteProgressDialog = null;
+
     public void startToDelete() {
         String content = mDialog.getContext().getString(R.string.deleting_progress,
                 0,
@@ -177,31 +180,54 @@ public class DeleteConfirmDialog {
                 .content(content)
                 .progress(true, 0);
 
-        final MaterialDialog deleteProgressDialog = builder.build();
-        deleteProgressDialog.setCancelable(false);
-        deleteProgressDialog.show();
+        mDeleteProgressDialog = builder.build();
+        mDeleteProgressDialog.setCancelable(false);
+        mDeleteProgressDialog.show();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                startDeleteTask(deleteProgressDialog);
+                startDeleteTask();
             }
         }, 500);
 
     }
 
-    private void startDeleteTask(final MaterialDialog progressDialog) {
+    private Handler mUpdateDeleteProgress = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            String info = (String) msg.obj;
+            mDeleteProgressDialog.setContent(info);
+            return true;
+        }
+    });
+
+    private void startDeleteTask() {
         new Thread(new Runnable() {
             public void run() {
+                if (mOnDeleteStatusListener != null){
+                    mOnDeleteStatusListener.onDeleteStart();
+                }
 
                 if (mDuplicateItemImages != null) {
+                    int count = 0;
+                    int size = mDuplicateItemImages.size();
                     for (DuplicateItemImage image : mDuplicateItemImages) {
                         try {
                             image.delete();
                         } catch (Exception e) {
                         }
+
+                        if (mOnDeleteStatusListener != null){
+                            mOnDeleteStatusListener.onDeleteImage(image.getImageRealPath());
+                        }
+
+                        String content = mDialog.getContext().getString(R.string.deleting_progress_format, ++count, size);
+                        Message msg = new Message();
+                        msg.obj = content;
+                        mUpdateDeleteProgress.sendMessage(msg);
                     }
 
                     SharedPreferenceUtil.addLong(
@@ -210,7 +236,7 @@ public class DeleteConfirmDialog {
                 }
 
 
-                progressDialog.dismiss();
+                mDeleteProgressDialog.dismiss();
 
                 if (mOnDeleteStatusListener != null) {
                     mOnDeleteStatusListener.onDeleteFinish();
@@ -249,6 +275,8 @@ public class DeleteConfirmDialog {
     }
 
     public interface OnDeleteStatusListener {
+        void onDeleteStart();
+        void onDeleteImage(String filePath);
         void onDeleteFinish();
     }
 

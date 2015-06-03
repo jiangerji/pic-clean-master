@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.base.widget.CustomRecyclerView;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog.OnDeleteStatusListener;
@@ -51,7 +52,7 @@ import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 import cn.iam007.pic.clean.master.utils.StringUtils;
 import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
 
-public class DuplicateScanFragment extends Fragment {
+public class DuplicateScanFragment extends BaseFragment {
 
     private View mRootView;
 
@@ -166,6 +167,9 @@ public class DuplicateScanFragment extends Fragment {
 
     private Toast mDeleteHint = null;
 
+    // 保存需要被删除组
+    private ArrayList<DuplicateItem> mDeleteDuplicateItemHeader = new ArrayList<>();
+
     private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
 
         @Override
@@ -182,19 +186,18 @@ public class DuplicateScanFragment extends Fragment {
                     items = ((DuplicateItemHeader) item).getSelectedItem();
                     dialog.addDeleteItems(items);
                     count += items.size();
+
+                    if (items.size() > 0){
+                        // 该header有选中的图片，表示已经处理
+                        mDeleteDuplicateItemHeader.add(item);
+                    }
                 }
                 index++;
             }
 
             if (count > 0) {
                 dialog.show();
-                dialog.setOnDeleteStatusListener(new OnDeleteStatusListener() {
-
-                    @Override
-                    public void onDeleteFinish() {
-                        mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
-                    }
-                });
+                dialog.setOnDeleteStatusListener(mOnDeleteStatusListener);
             } else {
                 if (mDeleteHint != null) {
                     mDeleteHint.cancel();
@@ -206,6 +209,24 @@ public class DuplicateScanFragment extends Fragment {
             }
         }
     };
+
+    private OnDeleteStatusListener mOnDeleteStatusListener = new OnDeleteStatusListener() {
+        @Override
+        public void onDeleteStart() {
+
+        }
+
+        @Override
+        public void onDeleteImage(String filePath) {
+
+        }
+
+        @Override
+        public void onDeleteFinish() {
+            mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
+        }
+    };
+
     protected View mScanHeaderView;
     protected TextView mScanCount;
     protected TextView mScanCountUnit;
@@ -415,8 +436,7 @@ public class DuplicateScanFragment extends Fragment {
                     break;
 
                 case DELETE_DUPLICATE_FINISHED:
-                    mDuplicateImageAdapter.clear();
-                    mDuplicateImageAdapter.notifyDataSetChanged();
+                    deleteDuplicateFinished();
                     break;
 
                 default:
@@ -425,6 +445,18 @@ public class DuplicateScanFragment extends Fragment {
             return false;
         }
     });
+
+    //
+    private void deleteDuplicateFinished(){
+        mDeleteBtn.setText(R.string.delete);
+        mAutoSelect.setTitle(R.string.auto_select);
+
+        for (DuplicateItem item : mDeleteDuplicateItemHeader){
+            mDuplicateImageAdapter.deleteSection(item);
+        }
+        mDeleteDuplicateItemHeader.clear();
+        mDuplicateImageAdapter.notifyDataSetChanged();
+    }
 
     /**
      * 处理找到相似图片

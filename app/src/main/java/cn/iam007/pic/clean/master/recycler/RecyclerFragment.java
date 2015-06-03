@@ -22,13 +22,14 @@ import java.io.File;
 
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class RecyclerFragment extends Fragment {
+public class RecyclerFragment extends BaseFragment {
     private View mRootView = null;
 
     @Override
@@ -122,6 +123,8 @@ public class RecyclerFragment extends Fragment {
         }
     };
 
+    private MaterialDialog mProgressDialog = null;
+
     public void startToDelete() {
         String content = getActivity().getString(R.string.deleting_progress);
 
@@ -130,10 +133,10 @@ public class RecyclerFragment extends Fragment {
                 .content(content)
                 .progress(true, 0);
 
-        final MaterialDialog deleteProgressDialog = builder.build();
-        deleteProgressDialog.setCancelable(true);
+        mProgressDialog = builder.build();
+        mProgressDialog.setCancelable(true);
         try {
-            deleteProgressDialog.show();
+            mProgressDialog.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +146,7 @@ public class RecyclerFragment extends Fragment {
 
             @Override
             public void run() {
-                startDeleteTask(deleteProgressDialog);
+                startDeleteTask();
             }
         }, 1000);
 
@@ -159,13 +162,27 @@ public class RecyclerFragment extends Fragment {
         }
     });
 
-    private void startDeleteTask(final MaterialDialog progressDialog) {
+    private Handler mUpdateProgress = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.obj != null) {
+                String content = (String) msg.obj;
+                mProgressDialog.setContent(content);
+            }
+            return true;
+        }
+    });
+
+    private void startDeleteTask() {
         new Thread(new Runnable() {
             public void run() {
-                mRecyclerImageAdapter.deleteItems();
-                progressDialog.dismiss();
-                mUpdateHandler.sendEmptyMessage(1);
+                mRecyclerImageAdapter.deleteItems(getActivity(), mUpdateProgress);
+                try {
+                    mProgressDialog.dismiss();
+                } catch (Exception e) {
 
+                }
+                mUpdateHandler.sendEmptyMessage(1);
             }
         }).start();
     }
@@ -175,7 +192,7 @@ public class RecyclerFragment extends Fragment {
         public void onClick(View v) {
             DialogBuilder builder = new DialogBuilder(getActivity());
 
-            builder.title(R.string.recycle)
+            builder.title(R.string.recycle_restore)
                     .positiveText(R.string.restore)
                     .negativeText(R.string.cancel)
                     .content(getActivity().getString(R.string.recycler_restore_message,
@@ -197,10 +214,10 @@ public class RecyclerFragment extends Fragment {
                 .content(content)
                 .progress(true, 0);
 
-        final MaterialDialog deleteProgressDialog = builder.build();
-        deleteProgressDialog.setCancelable(true);
+        mProgressDialog = builder.build();
+        mProgressDialog.setCancelable(true);
         try {
-            deleteProgressDialog.show();
+            mProgressDialog.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -210,19 +227,22 @@ public class RecyclerFragment extends Fragment {
 
             @Override
             public void run() {
-                startRestoreTask(deleteProgressDialog);
+                startRestoreTask();
             }
         }, 1000);
 
     }
 
-    private void startRestoreTask(final MaterialDialog progressDialog) {
+    private void startRestoreTask() {
         new Thread(new Runnable() {
             public void run() {
-                mRecyclerImageAdapter.restoreItems();
-                progressDialog.dismiss();
-                mUpdateHandler.sendEmptyMessage(1);
+                mRecyclerImageAdapter.restoreItems(getActivity(), mUpdateProgress);
+                try {
+                    mProgressDialog.dismiss();
+                } catch (Exception e){
 
+                }
+                mUpdateHandler.sendEmptyMessage(1);
             }
         }).start();
     }

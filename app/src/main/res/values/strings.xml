@@ -12,10 +12,14 @@
     <string name="delete">删除</string>
     <string name="cancel">取消</string>
     <string name="recycle">图片回收站</string>
+    <string name="recycle_restore">图片恢复</string>
     <string name="feedback">意见反馈</string>
     <string name="deleting_progress">正在删除相似图片&#8230;</string>
+    <string name="deleting_progress_format">正在删除相似图片 (%1$d/%2$d)&#8230;</string>
     <string name="restoring_progress">正在恢复图片&#8230;</string>
+    <string name="restoring_progress_format">正在恢复图片 (%1$d/%2$d)&#8230;</string>
     <string name="need_handle">需要处理</string>
+    <string name="finish_handle">完成处理</string>
     <string name="auto_select">智能选择</string>
     <string name="cancel_auto_select">取消智能选择</string>
     <string name="select_all">全选</string>
@@ -41,6 +45,12 @@
     
     <string name="scan_result_progress_hint">共扫描%1$d张图片，发现%2$d张相似照片</string>
 
+    <string name="delete_duplicate_finish_hint">共删除%1$d张相似图片</string>
+
     <string name="delete_hint">请选择需要删除的文件</string>
+
+    <string name="open_feedback_dialog_title">友情提示</string>
+    <string name="open_feedback_dialog_content">您的反馈有新的回复</string>
+    <string name="open_feedback_dialog_positive">去查看</string>
 
 </resources>

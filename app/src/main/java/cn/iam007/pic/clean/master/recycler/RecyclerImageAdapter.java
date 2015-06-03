@@ -2,6 +2,9 @@ package cn.iam007.pic.clean.master.recycler;
 
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.GridLayoutManager.LayoutParams;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -101,12 +104,19 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
     /**
      * 删除选中的图片
      */
-    public void deleteItems() {
+    public void deleteItems(Context context, Handler handler) {
         ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
+        int count = 0;
+        String content;
         for (RecyclerImageItem item : mItems) {
             if (item.isSelected()) {
                 RecyclerManager.getInstance().delete(item);
                 deleteItems.add(item);
+
+                content = context.getString(R.string.deleting_progress_format, ++count, mSelectedItem);
+                Message msg = new Message();
+                msg.obj = content;
+                handler.sendMessage(msg);
             }
         }
 
@@ -120,12 +130,19 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
     /**
      * 将选择的回收站图片恢复到原始路径
      */
-    public void restoreItems(){
+    public void restoreItems(Context context, Handler handler){
         ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
+        int count = 0;
+        String content;
         for (RecyclerImageItem item : mItems) {
             if (item.isSelected()) {
                 RecyclerManager.getInstance().restore(item);
                 deleteItems.add(item);
+
+                content = context.getString(R.string.restoring_progress_format, ++count, mSelectedItem);
+                Message msg = new Message();
+                msg.obj = content;
+                handler.sendMessage(msg);
             }
         }
 
