@@ -66,18 +66,21 @@ public class DuplicateItemHeader extends DuplicateItem {
             if (pos != null && pos >= 0) {
                 if (isSelected != mItemsSelected.get(pos)) {
                     mItemsSelected.set(pos, isSelected);
-                    String key = SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
                     if (isSelected) {
                         selectedCount++;
                         if (setSharedPreference) {
-                            SharedPreferenceUtil.addLong(key,
+                            SharedPreferenceUtil.addLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                                     item.getFileSize());
+                            SharedPreferenceUtil.addLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM,
+                                    1L);
                         }
                     } else {
                         selectedCount--;
                         if (setSharedPreference) {
-                            SharedPreferenceUtil.subLong(key,
+                            SharedPreferenceUtil.subLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                                     item.getFileSize());
+                            SharedPreferenceUtil.subLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM,
+                                    1L);
                         }
                     }
                 }

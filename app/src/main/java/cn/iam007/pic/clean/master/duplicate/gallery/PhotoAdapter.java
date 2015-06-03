@@ -139,11 +139,6 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
                         CompoundButton buttonView, boolean isChecked) {
                     DuplicateItem item = mDuplicateImageItem;
 
-                    if (mDuplicateImageAdapter != null) {
-                        mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) item,
-                                isChecked);
-                    }
-
                     if (item != null && (item instanceof DuplicateItemImage)) {
                         ((DuplicateItemImage) item).setSelected(isChecked, true);
                         item.refresh();

@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.duplicate.gallery;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateHoldAdapter;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItem;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
+import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class PhotoActivity extends BaseActivity {
 
@@ -65,14 +67,47 @@ public class PhotoActivity extends BaseActivity {
         mRecyclerView.scrollToPosition(mPosition);
     }
 
+    private String SELECTED_DELETE_IMAGE_TOTAL_NUM =
+            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+                @Override
+                public void onSharedPreferenceChanged(
+                        SharedPreferences sharedPreferences, String key) {
+                    if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_NUM)) {
+                        if (mTextView != null) {
+                            long count = sharedPreferences.getLong(key, 0);
+                            if (count <= 0) {
+                                mTextView.setText("0");
+                            } else {
+                                mTextView.setText(String.valueOf(count));
+                            }
+                        }
+                    }
+
+                }
+            };
+
     @Override
     public void onResume() {
         super.onResume();
+
+        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_NUM, 0L);
+        if (count <= 0) {
+            mTextView.setText("0");
+        } else {
+            mTextView.setText(String.valueOf(count));
+        }
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     private MenuItem mSelected = null;
@@ -111,24 +146,13 @@ public class PhotoActivity extends BaseActivity {
                     if (((DuplicateItemImage) duplicateItem).isSelected()){
                         mSelected.setChecked(false);
                         mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
-                        if (mDuplicateImageAdapter != null) {
-                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
-                                    false);
-                        }
                         ((DuplicateItemImage) duplicateItem).setSelected(false, true);
-                    } el
-                    se {
+                    } else {
                         mSelected.setChecked(true);
                         mSelected.setIcon(R.drawable.ic_checkbox_checked);
-                        if (mDuplicateImageAdapter != null) {
-                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
-                                    true);
-                        }
                         ((DuplicateItemImage) duplicateItem).setSelected(true, true);
                     }
                     duplicateItem.refresh();
-
-                    mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
                     return true;
                 }
             default:

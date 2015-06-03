@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.Log;
@@ -494,6 +493,8 @@ public class DuplicateScanFragment extends BaseFragment {
         // 使用sharedpreference来获取当前选中图片的大小
         SharedPreferenceUtil.setLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 0L);
+        SharedPreferenceUtil.setLong(SELECTED_DELETE_IMAGE_TOTAL_NUM,
+                0L);
 
         // 显示menu
         mAutoSelect.setVisible(true);
@@ -594,6 +595,8 @@ public class DuplicateScanFragment extends BaseFragment {
 
     private String SELECTED_DELETE_IMAGE_TOTAL_SIZE =
             SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
+    private String SELECTED_DELETE_IMAGE_TOTAL_NUM =
+            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM;
 
     private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
             new OnSharedPreferenceChangeListener() {

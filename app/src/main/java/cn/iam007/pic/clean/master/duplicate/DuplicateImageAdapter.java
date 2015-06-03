@@ -294,19 +294,6 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         return holder;
     }
 
-    // 响应某个item被选中的事件
-    public void onDuplicateItemImageSelected(
-            DuplicateItemImage item, boolean isSelected) {
-
-        if (item.isSelected() != isSelected) {
-            if (isSelected) {
-                mSelectedImageCount++;
-            } else {
-                mSelectedImageCount--;
-            }
-        }
-    }
-
     /**
      * 删除某一组相似图片
      *
@@ -361,6 +348,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         DuplicateItem item = null;
         // 将所有的计算选择状态
         long totalCount = 0;
+        long totalNum = 0;
         while (index < mItems.size()) {
             item = mItems.get(index);
             if (item.isHeader()) {
@@ -376,12 +364,19 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
                     if (currentFileSize >= preBestFileSize) {
                         ((DuplicateItemImage) bestItem).setSelected(true, false);
                         totalCount += ((DuplicateItemImage) bestItem).getFileSize();
+                        if (((DuplicateItemImage) bestItem).getFileSize() > 0) {
+                            totalNum += 1;
+                        }
                         bestItem = item;
                         ((DuplicateItemImage) bestItem).setSelected(false, false);
                     } else {
                         ((DuplicateItemImage) item).setSelected(true, false);
                         totalCount += ((DuplicateItemImage) item).getFileSize();
+                        if (((DuplicateItemImage) item).getFileSize() > 0) {
+                            totalNum += 1;
+                        }
                     }
+
                 }
             }
 
@@ -391,6 +386,9 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                 totalCount);
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM,
+                totalNum);
 
         if (layoutManager == null) {
             notifyDataSetChanged();
@@ -416,6 +414,9 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
         SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+                0L);
+        SharedPreferenceUtil.setLong(
+                SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM,
                 0L);
 
         if (layoutManager == null) {

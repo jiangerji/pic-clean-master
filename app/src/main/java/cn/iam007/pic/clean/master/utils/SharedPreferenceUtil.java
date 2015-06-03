@@ -16,6 +16,8 @@ public class SharedPreferenceUtil {
             "SELECTED_DELETE_IMAGE_TOTAL_SIZE";
     public final static String SELECTED_RECYCLER_IMAGE_TOTAL_SIZE =
             "SELECTED_RECYCLER_IMAGE_TOTAL_SIZE";
+    public final static String SELECTED_DELETE_IMAGE_TOTAL_NUM =
+            "SELECTED_DELETE_IMAGE_TOTAL_NUM";
 
     // 用于表示是否有清理相似图片, boolean
     public final static String HAS_DELETE_SOME_DUPLICATE_IMAGE = "HAS_DELETE_SOME_DUPLICATE_IMAGE";
