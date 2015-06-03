@@ -361,6 +361,14 @@ public class RecyclerFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
+        long count = SharedPreferenceUtil.getLong(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 0L);
+        if (count <= 0) {
+            mRestoreBtn.setEnabled(false);
+            mDeleteBtn.setEnabled(false);
+        } else {
+            mRestoreBtn.setEnabled(true);
+            mDeleteBtn.setEnabled(true);
+        }
         SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
