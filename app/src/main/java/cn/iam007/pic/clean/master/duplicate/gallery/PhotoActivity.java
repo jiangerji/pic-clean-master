@@ -47,13 +47,13 @@ public class PhotoActivity extends BaseActivity {
         mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
 
         mAdapter = new PhotoAdapter(this, mDuplicateImageAdapter);
-        mAdapter.setOnItemSelectedListener(new PhotoAdapter.OnItemSelectedListener() {
-
-            @Override
-            public void onSelected(boolean isChecked) {
-                mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
-            }
-        });
+//        mAdapter.setOnItemSelectedListener(new PhotoAdapter.OnItemSelectedListener() {
+//
+//            @Override
+//            public void onSelected(boolean isChecked) {
+//                mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
+//            }
+//        });
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this, new CenterLockListener.CenterItemListener() {
             @Override
@@ -111,13 +111,24 @@ public class PhotoActivity extends BaseActivity {
                     if (((DuplicateItemImage) duplicateItem).isSelected()){
                         mSelected.setChecked(false);
                         mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
+                        if (mDuplicateImageAdapter != null) {
+                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
+                                    false);
+                        }
                         ((DuplicateItemImage) duplicateItem).setSelected(false, true);
-                    } else {
+                    } el
+                    se {
                         mSelected.setChecked(true);
                         mSelected.setIcon(R.drawable.ic_checkbox_checked);
+                        if (mDuplicateImageAdapter != null) {
+                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
+                                    true);
+                        }
                         ((DuplicateItemImage) duplicateItem).setSelected(true, true);
                     }
                     duplicateItem.refresh();
+
+                    mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
                     return true;
                 }
             default:
