@@ -63,24 +63,25 @@ public class BaseActivity extends AppCompatActivity {
 
         initView();
 
-        final FeedbackAgent agent = new FeedbackAgent(this);
-        final int originalCount = agent.getDefaultThread().getCommentsList().size();
-        agent.getDefaultThread().sync(new FeedbackThread.SyncCallback() {
-            @Override
-            public void onCommentsSend(List<Comment> list, AVException e) {
+        if (!(BaseActivity.this instanceof FeedbackActivity)) {
+            final FeedbackAgent agent = new FeedbackAgent(this);
+            final int originalCount = agent.getDefaultThread().getCommentsList().size();
+            agent.getDefaultThread().sync(new FeedbackThread.SyncCallback() {
+                @Override
+                public void onCommentsSend(List<Comment> list, AVException e) {
 
-            }
+                }
 
-            @Override
-            public void onCommentsFetch(List<Comment> list, AVException e) {
-                LogUtil.d("count=" + list.size() + " " + originalCount + " " + BaseActivity.this);
-                if (originalCount < list.size()) {
-                    if (!(BaseActivity.this instanceof FeedbackActivity)) {
+                @Override
+                public void onCommentsFetch(List<Comment> list, AVException e) {
+                    LogUtil.d(
+                            "count=" + list.size() + " " + originalCount + " " + BaseActivity.this);
+                    if (originalCount < list.size()) {
                         openFeedbackDialog();
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void openFeedbackDialog() {
