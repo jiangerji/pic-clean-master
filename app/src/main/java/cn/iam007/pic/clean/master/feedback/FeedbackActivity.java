@@ -60,6 +60,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
 public class FeedbackActivity extends BaseActivity {
 
@@ -555,6 +556,8 @@ public class FeedbackActivity extends BaseActivity {
                         (ImageView) convertView.findViewById(Resources.id
                                 .avoscloud_feedback_image(FeedbackActivity.this));
                 convertView.setTag(holder);
+
+                PlatformUtils.applyFonts(convertView);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
