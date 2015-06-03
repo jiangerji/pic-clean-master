@@ -3,8 +3,6 @@ package cn.iam007.pic.clean.master.duplicate;
 import java.io.File;
 
 import cn.iam007.pic.clean.master.recycler.RecyclerManager;
-import cn.iam007.pic.clean.master.utils.CryptoUtil;
-import cn.iam007.pic.clean.master.utils.FileUtil;
 
 public class DuplicateItemImage extends DuplicateItem {
 
@@ -85,6 +83,7 @@ public class DuplicateItemImage extends DuplicateItem {
 
         if (itemHeader != null) {
             itemHeader.setItemImageSelected(this, isSelected, updateTotalCount);
+            itemHeader.refresh();
         }
     }
 

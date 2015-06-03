@@ -66,6 +66,11 @@ public class DuplicateViewHolderImage extends DuplicateViewHolder {
                     CompoundButton buttonView, boolean isChecked) {
                 DuplicateItem item = getDuplicateImageItem();
 
+                if (mAdapter != null) {
+                    mAdapter.onDuplicateItemImageSelected((DuplicateItemImage) item,
+                            isChecked);
+                }
+
                 if (item != null && (item instanceof DuplicateItemImage)) {
                     ((DuplicateItemImage) item).setSelected(isChecked, true);
                 }

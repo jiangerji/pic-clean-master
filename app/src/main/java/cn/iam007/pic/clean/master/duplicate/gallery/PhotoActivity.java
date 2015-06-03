@@ -1,30 +1,27 @@
 package cn.iam007.pic.clean.master.duplicate.gallery;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateHoldAdapter;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter;
-import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
-import cn.iam007.pic.clean.master.utils.StringUtils;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItem;
+import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 
 public class PhotoActivity extends BaseActivity {
 
-    private Toolbar mToolbar = null;
     private LinearLayoutManager layoutManager;
     private RecyclerView mRecyclerView;
     private PhotoAdapter mAdapter;
     private DuplicateImageAdapter mDuplicateImageAdapter;
     private TextView mTextView;
-    private Button mDeleteBtn;
+    private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +33,7 @@ public class PhotoActivity extends BaseActivity {
 
     private void initView() {
 
-        mToolbar = getToolbar();
-
-        int position = getIntent().getIntExtra("position", 1);
+        mPosition = getIntent().getIntExtra("position", 1);
         mDuplicateImageAdapter = DuplicateHoldAdapter.getInstance()
                 .getHoldAdapter();
 
@@ -50,77 +45,96 @@ public class PhotoActivity extends BaseActivity {
 
         mTextView = (TextView) findViewById(R.id.text_num);
         mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
-        mDeleteBtn = (Button) findViewById(R.id.delbutton);
 
         mAdapter = new PhotoAdapter(this, mDuplicateImageAdapter);
-        mAdapter.setOnItemSelectedListener(new PhotoAdapter.OnItemSelectedListener() {
-
-            @Override
-            public void onSelected(boolean isChecked) {
-                mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
-            }
-        });
+//        mAdapter.setOnItemSelectedListener(new PhotoAdapter.OnItemSelectedListener() {
+//
+//            @Override
+//            public void onSelected(boolean isChecked) {
+//                mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
+//            }
+//        });
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this));
-        mRecyclerView.scrollToPosition(position);
+        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this, new CenterLockListener.CenterItemListener() {
+            @Override
+            public void onCenterItem(int position) {
+                mPosition = position;
+                invalidateOptionsMenu();
+            }
+        }));
+        mRecyclerView.scrollToPosition(mPosition);
     }
-
-    private String SELECTED_DELETE_IMAGE_TOTAL_SIZE =
-            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
-
-    private SharedPreferences.OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-                @Override
-                public void onSharedPreferenceChanged(
-                        SharedPreferences sharedPreferences, String key) {
-                    if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_SIZE)) {
-                        if (mDeleteBtn != null) {
-                            long count = sharedPreferences.getLong(key, 0);
-                            if (count <= 0) {
-                                mDeleteBtn.setText(R.string.delete);
-                            } else {
-                                mDeleteBtn.setText(getString(R.string.delete_with_size,
-                                        StringUtils.convertFileSize(count)));
-                            }
-                        }
-                    }
-
-                }
-            };
 
     @Override
     public void onResume() {
         super.onResume();
-
-        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_SIZE, 0L);
-        if (count <= 0) {
-            mDeleteBtn.setText(R.string.delete);
-        } else {
-            mDeleteBtn.setText(getString(R.string.delete_with_size,
-                    StringUtils.convertFileSize(count)));
-        }
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(
-                mSharedPreferenceChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        SharedPreferenceUtil.clearOnSharedPreferenceChangeListener(
-                mSharedPreferenceChangeListener);
     }
 
-    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
+    private MenuItem mSelected = null;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.photo_menu, menu);
+        mSelected = menu.findItem(R.id.action_item_select);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        DuplicateItem item = mDuplicateImageAdapter.getItem(mPosition);
+        if (item instanceof DuplicateItemImage) {
+            if (((DuplicateItemImage) item).isSelected()){
+                mSelected.setChecked(true);
+                mSelected.setIcon(R.drawable.ic_checkbox_checked);
+            } else {
+                mSelected.setChecked(false);
+                mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
             }
             return true;
         }
-    };
+        return false; // Return false if nothing is done
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_item_select:
+                DuplicateItem duplicateItem = mDuplicateImageAdapter.getItem(mPosition);
+                if (duplicateItem instanceof DuplicateItemImage) {
+                    if (((DuplicateItemImage) duplicateItem).isSelected()){
+                        mSelected.setChecked(false);
+                        mSelected.setIcon(R.drawable.ic_checkbox_unchecked);
+                        if (mDuplicateImageAdapter != null) {
+                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
+                                    false);
+                        }
+                        ((DuplicateItemImage) duplicateItem).setSelected(false, true);
+                    } el
+                    se {
+                        mSelected.setChecked(true);
+                        mSelected.setIcon(R.drawable.ic_checkbox_checked);
+                        if (mDuplicateImageAdapter != null) {
+                            mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) duplicateItem,
+                                    true);
+                        }
+                        ((DuplicateItemImage) duplicateItem).setSelected(true, true);
+                    }
+                    duplicateItem.refresh();
+
+                    mTextView.setText(String.valueOf(mDuplicateImageAdapter.getSelectedImageCount()));
+                    return true;
+                }
+            default:
+                break;
+        }
+
+        return true;
+    }
 }

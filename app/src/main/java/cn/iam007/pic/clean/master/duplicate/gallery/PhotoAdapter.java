@@ -139,6 +139,11 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
                         CompoundButton buttonView, boolean isChecked) {
                     DuplicateItem item = mDuplicateImageItem;
 
+                    if (mDuplicateImageAdapter != null) {
+                        mDuplicateImageAdapter.onDuplicateItemImageSelected((DuplicateItemImage) item,
+                                isChecked);
+                    }
+
                     if (item != null && (item instanceof DuplicateItemImage)) {
                         ((DuplicateItemImage) item).setSelected(isChecked, true);
                         item.refresh();
@@ -166,7 +171,7 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
                             (PlatformUtils.getScreenWidth(mContext) * 4) / 3);
                     mImageView.setLayoutParams(params);
                     mItemView.setVisibility(View.VISIBLE);
-                    mCheckBox.setVisibility(View.VISIBLE);
+                    mCheckBox.setVisibility(View.INVISIBLE);
                     mCheckBox.setChecked(((DuplicateItemImage) item).isSelected());
                     mTextView.setText(String.valueOf(getPosition()));
                 } else {

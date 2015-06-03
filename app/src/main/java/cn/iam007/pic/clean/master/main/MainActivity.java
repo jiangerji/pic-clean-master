@@ -12,13 +12,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import com.avos.avoscloud.feedback.FeedbackAgent;
-import com.avos.avoscloud.feedback.ThreadActivity;
-
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
-import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;

@@ -35,10 +35,10 @@ dependencies {
     compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
     compile 'com.tonicartos:superslim:0.4.13'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/android-async-http-1.4.6.jar')
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/avoscloud-sdk-v3.3.3.jar')
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/avoscloud-statistics-v3.3.3.jar')
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/fastjson.jar')
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/httpmime-4.2.4.jar')
-    compile files('E:/Develop/Android-Studio/pic-clean-master/libs/avoscloud-feedback-v3.3.3.jar')
+    compile files('../libs/android-async-http-1.4.6.jar')
+    compile files('../libs/avoscloud-sdk-v3.3.3.jar')
+    compile files('../libs/avoscloud-statistics-v3.3.3.jar')
+    compile files('../libs/fastjson.jar')
+    compile files('../libs/httpmime-4.2.4.jar')
+    compile files('../libs/avoscloud-feedback-v3.3.3.jar')
 }

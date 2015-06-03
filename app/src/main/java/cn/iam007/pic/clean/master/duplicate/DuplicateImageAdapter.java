@@ -33,6 +33,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     private int mHeaderCount = 0;
     private int mDuplicateImageCount = 0;
+    private int mSelectedImageCount = 0;
 
     /**
      * 添加section
@@ -128,7 +129,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
     }
 
     public int getSelectedImageCount() {
-        return 0;
+        return mSelectedImageCount;
     }
 
     public DuplicateItem getItem(int pos) {
@@ -291,6 +292,19 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
         holder.setAdapter(this);
         return holder;
+    }
+
+    // 响应某个item被选中的事件
+    public void onDuplicateItemImageSelected(
+            DuplicateItemImage item, boolean isSelected) {
+
+        if (item.isSelected() != isSelected) {
+            if (isSelected) {
+                mSelectedImageCount++;
+            } else {
+                mSelectedImageCount--;
+            }
+        }
     }
 
     /**
