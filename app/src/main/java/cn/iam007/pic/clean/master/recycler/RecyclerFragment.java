@@ -1,12 +1,13 @@
 package cn.iam007.pic.clean.master.recycler;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,8 @@ import java.io.File;
 import cn.iam007.pic.clean.master.Constants;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseFragment;
+import cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity;
+import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
@@ -97,6 +100,27 @@ public class RecyclerFragment extends BaseFragment {
 
         mRecyclerImageAdapter = new RecyclerImageAdapter();
         mRecyclerImageContainer.setAdapter(mRecyclerImageAdapter);
+        mRecyclerImageAdapter.setOnItemClickListener(new RecyclerImageAdapter.MyItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position) {
+                Log.d("debug",
+                        "click item postion: "
+                                + position);
+                //                Toast.makeText(DuplicateScanActivity.this,
+                //                        "click : "
+                //                                + (postion - mDuplicateImageAdapter.getCustomHeaderCount()),
+                //                        Toast.LENGTH_SHORT)
+                //                        .show();
+                RecyclerHoldAdapter holdAdapter = RecyclerHoldAdapter.getInstance();
+                holdAdapter.setHoldAdapter(mRecyclerImageAdapter);
+                Intent intent = new Intent(getActivity(),
+                        PhotoActivity.class);
+                intent.putExtra("position", position);
+                intent.putExtra("fromFragment", MainActivity.RECYCLER_FRAGMENT);
+                getActivity().startActivity(intent);
+            }
+        });
 
         PlatformUtils.applyFonts(rootView);
     }

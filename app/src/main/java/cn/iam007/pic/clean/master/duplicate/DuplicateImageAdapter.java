@@ -14,26 +14,32 @@ import com.tonicartos.superslim.LinearSLM;
 import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.ImageAdapterInterface;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
+public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implements ImageAdapterInterface {
 
+    // 用于获取custom header对应position的mask
+    private final static int CUSTOM_HEADER_MASK = 0x00FF;
     private final ArrayList<DuplicateItem> mItems;
-
+    public ArrayList<Integer> mCustomHeaderType = new ArrayList<Integer>();
+    public MyItemClickListener mItemClickListener;
     private Context mContext;
+    private int mHeaderCount = 0;
+    private int mDuplicateImageCount = 0;
+    private int mCustomHeaderCount = 0;
+    private ArrayList<Integer> mCustomHeaderLayout = new ArrayList<Integer>();
+    private ArrayList<View> mCustomHeaderView = new ArrayList<View>();
+    private HeaderViewCallback mHeaderViewCallback = null;
 
     public DuplicateImageAdapter(Context context) {
         mContext = context;
         mItems = new ArrayList<>();
     }
-
-    private int mHeaderCount = 0;
-    private int mDuplicateImageCount = 0;
-    private int mSelectedImageCount = 0;
 
     /**
      * 添加section
@@ -87,13 +93,6 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         mItems.clear();
     }
 
-    private int mCustomHeaderCount = 0;
-    // 用于获取custom header对应position的mask
-    private final static int CUSTOM_HEADER_MASK = 0x00FF;
-    public ArrayList<Integer> mCustomHeaderType = new ArrayList<Integer>();
-    private ArrayList<Integer> mCustomHeaderLayout = new ArrayList<Integer>();
-    private ArrayList<View> mCustomHeaderView = new ArrayList<View>();
-
     /**
      * 添加可头部对象
      *
@@ -126,10 +125,6 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
 
     public int getCustomHeaderCount() {
         return mCustomHeaderCount;
-    }
-
-    public int getSelectedImageCount() {
-        return mSelectedImageCount;
     }
 
     public DuplicateItem getItem(int pos) {
@@ -431,24 +426,12 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         }
     }
 
-    private HeaderViewCallback mHeaderViewCallback = null;
-
     /**
      * @param headerViewCallback the mHeaderViewCallback to set
      */
     public void setHeaderViewCallback(HeaderViewCallback headerViewCallback) {
         this.mHeaderViewCallback = headerViewCallback;
     }
-
-    public interface HeaderViewCallback {
-        void onHeaderViewCreated(int layout, View view);
-    }
-
-    public interface MyItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public MyItemClickListener mItemClickListener;
 
     /**
      * 设置Item点击监听
@@ -459,4 +442,11 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> {
         this.mItemClickListener = listener;
     }
 
+    public interface HeaderViewCallback {
+        void onHeaderViewCreated(int layout, View view);
+    }
+
+    public interface MyItemClickListener {
+        void onItemClick(View view, int position);
+    }
 }

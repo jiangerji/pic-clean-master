@@ -1,7 +1,5 @@
 package cn.iam007.pic.clean.master.recycler;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -12,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.ImageAdapterInterface;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
+public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements ImageAdapterInterface {
 
     private ArrayList<RecyclerImageItem> mItems = new ArrayList<>();
 
@@ -29,6 +30,18 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
     public void addItem(RecyclerImageItem item) {
         mItems.add(item);
         item.setAdapter(this);
+    }
+
+    public ArrayList<RecyclerImageItem> getItems() {
+        return mItems;
+    }
+
+    public RecyclerImageItem getItem(int pos) {
+        if (pos < mItems.size()) {
+            return mItems.get(pos);
+        } else {
+            return null;
+        }
     }
 
     public void clear() {
@@ -44,7 +57,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
         LayoutParams layoutParams = new LayoutParams(width, width);
         itemView.setLayoutParams(layoutParams);
 
-        RecyclerViewHolder holder = new RecyclerViewHolder(itemView);
+        RecyclerViewHolder holder = new RecyclerViewHolder(itemView, mItemClickListener);
         return holder;
     }
 
@@ -160,5 +173,20 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> {
      */
     public long getSelectedItem() {
         return mSelectedItem;
+    }
+
+    public interface MyItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public MyItemClickListener mItemClickListener;
+
+    /**
+     * 设置Item点击监听
+     *
+     * @param listener
+     */
+    public void setOnItemClickListener(MyItemClickListener listener) {
+        this.mItemClickListener = listener;
     }
 }

@@ -1,6 +1,8 @@
 package cn.iam007.pic.clean.master.duplicate;
 
-public abstract class DuplicateItem {
+import cn.iam007.pic.clean.master.base.BaseItemInterface;
+
+public abstract class DuplicateItem implements BaseItemInterface {
 
     /**
      * 当前item绑定的view对象
@@ -21,7 +23,7 @@ public abstract class DuplicateItem {
 
     /**
      * 返回绑定view holder
-     * 
+     *
      * @return the viewHolder
      */
     public DuplicateViewHolder getViewHolder() {
@@ -30,9 +32,8 @@ public abstract class DuplicateItem {
 
     /**
      * 设置绑定view holder
-     * 
-     * @param viewHolder
-     *            the viewHolder to set
+     *
+     * @param viewHolder the viewHolder to set
      */
     public void setViewHolder(DuplicateViewHolder viewHolder) {
         this.viewHolder = viewHolder;
@@ -40,7 +41,7 @@ public abstract class DuplicateItem {
 
     /**
      * 是否是头部件
-     * 
+     *
      * @return the isHeader
      */
     public boolean isHeader() {
@@ -49,9 +50,8 @@ public abstract class DuplicateItem {
 
     /**
      * 设置是否是头部件
-     * 
-     * @param isHeader
-     *            the isHeader to set
+     *
+     * @param isHeader the isHeader to set
      */
     public void setHeader(boolean isHeader) {
         this.isHeader = isHeader;
@@ -59,7 +59,7 @@ public abstract class DuplicateItem {
 
     /**
      * 获取该部件所属头部件的位置
-     * 
+     *
      * @return
      */
     public int getSectionFirstPosition() {
@@ -67,8 +67,7 @@ public abstract class DuplicateItem {
     }
 
     /**
-     * @param sectionFirstPosition
-     *            the sectionFirstPosition to set
+     * @param sectionFirstPosition the sectionFirstPosition to set
      */
     public void setSectionFirstPosition(int sectionFirstPosition) {
         this.sectionFirstPosition = sectionFirstPosition;
@@ -83,4 +82,14 @@ public abstract class DuplicateItem {
         }
     }
 
+    public String getImageUrl() {
+        return null;
+    }
+
+    public void setSelected(boolean isSelected, boolean updateSelectedCount) {
+    }
+
+    public boolean isSelected() {
+        return false;
+    }
 }

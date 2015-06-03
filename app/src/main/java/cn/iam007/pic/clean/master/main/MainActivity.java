@@ -1,6 +1,5 @@
 package cn.iam007.pic.clean.master.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -112,8 +111,8 @@ public class MainActivity extends BaseActivity {
 
     private int mCurrentFragment = -1;
 
-    private final static int DUPLICATE_SCAN_FRAGMENT = 0x00;
-    private final static int RECYCLER_FRAGMENT = 0x01;
+    public final static int DUPLICATE_SCAN_FRAGMENT = 0x00;
+    public final static int RECYCLER_FRAGMENT = 0x01;
     private DuplicateScanFragment mDuplicateScanFragment = null;
     private RecyclerFragment mRecyclerFragment = null;
 

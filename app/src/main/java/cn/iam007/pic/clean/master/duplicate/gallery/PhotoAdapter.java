@@ -16,48 +16,40 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter;
-import cn.iam007.pic.clean.master.duplicate.DuplicateItem;
-import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
-import cn.iam007.pic.clean.master.duplicate.DuplicateViewHolder;
+import cn.iam007.pic.clean.master.base.BaseItemInterface;
+import cn.iam007.pic.clean.master.base.ImageAdapterInterface;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
 
 public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
 
+    public static final int VIEW_TYPE_IS_IMAGE = 0x01;
+    public static final int VIEW_TYPE_IS_NOT_IMAGE = 0x02;
+    private final ArrayList<BaseItemInterface> mItems;
     private Context mContext;
-    private final ArrayList<DuplicateItem> mItems;
-    private DuplicateImageAdapter mDuplicateImageAdapter;
+    private ImageAdapterInterface mImageAdapterInterface;
+    private OnItemSelectedListener mOnItemSelectedListener = null;
 
-    public PhotoAdapter(Context context, DuplicateImageAdapter adapter) {
+    public PhotoAdapter(Context context, ImageAdapterInterface adapter) {
         mContext = context;
-        mDuplicateImageAdapter = adapter;
-        mItems = adapter.getItems();
+        mImageAdapterInterface = adapter;
+        mItems = (ArrayList<BaseItemInterface>) adapter.getItems();
     }
 
     @Override
     public int getItemViewType(int position) {
 
-        DuplicateItem item = mItems.get(position);
+        BaseItemInterface item = mItems.get(position);
         int type = -1;
         if (item.isHeader()) {
-            type = DuplicateViewHolder.VIEW_TYPE_HEADER;
+            type = VIEW_TYPE_IS_NOT_IMAGE;
         } else {
-            // 判断位于第几个
-            int index = (position - item.getSectionFirstPosition() - 1) % 3;
-            if (index == 0) {
-                type = DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT;
-            } else if (index == 1) {
-                type = DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE;
-            } else {
-                type = DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT;
-            }
-
+            type = VIEW_TYPE_IS_IMAGE;
             try {
-                String imageUrl = ((DuplicateItemImage) item).getImageUrl();
+                String imageUrl = item.getImageUrl();
                 if (imageUrl == null) {
-                    type = DuplicateViewHolder.VIEW_TYPE_HEADER;
+                    type = VIEW_TYPE_IS_NOT_IMAGE;
                 }
             } catch (Exception e) {
                 // TODO: handle exception
@@ -76,19 +68,17 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
         MyViewHolder holder = null;
 
         switch (viewType) {
-        case DuplicateViewHolder.VIEW_TYPE_HEADER:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.photo_head_view, null);
-            holder = new HeadHolder(view);
-            break;
+            case VIEW_TYPE_IS_NOT_IMAGE:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.photo_head_view, null);
+                holder = new HeadHolder(view);
+                break;
 
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_LEFT:
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_MIDDLE:
-        case DuplicateViewHolder.VIEW_TYPE_CONTENT_RIGHT:
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.photo_item_view, null);
-            holder = new PhotoHolder(view);
-            break;
+            case VIEW_TYPE_IS_IMAGE:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.photo_item_view, null);
+                holder = new PhotoHolder(view);
+                break;
         }
 
         return holder;
@@ -96,9 +86,8 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final DuplicateItem item = mItems.get(position);
-        final View itemView = holder.itemView;
-
+        final BaseItemInterface item = mItems.get(position);
+//        final View itemView = holder.itemView;
         holder.bindView(item);
     }
 
@@ -107,12 +96,20 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
         return mItems.size();
     }
 
+    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+        mOnItemSelectedListener = listener;
+    }
+
+    public interface OnItemSelectedListener {
+        void onSelected(boolean isChecked);
+    }
+
     public abstract class MyViewHolder extends ViewHolder {
         public MyViewHolder(View itemView) {
             super(itemView);
         }
 
-        public abstract void bindView(DuplicateItem item);
+        public abstract void bindView(BaseItemInterface item);
     }
 
     public class PhotoHolder extends MyViewHolder {
@@ -120,7 +117,7 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
         private ImageView mImageView;
         private CheckBox mCheckBox;
         private TextView mTextView;
-        private DuplicateItem mDuplicateImageItem = null;
+        private BaseItemInterface mBaseItemInterface = null;
 
         public PhotoHolder(View itemView) {
             super(itemView);
@@ -137,10 +134,10 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
                 @Override
                 public void onCheckedChanged(
                         CompoundButton buttonView, boolean isChecked) {
-                    DuplicateItem item = mDuplicateImageItem;
+                    BaseItemInterface item = mBaseItemInterface;
 
-                    if (item != null && (item instanceof DuplicateItemImage)) {
-                        ((DuplicateItemImage) item).setSelected(isChecked, true);
+                    if (item != null) {
+                        item.setSelected(isChecked, true);
                         item.refresh();
                     }
 
@@ -153,29 +150,23 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
             mCheckBox.setOnCheckedChangeListener(mOnCheckedChangeListener);
         }
 
-        public void bindView(DuplicateItem item) {
-            mDuplicateImageItem = item;
+        public void bindView(BaseItemInterface item) {
+            mBaseItemInterface = item;
 
-            if (item instanceof DuplicateItemImage) {
-                String imageUrl = ((DuplicateItemImage) item).getImageUrl();
-                if (imageUrl != null) {
-                    ImageUtils.showImageByUrl(imageUrl,
-                            mImageView);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(PlatformUtils.getScreenWidth(mContext)
-                            - (int) (PlatformUtils.getDensity(mContext) * 10),
-                            (PlatformUtils.getScreenWidth(mContext) * 4) / 3);
-                    mImageView.setLayoutParams(params);
-                    mItemView.setVisibility(View.VISIBLE);
-                    mCheckBox.setVisibility(View.INVISIBLE);
-                    mCheckBox.setChecked(((DuplicateItemImage) item).isSelected());
-                    mTextView.setText(String.valueOf(getPosition()));
-                } else {
-                    // 占位图片
-                    mItemView.setVisibility(View.GONE);
-                    mImageView.setImageBitmap(null);
-                }
+            String imageUrl = item.getImageUrl();
+            if (imageUrl != null) {
+                ImageUtils.showImageByUrl(imageUrl,
+                        mImageView);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(PlatformUtils.getScreenWidth(mContext)
+                        - (int) (PlatformUtils.getDensity(mContext) * 10),
+                        (PlatformUtils.getScreenWidth(mContext) * 4) / 3);
+                mImageView.setLayoutParams(params);
+                mItemView.setVisibility(View.VISIBLE);
+                mCheckBox.setVisibility(View.INVISIBLE);
+                mCheckBox.setChecked(item.isSelected());
+                mTextView.setText(String.valueOf(getAdapterPosition()));
             } else {
-                // 出现错误，暂时不显示
+                // 占位图片
                 mItemView.setVisibility(View.GONE);
                 mImageView.setImageBitmap(null);
             }
@@ -187,18 +178,8 @@ public class PhotoAdapter extends Adapter<PhotoAdapter.MyViewHolder> {
             super(itemView);
         }
 
-        public void bindView(DuplicateItem item) {
+        public void bindView(BaseItemInterface item) {
 
         }
-    }
-
-    private OnItemSelectedListener mOnItemSelectedListener = null;
-
-    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
-        mOnItemSelectedListener = listener;
-    }
-
-    public interface OnItemSelectedListener {
-        void onSelected(boolean isChecked);
     }
 }

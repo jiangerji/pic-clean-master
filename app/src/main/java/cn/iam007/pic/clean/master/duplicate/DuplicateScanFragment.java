@@ -45,6 +45,7 @@ import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.DuplicateFind
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.SectionItem;
 import cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity;
+import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
@@ -53,8 +54,19 @@ import cn.iam007.pic.clean.master.utils.StringUtils.Unit;
 
 public class DuplicateScanFragment extends BaseFragment {
 
+    private final static int SCAN_HINT_UPDATE = 0x01;
+    private final static int SCAN_PROGRESS_UPDATE = 0x02;
+    private final static int SCAN_DUPLICATE_SECTION_FIND = 0x03; // 找到一组相似图片
+    private final static int SCAN_DUPLICATE_FIND_FINISHED = 0x04; // 查找相似图片结束
+    private final static int DELETE_DUPLICATE_FINISHED = 0x05; // 删除完成
+    protected View mScanHeaderView;
+    protected TextView mScanCount;
+    protected TextView mScanCountUnit;
+    protected TextView mScanResultHint;
+    protected TextView mScanHint;
+    protected ProgressBar mScanProgressBar;
+    boolean mIsStarted = false;
     private View mRootView;
-
     private View mScanHintHeaderContainer;
     private TextView mScanHintHeader;
     private ProgressBar mScanHintHeaderProgressBar;
@@ -64,6 +76,271 @@ public class DuplicateScanFragment extends BaseFragment {
     private ProgressBarCircularIndeterminate mStartProgress;
     private View mDeleteBtnContainer;
     private Button mDeleteBtn;
+    private Toast mDeleteHint = null;
+    // 保存需要被删除组
+    private ArrayList<DuplicateItem> mDeleteDuplicateItemHeader = new ArrayList<>();
+    private File mCameraDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+    private long mDuplicateImageFilesSize = 0; // 所有已发现相似图片文件的总大小
+    private int mDuplicateImageFileCount = 0; // 所有已发现相似图片文件的数量
+    private boolean mDuplicateImagesSectionChanged = false;
+    private boolean mDuplicateImageScanFinished = false;
+    private String mScanHintText = "";
+    @SuppressLint("RtlHardcoded")
+    private int mScanHintGravity = Gravity.LEFT;
+    private HeaderViewCallback mHeaderViewCallback = new HeaderViewCallback() {
+
+        @Override
+        public void onHeaderViewCreated(int layout, View view) {
+            if (layout == R.layout.fragment_duplicate_scan_header) {
+                mScanHeaderView = view;
+
+                mScanCount = (TextView) view.findViewById(R.id.scanCount);
+                mScanCountUnit = (TextView) view.findViewById(R.id.scanCountUnit);
+                mScanResultHint = (TextView) view.findViewById(R.id.scanResultHint);
+
+                Unit unit = StringUtils.convertFileSize(mDuplicateImageFilesSize);
+                if (mScanCount != null) {
+                    mScanCount.setText(unit.getCount());
+                }
+
+                if (mScanCountUnit != null) {
+                    mScanCountUnit.setText(unit.getUnit());
+                }
+            } else if (layout == R.layout.fragment_duplicate_scan_progress) {
+                mScanHint = (TextView) view.findViewById(R.id.scanHint);
+                mScanHint.setText(mScanHintText);
+                mScanHint.setGravity(mScanHintGravity);
+
+                mScanProgressBar = (ProgressBar) view.findViewById(R.id.scanProgress);
+            }
+        }
+    };
+    private int mCurrentProgress = 0;
+    private Handler mUpdateHandler = new Handler();
+    private Runnable mUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mScanHint != null) {
+                mScanHint.setText(mScanHintText);
+                mScanHint.setGravity(mScanHintGravity);
+            }
+
+            if (mScanHintHeader != null) {
+                mScanHintHeader.setText(mScanHintText);
+                mScanHintHeader.setGravity(mScanHintGravity);
+            }
+
+            if (mScanProgressBar != null) {
+                mScanProgressBar.setProgress(mCurrentProgress);
+            }
+
+            if (mScanHintHeaderProgressBar != null) {
+                mScanHintHeaderProgressBar.setProgress(mCurrentProgress);
+            }
+
+            if (!mDuplicateImageScanFinished) {
+                mUpdateHandler.postDelayed(mUpdateRunnable, 33);
+            }
+        }
+    };
+    //智能选择删除哪些图片
+    private MenuItem mAutoSelect = null;
+    private boolean mAutoSelected = false;
+    private String SELECTED_DELETE_IMAGE_TOTAL_SIZE =
+            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
+    private String SELECTED_DELETE_IMAGE_TOTAL_NUM =
+            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM;
+    private Handler mHandler = new Handler(new Callback() {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case SCAN_HINT_UPDATE:
+                    mScanHintText = (String) msg.obj;
+                    mScanHintGravity = msg.arg1;
+                    break;
+
+                case SCAN_PROGRESS_UPDATE:
+                    mCurrentProgress = msg.arg1;
+                    break;
+
+                case SCAN_DUPLICATE_SECTION_FIND:
+                    SectionItem sectionItem = (SectionItem) msg.obj;
+                    doDuplicateSectionFind(sectionItem);
+                    break;
+
+                case SCAN_DUPLICATE_FIND_FINISHED:
+                    mDuplicateImageScanFinished = true;
+                    mScanProgressBar.setVisibility(View.INVISIBLE);
+                    mScanHintHeaderProgressBar.setVisibility(View.INVISIBLE);
+
+                    startFinishAnimation();
+                    mHandler.postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (mDuplicateImagesSectionChanged) {
+                                mDuplicateImageAdapter.notifyDataSetChanged();
+                                mDuplicateImagesSectionChanged = false;
+                            }
+                        }
+                    }, 50);
+                    break;
+
+                case DELETE_DUPLICATE_FINISHED:
+                    deleteDuplicateFinished();
+                    break;
+
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+    private OnDeleteStatusListener mOnDeleteStatusListener = new OnDeleteStatusListener() {
+        @Override
+        public void onDeleteStart() {
+
+        }
+
+        @Override
+        public void onDeleteImage(String filePath) {
+
+        }
+
+        @Override
+        public void onDeleteFinish() {
+            mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
+        }
+    };
+    private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            DeleteConfirmDialog dialog = DeleteConfirmDialog.builder(getActivity());
+
+            int index = 0;
+            DuplicateItem item = null;
+            ArrayList<DuplicateItemImage> items = null;
+            int count = 0;
+            while (index < mDuplicateImageAdapter.getRealItemCount()) {
+                item = mDuplicateImageAdapter.getItem(index);
+                if (item.isHeader()) {
+                    items = ((DuplicateItemHeader) item).getSelectedItem();
+                    dialog.addDeleteItems(items);
+                    count += items.size();
+
+                    if (items.size() > 0) {
+                        // 该header有选中的图片，表示已经处理
+                        mDeleteDuplicateItemHeader.add(item);
+                    }
+                }
+                index++;
+            }
+
+            if (count > 0) {
+                dialog.show();
+                dialog.setOnDeleteStatusListener(mOnDeleteStatusListener);
+            } else {
+                if (mDeleteHint != null) {
+                    mDeleteHint.cancel();
+                }
+
+                mDeleteHint =
+                        Toast.makeText(getActivity(), R.string.delete_hint, Toast.LENGTH_SHORT);
+                mDeleteHint.show();
+            }
+        }
+    };
+    @SuppressLint("RtlHardcoded")
+    private DuplicateFindCallback mDuplicateFindCallback = new DuplicateFindCallback() {
+
+        @Override
+        public void onDuplicateFindStart(final String folder, int count) {
+            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
+            msg.obj = String.format(getString(R.string.scanning), folder, "");
+            msg.arg1 = Gravity.LEFT;
+            mHandler.sendMessage(msg);
+            LogUtil.d("Find start:" + folder + ", " + count);
+        }
+
+        @Override
+        public void onDuplicateFindExecute(final String file, long size) {
+            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
+            File aFile = new File(file);
+            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(),
+                    aFile.getName());
+            msg.arg1 = Gravity.LEFT;
+            mHandler.sendMessage(msg);
+        }
+
+        @Override
+        public void onDuplicateFindProgressUpdate(final double progress) {
+            Message msg = mHandler.obtainMessage(SCAN_PROGRESS_UPDATE);
+            msg.arg1 = (int) (100 * progress);
+            mHandler.sendMessage(msg);
+        }
+
+        @Override
+        public void onDuplicateFindFinished(
+                final int fileCount, final long fileSize) {
+            mIsStarted = false;
+            LogUtil.d("Find finished:" + mDuplicateImageFileCount);
+            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
+            msg.obj = String.format(getString(R.string.scan_result_progress_hint),
+                    fileCount,
+                    mDuplicateImageFileCount);
+            msg.arg1 = Gravity.CENTER;
+            mHandler.sendMessage(msg);
+
+            mHandler.sendEmptyMessage(SCAN_DUPLICATE_FIND_FINISHED);
+        }
+
+        @Override
+        public void onDuplicateSectionFind(SectionItem sectionItem) {
+            //            LogUtil.d("Find onDuplicateSectionFind");
+            Message msg = mHandler.obtainMessage(SCAN_DUPLICATE_SECTION_FIND);
+            msg.obj = sectionItem;
+            mHandler.sendMessage(msg);
+
+            if (sectionItem != null && sectionItem.getImages() != null) {
+                mDuplicateImageFileCount += sectionItem.getImages().size();
+            }
+        }
+
+    };
+    private OnClickListener startBtnOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (!mIsStarted) {
+                startDuplicateImageFindTask();
+//                mStartProgress.startAnimation(true, 750L);
+                mIsStarted = true;
+            }
+        }
+    };
+    private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
+            new OnSharedPreferenceChangeListener() {
+
+                @Override
+                public void onSharedPreferenceChanged(
+                        SharedPreferences sharedPreferences, String key) {
+                    if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_SIZE)) {
+                        if (mDeleteBtn != null) {
+                            long count = sharedPreferences.getLong(key, 0);
+                            if (count <= 0) {
+                                mDeleteBtn.setText(R.string.delete);
+                            } else {
+                                mDeleteBtn.setText(getString(R.string.delete_with_size,
+                                        StringUtils.convertFileSize(count)));
+                            }
+                        }
+                    }
+
+                }
+            };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -147,6 +424,7 @@ public class DuplicateScanFragment extends BaseFragment {
                         PhotoActivity.class);
                 intent.putExtra("position",
                         (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                intent.putExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
                 getActivity().startActivity(intent);
             }
         });
@@ -164,120 +442,6 @@ public class DuplicateScanFragment extends BaseFragment {
         }
     }
 
-    private Toast mDeleteHint = null;
-
-    // 保存需要被删除组
-    private ArrayList<DuplicateItem> mDeleteDuplicateItemHeader = new ArrayList<>();
-
-    private OnClickListener mDeleteBtnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            DeleteConfirmDialog dialog = DeleteConfirmDialog.builder(getActivity());
-
-            int index = 0;
-            DuplicateItem item = null;
-            ArrayList<DuplicateItemImage> items = null;
-            int count = 0;
-            while (index < mDuplicateImageAdapter.getRealItemCount()) {
-                item = mDuplicateImageAdapter.getItem(index);
-                if (item.isHeader()) {
-                    items = ((DuplicateItemHeader) item).getSelectedItem();
-                    dialog.addDeleteItems(items);
-                    count += items.size();
-
-                    if (items.size() > 0){
-                        // 该header有选中的图片，表示已经处理
-                        mDeleteDuplicateItemHeader.add(item);
-                    }
-                }
-                index++;
-            }
-
-            if (count > 0) {
-                dialog.show();
-                dialog.setOnDeleteStatusListener(mOnDeleteStatusListener);
-            } else {
-                if (mDeleteHint != null) {
-                    mDeleteHint.cancel();
-                }
-
-                mDeleteHint =
-                        Toast.makeText(getActivity(), R.string.delete_hint, Toast.LENGTH_SHORT);
-                mDeleteHint.show();
-            }
-        }
-    };
-
-    private OnDeleteStatusListener mOnDeleteStatusListener = new OnDeleteStatusListener() {
-        @Override
-        public void onDeleteStart() {
-
-        }
-
-        @Override
-        public void onDeleteImage(String filePath) {
-
-        }
-
-        @Override
-        public void onDeleteFinish() {
-            mHandler.sendEmptyMessage(DELETE_DUPLICATE_FINISHED);
-        }
-    };
-
-    protected View mScanHeaderView;
-    protected TextView mScanCount;
-    protected TextView mScanCountUnit;
-    protected TextView mScanResultHint;
-    protected TextView mScanHint;
-    protected ProgressBar mScanProgressBar;
-
-    private HeaderViewCallback mHeaderViewCallback = new HeaderViewCallback() {
-
-        @Override
-        public void onHeaderViewCreated(int layout, View view) {
-            if (layout == R.layout.fragment_duplicate_scan_header) {
-                mScanHeaderView = view;
-
-                mScanCount = (TextView) view.findViewById(R.id.scanCount);
-                mScanCountUnit = (TextView) view.findViewById(R.id.scanCountUnit);
-                mScanResultHint = (TextView) view.findViewById(R.id.scanResultHint);
-
-                Unit unit = StringUtils.convertFileSize(mDuplicateImageFilesSize);
-                if (mScanCount != null) {
-                    mScanCount.setText(unit.getCount());
-                }
-
-                if (mScanCountUnit != null) {
-                    mScanCountUnit.setText(unit.getUnit());
-                }
-            } else if (layout == R.layout.fragment_duplicate_scan_progress) {
-                mScanHint = (TextView) view.findViewById(R.id.scanHint);
-                mScanHint.setText(mScanHintText);
-                mScanHint.setGravity(mScanHintGravity);
-
-                mScanProgressBar = (ProgressBar) view.findViewById(R.id.scanProgress);
-            }
-        }
-    };
-
-    boolean mIsStarted = false;
-    private OnClickListener startBtnOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (!mIsStarted) {
-                startDuplicateImageFindTask();
-//                mStartProgress.startAnimation(true, 750L);
-                mIsStarted = true;
-            }
-        }
-    };
-
-    private File mCameraDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-
     @SuppressLint("SdCardPath")
     private void startDuplicateImageFindTask() {
         DuplicateImageFindTask mDuplicateImageFindTask =
@@ -292,165 +456,12 @@ public class DuplicateScanFragment extends BaseFragment {
         mUpdateHandler.post(mUpdateRunnable);
     }
 
-    @SuppressLint("RtlHardcoded")
-    private DuplicateFindCallback mDuplicateFindCallback = new DuplicateFindCallback() {
-
-        @Override
-        public void onDuplicateFindStart(final String folder, int count) {
-            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scanning), folder, "");
-            msg.arg1 = Gravity.LEFT;
-            mHandler.sendMessage(msg);
-            LogUtil.d("Find start:" + folder + ", " + count);
-        }
-
-        @Override
-        public void onDuplicateFindExecute(final String file, long size) {
-            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            File aFile = new File(file);
-            msg.obj = String.format(getString(R.string.scanning), aFile.getParentFile().getName(),
-                    aFile.getName());
-            msg.arg1 = Gravity.LEFT;
-            mHandler.sendMessage(msg);
-        }
-
-        @Override
-        public void onDuplicateFindProgressUpdate(final double progress) {
-            Message msg = mHandler.obtainMessage(SCAN_PROGRESS_UPDATE);
-            msg.arg1 = (int) (100 * progress);
-            mHandler.sendMessage(msg);
-        }
-
-        @Override
-        public void onDuplicateFindFinished(
-                final int fileCount, final long fileSize) {
-            mIsStarted = false;
-            LogUtil.d("Find finished:" + mDuplicateImageFileCount);
-            Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
-            msg.obj = String.format(getString(R.string.scan_result_progress_hint),
-                    fileCount,
-                    mDuplicateImageFileCount);
-            msg.arg1 = Gravity.CENTER;
-            mHandler.sendMessage(msg);
-
-            mHandler.sendEmptyMessage(SCAN_DUPLICATE_FIND_FINISHED);
-        }
-
-        @Override
-        public void onDuplicateSectionFind(SectionItem sectionItem) {
-            //            LogUtil.d("Find onDuplicateSectionFind");
-            Message msg = mHandler.obtainMessage(SCAN_DUPLICATE_SECTION_FIND);
-            msg.obj = sectionItem;
-            mHandler.sendMessage(msg);
-
-            if (sectionItem != null && sectionItem.getImages() != null) {
-                mDuplicateImageFileCount += sectionItem.getImages().size();
-            }
-        }
-
-    };
-
-    private long mDuplicateImageFilesSize = 0; // 所有已发现相似图片文件的总大小
-    private int mDuplicateImageFileCount = 0; // 所有已发现相似图片文件的数量
-
-    private boolean mDuplicateImagesSectionChanged = false;
-
-    private boolean mDuplicateImageScanFinished = false;
-
-    private String mScanHintText = "";
-    @SuppressLint("RtlHardcoded")
-    private int mScanHintGravity = Gravity.LEFT;
-
-    private int mCurrentProgress = 0;
-
-
-    private Handler mUpdateHandler = new Handler();
-    private Runnable mUpdateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mScanHint != null) {
-                mScanHint.setText(mScanHintText);
-                mScanHint.setGravity(mScanHintGravity);
-            }
-
-            if (mScanHintHeader != null) {
-                mScanHintHeader.setText(mScanHintText);
-                mScanHintHeader.setGravity(mScanHintGravity);
-            }
-
-            if (mScanProgressBar != null) {
-                mScanProgressBar.setProgress(mCurrentProgress);
-            }
-
-            if (mScanHintHeaderProgressBar != null) {
-                mScanHintHeaderProgressBar.setProgress(mCurrentProgress);
-            }
-
-            if (!mDuplicateImageScanFinished) {
-                mUpdateHandler.postDelayed(mUpdateRunnable, 33);
-            }
-        }
-    };
-
-    private final static int SCAN_HINT_UPDATE = 0x01;
-    private final static int SCAN_PROGRESS_UPDATE = 0x02;
-    private final static int SCAN_DUPLICATE_SECTION_FIND = 0x03; // 找到一组相似图片
-    private final static int SCAN_DUPLICATE_FIND_FINISHED = 0x04; // 查找相似图片结束
-    private final static int DELETE_DUPLICATE_FINISHED = 0x05; // 删除完成
-    private Handler mHandler = new Handler(new Callback() {
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case SCAN_HINT_UPDATE:
-                    mScanHintText = (String) msg.obj;
-                    mScanHintGravity = msg.arg1;
-                    break;
-
-                case SCAN_PROGRESS_UPDATE:
-                    mCurrentProgress = msg.arg1;
-                    break;
-
-                case SCAN_DUPLICATE_SECTION_FIND:
-                    SectionItem sectionItem = (SectionItem) msg.obj;
-                    doDuplicateSectionFind(sectionItem);
-                    break;
-
-                case SCAN_DUPLICATE_FIND_FINISHED:
-                    mDuplicateImageScanFinished = true;
-                    mScanProgressBar.setVisibility(View.INVISIBLE);
-                    mScanHintHeaderProgressBar.setVisibility(View.INVISIBLE);
-
-                    startFinishAnimation();
-                    mHandler.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (mDuplicateImagesSectionChanged) {
-                                mDuplicateImageAdapter.notifyDataSetChanged();
-                                mDuplicateImagesSectionChanged = false;
-                            }
-                        }
-                    }, 50);
-                    break;
-
-                case DELETE_DUPLICATE_FINISHED:
-                    deleteDuplicateFinished();
-                    break;
-
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
-
     //
-    private void deleteDuplicateFinished(){
+    private void deleteDuplicateFinished() {
         mDeleteBtn.setText(R.string.delete);
         mAutoSelect.setTitle(R.string.auto_select);
 
-        for (DuplicateItem item : mDeleteDuplicateItemHeader){
+        for (DuplicateItem item : mDeleteDuplicateItemHeader) {
             mDuplicateImageAdapter.deleteSection(item);
         }
         mDeleteDuplicateItemHeader.clear();
@@ -544,10 +555,6 @@ public class DuplicateScanFragment extends BaseFragment {
         });
     }
 
-    //智能选择删除哪些图片
-    private MenuItem mAutoSelect = null;
-    private boolean mAutoSelected = false;
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -592,32 +599,6 @@ public class DuplicateScanFragment extends BaseFragment {
 
         return true;
     }
-
-    private String SELECTED_DELETE_IMAGE_TOTAL_SIZE =
-            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE;
-    private String SELECTED_DELETE_IMAGE_TOTAL_NUM =
-            SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM;
-
-    private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
-            new OnSharedPreferenceChangeListener() {
-
-                @Override
-                public void onSharedPreferenceChanged(
-                        SharedPreferences sharedPreferences, String key) {
-                    if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_SIZE)) {
-                        if (mDeleteBtn != null) {
-                            long count = sharedPreferences.getLong(key, 0);
-                            if (count <= 0) {
-                                mDeleteBtn.setText(R.string.delete);
-                            } else {
-                                mDeleteBtn.setText(getString(R.string.delete_with_size,
-                                        StringUtils.convertFileSize(count)));
-                            }
-                        }
-                    }
-
-                }
-            };
 
     @Override
     public void onResume() {

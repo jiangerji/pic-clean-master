@@ -5,12 +5,10 @@ import com.lidroid.xutils.db.annotation.Id;
 import com.lidroid.xutils.db.annotation.Transient;
 
 import java.lang.ref.WeakReference;
-import java.util.WeakHashMap;
 
-import cn.iam007.pic.clean.master.utils.CryptoUtil;
-import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
+import cn.iam007.pic.clean.master.base.BaseItemInterface;
 
-public class RecyclerImageItem {
+public class RecyclerImageItem implements BaseItemInterface {
     @Id
     private String id; // 用于保存到数据库中的index
 
@@ -101,7 +99,11 @@ public class RecyclerImageItem {
      * @return the recyclerPath
      */
     public String getImageRecyclerPath() {
-        return "file://" + recyclerPath;
+        if (recyclerPath != null) {
+            return "file://" + recyclerPath;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -113,6 +115,10 @@ public class RecyclerImageItem {
         return recyclerPath;
     }
 
+
+    public String getImageUrl() {
+        return getImageRecyclerPath();
+    }
     /**
      * @return the mViewHolder
      */
@@ -133,5 +139,18 @@ public class RecyclerImageItem {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * 更新当前绑定view
+     */
+    public final void refresh() {
+        if (this.viewHolder != null) {
+            this.viewHolder.refresh();
+        }
+    }
+
+    public boolean isHeader() {
+        return false;
     }
 }

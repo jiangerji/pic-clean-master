@@ -9,17 +9,25 @@ import android.widget.ImageView;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
-import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class RecyclerViewHolder extends ViewHolder {
 
     private ImageView mImageView = null;
     private CheckBox mCheckBox = null;
+    private RecyclerImageAdapter.MyItemClickListener mListener;
+    private RecyclerImageItem mItem;
 
-    public RecyclerViewHolder(final View itemView) {
+    public RecyclerViewHolder(final View itemView, final RecyclerImageAdapter.MyItemClickListener listener) {
         super(itemView);
 
+        mListener = listener;
         mImageView = (ImageView) itemView.findViewById(R.id.image);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onItemClick(itemView, getAdapterPosition());
+            }
+        });
         mCheckBox = (CheckBox) itemView.findViewById(R.id.checkBox);
 
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -33,8 +41,6 @@ public class RecyclerViewHolder extends ViewHolder {
 
         PlatformUtils.applyFonts(itemView);
     }
-
-    private RecyclerImageItem mItem;
 
     public void bindView(RecyclerImageItem item) {
         mItem = item;
@@ -51,5 +57,12 @@ public class RecyclerViewHolder extends ViewHolder {
 
     public void setChecked(boolean checked) {
         mCheckBox.setChecked(checked);
+    }
+
+    /**
+     * 刷新绑定view
+     */
+    public void refresh() {
+        bindView(mItem);
     }
 }

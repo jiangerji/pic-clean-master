@@ -32,10 +32,14 @@
         android:layout_toEndOf="@+id/textView1"
         android:layout_toRightOf="@+id/textView1"
         android:text="1"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:background="@drawable/bottom_num_text_bg"
-        android:textSize="20dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/white_light_FAFAFA"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <Button
