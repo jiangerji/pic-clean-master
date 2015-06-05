@@ -25,8 +25,11 @@ public class PhotoActivity extends BaseActivity {
     private ImageAdapterInterface mImageAdapterInterface;
     private TextView mTextView;
     private int mPosition;
+    private int mFrom;
     private String SELECTED_DELETE_IMAGE_TOTAL_NUM =
             SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM;
+    private String SELECTED_RECYCLER_IMAGE_TOTAL_SIZE =
+            SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE;
     private SharedPreferences.OnSharedPreferenceChangeListener mSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
 
@@ -34,6 +37,15 @@ public class PhotoActivity extends BaseActivity {
                 public void onSharedPreferenceChanged(
                         SharedPreferences sharedPreferences, String key) {
                     if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_NUM)) {
+                        if (mTextView != null) {
+                            long count = sharedPreferences.getLong(key, 0);
+                            if (count <= 0) {
+                                mTextView.setText("0");
+                            } else {
+                                mTextView.setText(String.valueOf(count));
+                            }
+                        }
+                    } else if (key.equalsIgnoreCase(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE)) {
                         if (mTextView != null) {
                             long count = sharedPreferences.getLong(key, 0);
                             if (count <= 0) {
@@ -59,7 +71,8 @@ public class PhotoActivity extends BaseActivity {
     private void initView() {
 
         mPosition = getIntent().getIntExtra("position", 1);
-        if (getIntent().getIntExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT) == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
+        mFrom = getIntent().getIntExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
+        if (mFrom == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
             mImageAdapterInterface = DuplicateHoldAdapter.getInstance()
                     .getHoldAdapter();
         } else {
@@ -96,7 +109,13 @@ public class PhotoActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
 
-        long count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_NUM, 0L);
+        long count = 0L;
+        if (mFrom == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
+            count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_NUM, 0L);
+        } else {
+            count = SharedPreferenceUtil.getLong(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 0L);
+        }
+
         if (count <= 0) {
             mTextView.setText("0");
         } else {
