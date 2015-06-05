@@ -1,11 +1,15 @@
 package cn.iam007.pic.clean.master.base;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,11 +22,13 @@ import com.avos.avoscloud.feedback.Comment;
 import com.avos.avoscloud.feedback.FeedbackAgent;
 import com.avos.avoscloud.feedback.FeedbackThread;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.widget.SystemBarTintManager;
 import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
+import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -193,5 +199,59 @@ public class BaseActivity extends AppCompatActivity {
     public void setContentView(int layoutResID) {
         View.inflate(this, layoutResID, mContainer);
         PlatformUtils.applyFonts(mContainer);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(0, R.anim.slide_out_right);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void finish() {
+        boolean launch = needLaunchMainActivity();
+        if (launch){
+            Intent intent = new Intent();
+            intent.setClass(this, MainActivity.class);
+            startActivity(intent);
+        }
+        super.finish();
+    }
+
+    private boolean needLaunchMainActivity() {
+        boolean launcher = false;
+        try{
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1000);
+
+            LogUtil.d(TAG, "================running app===============");
+            String packageName;
+            String className = null;
+            ActivityManager.RunningTaskInfo _info = null;
+            for (ActivityManager.RunningTaskInfo info : list) {
+                packageName = info.topActivity.getPackageName();
+                className = info.topActivity.getClassName();
+                if (packageName.equalsIgnoreCase(getPackageName())){
+                    _info = info;
+                    break;
+                }
+            }
+
+            if (_info.numActivities == 1){
+                if (!className.equalsIgnoreCase(MainActivity.class.getName())){
+                    launcher = true;
+                }
+
+            }
+        } catch (Exception e){
+
+        }
+
+        return launcher;
     }
 }

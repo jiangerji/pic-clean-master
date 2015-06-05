@@ -484,17 +484,6 @@ public class FeedbackActivity extends BaseActivity {
         actionBar.setTitle(R.string.feedback);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                finish();
-                overridePendingTransition(0, R.anim.slide_out_right);
-                break;
-        }
-        return true;
-    }
-
     private void smoothScrollToBottom() {
         feedbackListView.post(new Runnable() {
 

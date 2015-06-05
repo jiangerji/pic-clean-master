@@ -1,9 +1,22 @@
 <resources>
 
+    <style name="WindowAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/zoom_out_center</item>
+        <item name="android:activityCloseEnterAnimation">@anim/zoom_in_center</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+        <item name="android:taskOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:taskOpenExitAnimation">@anim/zoom_out_center</item>
+        <item name="android:taskCloseEnterAnimation">@anim/zoom_in_center</item>
+        <item name="android:taskCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
     <style name="AppTheme" parent="AppTheme.Base"/>
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
-        
+
+        <item name="android:windowAnimationStyle">@style/WindowAnimation</item>
+
         <!--toolbar的背景颜色-->
         <item name="colorPrimary">@color/primary</item>
         
