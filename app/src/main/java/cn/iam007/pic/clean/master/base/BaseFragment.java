@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 
 import com.avos.avoscloud.AVAnalytics;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * Created by Administrator on 2015/6/2.
  */
@@ -12,12 +14,16 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AVAnalytics.onFragmentStart(this.getClass().getSimpleName());
+        String name = this.getClass().getSimpleName();
+        AVAnalytics.onFragmentStart(name);
+//        JPushInterface.onFragmentResume(getActivity(), name);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        AVAnalytics.onFragmentEnd(this.getClass().getSimpleName());
+        String name = this.getClass().getSimpleName();
+        AVAnalytics.onFragmentEnd(name);
+//        JPushInterface.onFragmentPause(getActivity(), name);
     }
 }

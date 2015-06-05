@@ -26,6 +26,7 @@ import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
+import cn.jpush.android.api.JPushInterface;
 
 public class BaseActivity extends AppCompatActivity {
     protected final static String TAG = "BaseActivity";
@@ -173,12 +174,14 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         AVAnalytics.onResume(this);
+        JPushInterface.onResume(this);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         AVAnalytics.onPause(this);
+        JPushInterface.onPause(this);
+        super.onPause();
     }
 
     @Override

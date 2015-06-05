@@ -14,6 +14,7 @@ import android.widget.Toast;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
+import cn.iam007.pic.clean.master.push.PushManager;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
