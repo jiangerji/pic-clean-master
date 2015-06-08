@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_duplicate_scan"
+            android:checked="true"
+            android:icon="@drawable/ic_duplicate_scan_normal"
+            android:title="@string/slide_menu_duplicate_scan"/>
+        <item
+            android:id="@+id/navigation_recycler"
+            android:icon="@drawable/ic_delete_normal"
+            android:title="@string/recycle"/>
+        <item
+            android:id="@+id/navigation_feedback"
+            android:icon="@drawable/ic_feedback_normal"
+            android:title="@string/feedback"/>
+    </group>
+
+</menu>

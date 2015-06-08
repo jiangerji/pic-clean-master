@@ -353,7 +353,7 @@ public class DuplicateScanFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-        getActivity().setTitle(R.string.app_name);
+        getActivity().setTitle(R.string.slide_menu_duplicate_scan);
     }
 
     @SuppressLint("InflateParams")

@@ -154,9 +154,6 @@ public class PhotoActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
             case R.id.action_item_select:
                 BaseItemInterface duplicateItem = mImageAdapterInterface.getItem(mPosition);
                 if (duplicateItem.isSelected()) {
@@ -173,6 +170,6 @@ public class PhotoActivity extends BaseActivity {
             default:
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }

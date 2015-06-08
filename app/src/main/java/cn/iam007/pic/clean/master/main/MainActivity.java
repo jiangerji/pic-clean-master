@@ -2,19 +2,18 @@ package cn.iam007.pic.clean.master.main;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
-import cn.iam007.pic.clean.master.push.PushManager;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -32,9 +31,15 @@ public class MainActivity extends BaseActivity {
     }
 
     DrawerLayout mDrawerLayout = null;
+    NavigationView mNavigationView = null;
 
     private void initView() {
-        mToolbar = getToolbar();
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            PlatformUtils.applyFonts(mToolbar);
+        }
 
         _initSlideMenu();
 
@@ -57,14 +62,8 @@ public class MainActivity extends BaseActivity {
         // Handle different Drawer States :D
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        View scan = findViewById(R.id.duplicate_scan);
-        scan.setOnClickListener(mDrawLayoutOnClickListener);
-
-        View recycler = findViewById(R.id.recycler);
-        recycler.setOnClickListener(mDrawLayoutOnClickListener);
-
-        View feedback = findViewById(R.id.feedback);
-        feedback.setOnClickListener(mDrawLayoutOnClickListener);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
@@ -83,21 +82,22 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private OnClickListener mDrawLayoutOnClickListener = new OnClickListener() {
-
+    private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
         @Override
-        public void onClick(View v) {
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
             int pos = -1;
-            switch (v.getId()) {
-                case R.id.duplicate_scan:
+            switch (menuItem.getItemId()) {
+                case R.id.navigation_duplicate_scan:
                     pos = DUPLICATE_SCAN_FRAGMENT;
+                    menuItem.setChecked(true);
                     break;
 
-                case R.id.recycler:
+                case R.id.navigation_recycler:
                     pos = RECYCLER_FRAGMENT;
+                    menuItem.setChecked(true);
                     break;
 
-                case R.id.feedback:
+                case R.id.navigation_feedback:
                     openFeedback();
                     break;
 
@@ -107,6 +107,7 @@ public class MainActivity extends BaseActivity {
 
             setFragment(pos);
             mDrawerLayout.closeDrawers();
+            return true;
         }
     };
 
