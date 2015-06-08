@@ -35,11 +35,7 @@
             android:name="cn.iam007.pic.clean.master.main.MainActivity"
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
@@ -58,6 +54,18 @@
             android:name="cn.iam007.pic.clean.master.webview.WebViewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name="cn.iam007.pic.clean.master.about.AboutActivity"
+            android:label="@string/about"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- 用于表示渠道来源 -->

@@ -55,4 +55,8 @@
     <string name="open_feedback_dialog_positive">去查看</string>
     <string name="feedback_contact_hint">Email或QQ号码</string>
     <string name="feedback_input_hint">填写反馈</string>
+
+    <!-- About相关 -->
+    <string name="about">关于</string>
+    <string name="about_version">版本号：%1$s</string>
 </resources>
