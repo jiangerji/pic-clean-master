@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -22,7 +21,6 @@ import com.avos.avoscloud.feedback.Comment;
 import com.avos.avoscloud.feedback.FeedbackAgent;
 import com.avos.avoscloud.feedback.FeedbackThread;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
@@ -208,8 +206,11 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(0, R.anim.slide_out_right);
                 break;
+
+            default:
+                break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
