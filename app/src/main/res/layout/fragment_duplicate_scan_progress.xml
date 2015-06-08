@@ -19,7 +19,6 @@
         android:layout_below="@id/scanProgressHintDividor"
         android:singleLine="true"
         android:paddingLeft="10dp"
-        android:paddingStart="10dp"
         android:paddingRight="10dp"
         android:paddingEnd="10dp"
         android:paddingTop="3dp"

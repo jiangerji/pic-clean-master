@@ -28,11 +28,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:recyclerview-v7:22.1.1'
+    compile 'com.android.support:design:22.2.0'
     compile files('../libs/android_api_3_5.jar')
     compile files('../libs/universal-image-loader-1.9.3.jar')
     compile files('../libs/xUtils-2.6.14.jar')
     compile 'com.afollestad:material-dialogs:0.7.4.2'
-    compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
     compile 'com.tonicartos:superslim:0.4.13'
     compile 'com.nineoldandroids:library:2.4.0'
     compile files('../libs/android-async-http-1.4.6.jar')

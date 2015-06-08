@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.Log;
@@ -22,12 +23,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.tonicartos.superslim.LayoutManager;
@@ -73,9 +74,10 @@ public class DuplicateScanFragment extends BaseFragment {
     private LayoutManager mLayoutManager;
     private CustomRecyclerView mDuplicateImageContainer;
     private DuplicateImageAdapter mDuplicateImageAdapter;
-    private ProgressBarCircularIndeterminate mStartProgress;
+    private FloatingActionButton mFloatingButton;
     private View mDeleteBtnContainer;
     private Button mDeleteBtn;
+    private ProgressBar mProgressBar;
     private Toast mDeleteHint = null;
     // 保存需要被删除组
     private ArrayList<DuplicateItem> mDeleteDuplicateItemHeader = new ArrayList<>();
@@ -316,6 +318,10 @@ public class DuplicateScanFragment extends BaseFragment {
         public void onClick(View v) {
             if (!mIsStarted) {
                 startDuplicateImageFindTask();
+                mProgressBar.setVisibility(View.VISIBLE);
+                mFloatingButton.setVisibility(View.INVISIBLE);
+                mFloatingButton.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                        R.anim.abc_slide_out_bottom));
 //                mStartProgress.startAnimation(true, 750L);
                 mIsStarted = true;
             }
@@ -429,13 +435,18 @@ public class DuplicateScanFragment extends BaseFragment {
             }
         });
 
-        mStartProgress =
-                (ProgressBarCircularIndeterminate) rootView.findViewById(R.id.startProgress);
-        mStartProgress.setOnClickListener(startBtnOnClickListener);
+        mFloatingButton =
+                (FloatingActionButton) rootView.findViewById(R.id.startProgress);
+        mFloatingButton.setOnClickListener(startBtnOnClickListener);
+        mFloatingButton.setVisibility(View.VISIBLE);
+        mFloatingButton.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                R.anim.abc_slide_in_bottom));
 
         mDeleteBtnContainer = rootView.findViewById(R.id.delete_btn_container);
         mDeleteBtn = (Button) rootView.findViewById(R.id.delete_btn);
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
+
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         if (rootView != null) {
             PlatformUtils.applyFonts(rootView);
@@ -510,13 +521,13 @@ public class DuplicateScanFragment extends BaseFragment {
         // 显示menu
         mAutoSelect.setVisible(true);
 
-        mStartProgress.setVisibility(View.INVISIBLE);
-        //        mStartProgress.startAnimation(AnimationUtils.loadAnimation(getApplication(),
-        //                R.anim.fade_out));
+        mProgressBar.setVisibility(View.GONE);
+        mProgressBar.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                R.anim.abc_fade_out));
 
         mDeleteBtnContainer.setVisibility(View.VISIBLE);
-        //        mDeleteBtnContainer.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
-        //                R.anim.slide_in_bottom));
+        mDeleteBtnContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                        R.anim.abc_slide_in_bottom));
 
         final int scanHeaderViewHeight = mScanHeaderView.getHeight();
         final float scanCountTextSize = mScanCount.getTextSize();
