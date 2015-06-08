@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="AppTheme.Base">
         
         <!--导航栏底部颜色-->
-        <item name="android:navigationBarColor">@color/accent</item>
+        <item name="android:navigationBarColor">@color/black_light_333333</item>
     </style>
 
 </resources>

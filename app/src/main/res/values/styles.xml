@@ -24,7 +24,7 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         
         <!--android系统控件的颜色-->
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/red_light_EB5347</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
