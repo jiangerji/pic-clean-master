@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import org.json.JSONObject;
 
-import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.webview.WebViewActivity;
 import cn.jpush.android.api.JPushInterface;

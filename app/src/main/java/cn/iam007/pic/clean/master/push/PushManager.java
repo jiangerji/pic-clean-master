@@ -18,7 +18,7 @@ public class PushManager {
 
 
     public static final void init(Context context) {
-        JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
+        JPushInterface.setDebugMode(false);    // 设置开启日志,发布时请关闭日志
         JPushInterface.init(context);       // 初始化 JPush
 
         mHandlers.add(new DefaultPushHandler());
