@@ -22,7 +22,7 @@
         android:layout_margin="6dp"
         android:gravity="center"
         android:textColor="@color/about_libraries_title_openSource"
-        tools:text="About AppName"/>
+        tools:text="@string/app_name"/>
 
     <TextView
         android:id="@+id/aboutVersion"
@@ -32,7 +32,7 @@
         android:layout_margin="4dp"
         android:gravity="center"
         android:textColor="@color/about_libraries_title_openSource"
-        tools:text="About version"/>
+        tools:text="@string/about_version"/>
 
     <View
         android:id="@+id/aboutDivider"
@@ -47,10 +47,10 @@
         android:textSize="@dimen/about_textSizeSmall"
         android:textStyle="normal"
         android:padding="8dp"
-        android:gravity="center"
+        android:gravity="left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:textColor="@color/about_libraries_text_openSource"
-        tools:text="About description"/>
+        tools:text="@string/app_description"/>
 </LinearLayout>

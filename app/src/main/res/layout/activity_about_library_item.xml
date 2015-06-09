@@ -8,6 +8,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:clickable="true"
+    card_view:cardBackgroundColor="@color/about_libraries_card"
     card_view:cardCornerRadius="5dp"
     android:foreground="?selectableItemBackground">
 

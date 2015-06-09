@@ -29,36 +29,36 @@ public class AboutLibrary implements Comparable<AboutLibrary> {
 
     private String definedName = "";
 
-    // ×÷Õß
+    // ä½œè€…
     private String author = "";
 
-    // ×÷ÕßµÄÍøÖ·
+    // ä½œè€…çš„ç½‘å€
     private String authorWebsite = "";
 
-    // ÒıÓÃ¿âµÄÃû×Ö
+    // å¼•ç”¨åº“çš„åå­—
     private String libraryName = "";
 
-    // ÒıÓÃ¿âµÄÃèÊö
+    // å¼•ç”¨åº“çš„æè¿°
     private String libraryDescription = "";
 
-    // ÒıÓÃ¿âµÄ°æ±¾
+    // å¼•ç”¨åº“çš„ç‰ˆæœ¬
     private String libraryVersion = "";
 
-    // ÒıÓÃ¿âµÄµØÖ·
+    // å¼•ç”¨åº“çš„åœ°å€
     private String libraryWebsite = "";
 
-    // ÊÇ·ñÊÇ¿ªÔ´¿â
+    // æ˜¯å¦æ˜¯å¼€æºåº“
     private boolean isOpenSource = true;
 
-    // ¿ªÔ´¿âµÄµØÖ·
+    // å¼€æºåº“çš„åœ°å€
     private String repositoryLink = "";
 
     /**
-     * ¹¹ÔìAboutLibrary¶ÔÏó
+     * æ„é€ AboutLibraryå¯¹è±¡
      *
-     * @param author             Ê¹ÓÃ¿âµÄ×÷Õß
-     * @param libraryName        Ê¹ÓÃ¿âµÄÃû³Æ
-     * @param libraryDescription Ê¹ÓÃ¿âµÄÃèÊö
+     * @param author             ä½¿ç”¨åº“çš„ä½œè€…
+     * @param libraryName        ä½¿ç”¨åº“çš„åç§°
+     * @param libraryDescription ä½¿ç”¨åº“çš„æè¿°
      */
     public AboutLibrary(String author, String libraryName, String libraryDescription) {
         this.author = author;

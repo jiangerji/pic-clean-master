@@ -4,6 +4,9 @@
         
         <!--导航栏底部颜色-->
         <item name="android:navigationBarColor">@color/black_light_333333</item>
+
+        <!-- 控件按下涟漪效果 -->
+        <item name="android:colorControlHighlight">#222B2B2B</item>
     </style>
 
 </resources>

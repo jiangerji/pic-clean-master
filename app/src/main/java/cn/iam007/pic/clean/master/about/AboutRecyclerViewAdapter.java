@@ -3,7 +3,6 @@ package cn.iam007.pic.clean.master.about;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -18,6 +17,7 @@ import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
+import cn.iam007.pic.clean.master.webview.WebViewActivity;
 
 public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -70,12 +70,18 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //Set texts
             holder.libraryName.setText(library.getLibraryName());
             holder.libraryCreator.setText(library.getAuthor());
-            holder.libraryDescription.setText(library.getLibraryDescription());
+            holder.libraryCreator.setOnTouchListener(rippleForegroundListener);
+            try {
+                holder.libraryDescription.setText(Html.fromHtml(library.getLibraryDescription()));
+            } catch (Exception e) {
+
+            }
+            holder.libraryDescription.setOnTouchListener(rippleForegroundListener);
 
             holder.libraryBottomDivider.setVisibility(View.GONE);
             //Set License or Version Text
             holder.libraryBottomContainer.setVisibility(View.GONE);
-            holder.libraryBottomContainer.setVisibility(View.GONE);
+            holder.libraryBottomContainer.setOnTouchListener(rippleForegroundListener);
 
             if (!TextUtils.isEmpty(library.getLibraryVersion())) {
                 holder.libraryBottomDivider.setVisibility(View.VISIBLE);
@@ -88,7 +94,7 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.libraryCreator.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        openAuthorWebsite(ctx, library.getAuthorWebsite());
+                        openUrl(ctx, library.getAuthorWebsite(), library.getAuthor());
                     }
                 });
             } else {
@@ -101,8 +107,9 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.libraryDescription.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openLibraryWebsite(ctx,
-                                library.getLibraryWebsite() != null ? library.getLibraryWebsite() : library.getRepositoryLink());
+                        openUrl(ctx,
+                                library.getLibraryWebsite() != null ? library.getLibraryWebsite() : library.getRepositoryLink(),
+                                library.getLibraryName());
                     }
                 });
             } else {
@@ -112,36 +119,18 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             holder.libraryBottomContainer.setOnTouchListener(null);
             holder.libraryBottomContainer.setOnClickListener(null);
-
-//            }
         }
     }
 
-    /**
-     * helper method to open the author website
-     *
-     * @param ctx
-     * @param authorWebsite
-     */
-    private void openAuthorWebsite(Context ctx, String authorWebsite) {
+    private void openUrl(Context ctx, String website, String title) {
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(authorWebsite));
-            ctx.startActivity(browserIntent);
-        } catch (Exception ex) {
-        }
-    }
+            Intent intent = new Intent();
+            intent.setClass(ctx, WebViewActivity.class);
+            intent.putExtra(WebViewActivity.DATA_URL, website);
+            intent.putExtra(WebViewActivity.DATA_TITLE, title);
+            ctx.startActivity(intent);
+        } catch (Exception e) {
 
-    /**
-     * helper method to open the library website
-     *
-     * @param ctx
-     * @param libraryWebsite
-     */
-    private void openLibraryWebsite(Context ctx, String libraryWebsite) {
-        try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(libraryWebsite));
-            ctx.startActivity(browserIntent);
-        } catch (Exception ex) {
         }
     }
 
@@ -156,24 +145,21 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return libs == null ? 0 : libs.size() + 1;
+        return libs == null ? 0 : libs.size();
     }
 
     public AboutLibrary getItem(int pos) {
-        return libs.get(pos - 1);
+        return libs.get(pos);
     }
 
     public long getItemId(int pos) {
         return pos;
     }
 
-    public void setLibs(List<AboutLibrary> libs) {
-        this.libs = libs;
-        this.notifyDataSetChanged();
-    }
-
-    public void addLibs(List<AboutLibrary> libs) {
-        this.libs.addAll(libs);
+    public void addLibraries(Object[] libraries) {
+        for (Object library : libraries) {
+            this.libs.add((AboutLibrary) library);
+        }
     }
 
     String description;
