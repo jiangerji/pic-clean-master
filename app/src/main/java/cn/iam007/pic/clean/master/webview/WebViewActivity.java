@@ -1,6 +1,7 @@
 package cn.iam007.pic.clean.master.webview;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -44,13 +45,16 @@ public class WebViewActivity extends BaseActivity {
                     if (mLoadingProgressBar != null) {
                         mLoadingProgressBar.setVisibility(View.VISIBLE);
                         mLoadingProgressBar.startAnimation(
-                                AnimationUtils.loadAnimation(WebViewActivity.this, R.anim.abc_fade_in));
+                                AnimationUtils.loadAnimation(WebViewActivity.this,
+                                        R.anim.abc_fade_in));
                     }
                     view.loadUrl(url);
-                    return true;
                 } else {
-                    return false;
+                    // Otherwise allow the OS to handle things like tel, mailto, etc.
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
                 }
+                return true;
             }
 
             @Override
@@ -58,7 +62,8 @@ public class WebViewActivity extends BaseActivity {
                 if (mLoadingProgressBar != null) {
                     mLoadingProgressBar.setVisibility(View.GONE);
                     mLoadingProgressBar.startAnimation(
-                            AnimationUtils.loadAnimation(WebViewActivity.this, R.anim.abc_fade_out));
+                            AnimationUtils.loadAnimation(WebViewActivity.this,
+                                    R.anim.abc_fade_out));
                 }
             }
         });
@@ -71,7 +76,7 @@ public class WebViewActivity extends BaseActivity {
             }
 
             String title = intent.getStringExtra(DATA_TITLE);
-            if (!TextUtils.isEmpty(title)){
+            if (!TextUtils.isEmpty(title)) {
                 setTitle(title);
             }
         }
