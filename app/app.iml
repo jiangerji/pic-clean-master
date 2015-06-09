@@ -69,6 +69,8 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/cn.leancloud.android/avoscloud-feedback/v3.3.4/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/cn.leancloud.android/avoscloud-statistics/v3.3.4/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.afollestad/material-dialogs/0.7.4.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/22.2.0/jars" />
@@ -96,19 +98,26 @@
     <orderEntry type="library" exported="" name="fastjson" level="project" />
     <orderEntry type="library" exported="" name="design-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="android_api_3_5" level="project" />
+    <orderEntry type="library" exported="" name="avoscloud-sdk-v3.3.4" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.2.0" level="project" />
+    <orderEntry type="library" exported="" name="httpcore-4.2.4" level="project" />
     <orderEntry type="library" exported="" name="jpush-sdk-release1.7.4" level="project" />
     <orderEntry type="library" exported="" name="android-async-http-1.4.6" level="project" />
+    <orderEntry type="library" exported="" name="1_android-async-http-1.4.6" level="project" />
     <orderEntry type="library" exported="" name="avoscloud-statistics-v3.3.3" level="project" />
+    <orderEntry type="library" exported="" name="avoscloud-statistics-v3.3.4" level="project" />
     <orderEntry type="library" exported="" name="material-dialogs-0.7.4.2" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="avoscloud-feedback-v3.3.3" level="project" />
     <orderEntry type="library" exported="" name="xUtils-2.6.14" level="project" />
+    <orderEntry type="library" exported="" name="avoscloud-feedback-v3.3.3" level="project" />
+    <orderEntry type="library" exported="" name="avoscloud-feedback-v3.3.4" level="project" />
     <orderEntry type="library" exported="" name="superslim-0.4.13" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="universal-image-loader-1.9.3" level="project" />
+    <orderEntry type="library" exported="" name="fastjson-1.1.38-leancloud" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.2.4" level="project" />
+    <orderEntry type="library" exported="" name="1_httpmime-4.2.4" level="project" />
   </component>
 </module>

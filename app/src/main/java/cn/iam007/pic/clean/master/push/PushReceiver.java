@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.jpush.android.api.JPushInterface;
 

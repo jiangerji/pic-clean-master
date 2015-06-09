@@ -54,7 +54,7 @@
             android:layout_marginTop="5dp"
             android:layout_toLeftOf="@id/avoscloud_feedback_functional_wrap"
             android:background="@color/avoscloud_feedback_input_wrap_background"
-            android:hint="@string/avoscloud_feedback_input_hint"
+            android:hint="@string/feedback_input_hint"
             android:minHeight="40dp"
             android:textColor="@color/avoscloud_feedback_text_gray"
             android:textColorHint="@color/avoscloud_feedback_text_gray">
@@ -70,7 +70,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:background="@color/avoscloud_feedback_input_wrap_background"
-        android:hint="@string/avoscloud_feedback_contact_hint"
+        android:hint="@string/feedback_contact_hint"
         android:padding="15dp"
         android:textColor="@color/avoscloud_feedback_text_gray"
         android:textColorHint="@color/avoscloud_feedback_text_gray"
