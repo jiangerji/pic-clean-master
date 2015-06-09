@@ -7,4 +7,8 @@
     <dimen name="grid_column_width">96dp</dimen>
 
     <dimen name="slide_menu_text_size">15sp</dimen>
+    <!-- about相关 -->
+    <dimen name="about_textSizeLarge">20sp</dimen>
+    <dimen name="about_textSizeSmall">14sp</dimen>
+    <dimen name="about_image_size">72dp</dimen>
 </resources>

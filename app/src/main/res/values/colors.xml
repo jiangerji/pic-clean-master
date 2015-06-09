@@ -23,4 +23,13 @@
     <color name="white_light_FAFAFA">#FAFAFA</color>
     <color name="green_light_65BA29">#65BA29</color>
     <color name="green_light_56AF1F">#56AF1F</color>
+
+    <!-- AboutLibraries DEFAULT colors -->
+    <color name="about_libraries_window_background">#ECECEC</color>
+    <color name="about_libraries_card">#FAFAFA</color>
+    <color name="about_libraries_title_openSource">#212121</color>
+    <color name="about_libraries_text_openSource">#727272</color>
+    <color name="about_libraries_special_button_openSource">#212121</color>
+    <color name="about_libraries_dividerDark_openSource">#AAA</color>
+    <color name="about_libraries_dividerLight_openSource">#DADADA</color>
 </resources>
