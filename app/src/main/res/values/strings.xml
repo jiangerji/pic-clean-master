@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">图片清理大师</string>
+    <string name="app_description">图片清理大师提供扫描手机的相册，并找出相册中可能相似的图片，清理多余的照片。自拍达人、摄影大师可以放心的拍，我们来帮你找出最好的照片。</string>
     <string name="action_settings">Settings</string>
     
     <string name="drawer_open">open</string>
@@ -59,4 +60,6 @@
     <!-- About相关 -->
     <string name="about">关于</string>
     <string name="about_version">版本号：%1$s</string>
+
+    <string name="loading">loading</string>
 </resources>

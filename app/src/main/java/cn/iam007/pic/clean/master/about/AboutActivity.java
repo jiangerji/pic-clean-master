@@ -6,8 +6,18 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.animation.AnimationUtils;
+
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
+import com.lidroid.xutils.util.LogUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
@@ -19,6 +29,7 @@ public class AboutActivity extends BaseActivity {
 
     RecyclerView mRecyclerView;
     AboutRecyclerViewAdapter mAdapter;
+    View mLoadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +37,9 @@ public class AboutActivity extends BaseActivity {
 
         setContentView(R.layout.activity_about);
         initView();
+
+        mLoadingProgressBar = getToolbar().findViewById(R.id.toolbar_progress_bar);
+        mLoadingProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void initView() {
@@ -66,54 +80,72 @@ public class AboutActivity extends BaseActivity {
 
         //add this cool thing to the headerView of our listView
         mAdapter.setHeader(versionName, versionCode, null);
-        mAdapter.setDescription("this is the app's description, can be html format.");
+        mAdapter.setDescription(getString(R.string.app_description));
     }
 
+    /**
+     * 获取需要展示的使用开源库
+     */
     private void _initAdapterLibraries() {
-        /**
-         <?xml version="1.0" encoding="utf-8"?>
-         <resources>
+        AVQuery<AVObject> query = new AVQuery<>("Libraries");
+        query.findInBackground(new FindCallback<AVObject>() {
+            public void done(List<AVObject> avObjects, AVException e) {
+                if (e == null) {
+                    ArrayList<AboutLibrary> libraries = new ArrayList<>();
+                    for (AVObject object : avObjects) {
+                        AboutLibrary library = toAboutLibrary(object);
+                        if (library != null) {
+                            libraries.add(library);
+                        }
+                    }
 
-         <string name="define_int_NineOldAndroids">year;owner</string>
-         <string name="library_NineOldAndroids_author">Jake Wharton</string>
-         <string name="library_NineOldAndroids_authorWebsite">http://jakewharton.com/</string>
-         <string name="library_NineOldAndroids_libraryName">NineOldAndroids</string>
-         <string name="library_NineOldAndroids_libraryDescription">Android library for using the Honeycomb (Android 3.0) animation API on all versions of the
-         platform
-         back to 1.0!
-         </string>
-         <string name="library_NineOldAndroids_libraryVersion">2.4.0</string>
-         <string name="library_NineOldAndroids_libraryWebsite">http://nineoldandroids.com/</string>
-         <string name="library_NineOldAndroids_licenseId">apache_2_0</string>
-         <string name="library_NineOldAndroids_isOpenSource">true</string>
-         <string name="library_NineOldAndroids_repositoryLink">https://github.com/JakeWharton/NineOldAndroids</string>
-         <string name="library_NineOldAndroids_classPath">com.nineoldandroids.view.ViewHelper</string>
-         <!-- Custom variables section -->
-         <string name="library_NineOldAndroids_owner">Jake Wharton</string>
-         <string name="library_NineOldAndroids_year">2014</string>
-         </resources>
-         */
-        String author = "Jake Wharton";
-        String authorWebsite = "http://jakewharton.com/";
-        String libraryName = "NineOldAndroids";
-        String libraryDescription =
-                "Android library for using the Honeycomb (Android 3.0) animation API on all versions of the" +
-                        " platform back to 1.0!";
-        String libraryVersion = "2.4.0";
-        String libraryWebsite = "http://nineoldandroids.com";
-        boolean isOpenSource = true;
-        String repositoryLink = "https://github.com/JakeWharton/NineOldAndroids";
+                    Object[] ls = libraries.toArray();
+                    Arrays.sort(ls);
+                    mAdapter.addLibraries(ls);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    LogUtils.d("获取关于界面信息错误！");
+                }
 
-        AboutLibrary library = new AboutLibrary(author, libraryName, libraryDescription);
-        library.setAuthor(author);
-        library.setAuthorWebsite(authorWebsite);
-        library.setLibraryVersion(libraryVersion);
-        library.setLibraryWebsite(libraryWebsite);
-        library.setOpenSource(isOpenSource);
-        library.setRepositoryLink(repositoryLink);
+                hideLoadingView();
+            }
+        });
+    }
 
-        ArrayList<AboutLibrary> libraries = new ArrayList<>();
-        libraries.add(library);
-        mAdapter.setLibs(libraries);
+    private void hideLoadingView() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mLoadingProgressBar != null) {
+                    mLoadingProgressBar.setVisibility(View.GONE);
+                    mLoadingProgressBar.startAnimation(
+                            AnimationUtils.loadAnimation(AboutActivity.this, R.anim.fade_out));
+                }
+            }
+        });
+    }
+
+    private AboutLibrary toAboutLibrary(AVObject object) {
+        AboutLibrary library = null;
+
+        if (object != null) {
+            String libraryName = object.getString("libraryName");
+            String libraryDescription = object.getString("libraryDescription");
+            String libraryWebsite = object.getString("libraryWebsite");
+            String libraryVersion = object.getString("libraryVersion");
+            String author = object.getString("author");
+            String authorWebsite = object.getString("authorWebsite");
+            boolean isOpenSource = object.getBoolean("isOpenSource");
+            String repositoryLink = object.getString("repositoryLink");
+
+            library = new AboutLibrary(author, libraryName, libraryDescription);
+            library.setLibraryWebsite(libraryWebsite);
+            library.setLibraryVersion(libraryVersion);
+            library.setAuthorWebsite(authorWebsite);
+            library.setOpenSource(isOpenSource);
+            library.setRepositoryLink(repositoryLink);
+        }
+
+        return library;
     }
 }

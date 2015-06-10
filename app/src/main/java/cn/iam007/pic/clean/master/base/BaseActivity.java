@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.avos.avoscloud.AVAnalytics;
@@ -112,7 +114,6 @@ public class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FeedbackActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
     }
 
     private void initView() {
@@ -195,7 +196,20 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        View.inflate(this, layoutResID, mContainer);
+        View view = View.inflate(this, layoutResID, mContainer);
+        if (!(BaseActivity.this instanceof MainActivity)) {
+            RelativeLayout.LayoutParams layoutParams =
+                    (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+            TypedArray actionbarSizeTypedArray = obtainStyledAttributes(new int[] {
+                    android.R.attr.actionBarSize
+            });
+
+            float h = actionbarSizeTypedArray.getDimension(0, 0);
+
+            layoutParams.topMargin = (int) h;
+            view.setLayoutParams(layoutParams);
+        }
         PlatformUtils.applyFonts(mContainer);
     }
 
@@ -204,7 +218,6 @@ public class BaseActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(0, R.anim.slide_out_right);
                 break;
 
             default:
@@ -216,7 +229,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void finish() {
         boolean launch = needLaunchMainActivity();
-        if (launch){
+        if (launch) {
             Intent intent = new Intent();
             intent.setClass(this, MainActivity.class);
             startActivity(intent);
@@ -226,7 +239,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean needLaunchMainActivity() {
         boolean launcher = false;
-        try{
+        try {
             ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1000);
 
@@ -237,19 +250,19 @@ public class BaseActivity extends AppCompatActivity {
             for (ActivityManager.RunningTaskInfo info : list) {
                 packageName = info.topActivity.getPackageName();
                 className = info.topActivity.getClassName();
-                if (packageName.equalsIgnoreCase(getPackageName())){
+                if (packageName.equalsIgnoreCase(getPackageName())) {
                     _info = info;
                     break;
                 }
             }
 
-            if (_info.numActivities == 1){
-                if (!className.equalsIgnoreCase(MainActivity.class.getName())){
+            if (_info.numActivities == 1) {
+                if (!className.equalsIgnoreCase(MainActivity.class.getName())) {
                     launcher = true;
                 }
 
             }
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
 
