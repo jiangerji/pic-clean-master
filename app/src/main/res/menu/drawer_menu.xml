@@ -15,6 +15,10 @@
             android:id="@+id/navigation_feedback"
             android:icon="@drawable/ic_feedback_normal"
             android:title="@string/feedback"/>
+        <item
+            android:id="@+id/navigation_about"
+            android:icon="@drawable/ic_about_normal"
+            android:title="@string/about"/>
     </group>
 
 </menu>

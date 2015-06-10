@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -12,9 +13,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.about.AboutActivity;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
+import cn.iam007.pic.clean.master.service.Iam007Service;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
@@ -73,6 +76,9 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         mExitHintToast = null;
+        Intent intent = new Intent();
+        intent.setClass(this, Iam007Service.class);
+        startService(intent);
     }
 
     @Override
@@ -82,36 +88,49 @@ public class MainActivity extends BaseActivity {
         if (mExitHintToast != null) {
             mExitHintToast.cancel();
         }
+        Intent intent = new Intent();
+        intent.setClass(this, Iam007Service.class);
+        stopService(intent);
     }
 
-    private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem menuItem) {
-            int pos = -1;
-            switch (menuItem.getItemId()) {
-                case R.id.navigation_duplicate_scan:
-                    pos = DUPLICATE_SCAN_FRAGMENT;
-                    menuItem.setChecked(true);
-                    break;
+    private final void openAbout() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
 
-                case R.id.navigation_recycler:
-                    pos = RECYCLER_FRAGMENT;
-                    menuItem.setChecked(true);
-                    break;
+    private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener =
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    int pos = -1;
+                    switch (menuItem.getItemId()) {
+                        case R.id.navigation_duplicate_scan:
+                            pos = DUPLICATE_SCAN_FRAGMENT;
+                            menuItem.setChecked(true);
+                            break;
 
-                case R.id.navigation_feedback:
-                    openFeedback();
-                    break;
+                        case R.id.navigation_recycler:
+                            pos = RECYCLER_FRAGMENT;
+                            menuItem.setChecked(true);
+                            break;
 
-                default:
-                    break;
-            }
+                        case R.id.navigation_feedback:
+                            openFeedback();
+                            break;
 
-            setFragment(pos);
-            mDrawerLayout.closeDrawers();
-            return true;
-        }
-    };
+                        case R.id.navigation_about:
+                            openAbout();
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    setFragment(pos);
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                }
+            };
 
     private int mCurrentFragment = -1;
 
