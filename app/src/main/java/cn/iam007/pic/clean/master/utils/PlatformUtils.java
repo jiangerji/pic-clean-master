@@ -239,4 +239,27 @@ public class PlatformUtils {
                 "fonts/RobotoCondensed-Light.ttf");
         applyFonts(view, font);
     }
+
+    /**
+     * 获取当前应用的version code
+     */
+    public static Integer getAppCode(Context context) {
+        Integer versionCode = null;
+        //get the packageManager to load and read some values :D
+        PackageManager pm = context.getPackageManager();
+        //get the packageName
+        String packageName = context.getPackageName();
+        //Try to load the applicationInfo
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = pm.getPackageInfo(packageName, 0);
+        } catch (Exception ex) {
+        }
+
+        if (packageInfo != null) {
+            versionCode = packageInfo.versionCode;
+        }
+
+        return versionCode;
+    }
 }

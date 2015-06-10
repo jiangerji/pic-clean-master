@@ -1,12 +1,14 @@
 package cn.iam007.pic.clean.master;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 
 import cn.iam007.pic.clean.master.push.PushManager;
 import cn.iam007.pic.clean.master.recycler.RecyclerManager;
+import cn.iam007.pic.clean.master.service.Iam007Service;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 

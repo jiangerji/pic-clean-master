@@ -68,6 +68,12 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="cn.iam007.pic.clean.master.service.Iam007Service"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
         <!-- 用于表示渠道来源 -->
         <meta-data android:name="leancloud" android:value="Offical"/>
 

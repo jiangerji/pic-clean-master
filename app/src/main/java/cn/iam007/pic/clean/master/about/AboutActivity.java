@@ -1,8 +1,13 @@
 package cn.iam007.pic.clean.master.about;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +26,7 @@ import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.base.BaseActivity;
+import cn.iam007.pic.clean.master.service.Iam007Service;
 
 /**
  * Created by Administrator on 2015/6/8.
@@ -40,6 +46,14 @@ public class AboutActivity extends BaseActivity {
 
         mLoadingProgressBar = getToolbar().findViewById(R.id.toolbar_progress_bar);
         mLoadingProgressBar.setVisibility(View.VISIBLE);
+
+        bindService();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
     }
 
     private void initView() {
@@ -148,4 +162,23 @@ public class AboutActivity extends BaseActivity {
 
         return library;
     }
+
+    private void bindService() {
+        Intent intent = new Intent();
+        intent.setClass(this, Iam007Service.class);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private Iam007Service mService = null;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = ((Iam007Service.Iam007Binder) service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+    };
 }
