@@ -419,19 +419,16 @@ public class DuplicateScanFragment extends BaseFragment {
                 Log.d("debug",
                         "click item postion: "
                                 + (position - mDuplicateImageAdapter.getCustomHeaderCount()));
-                //                Toast.makeText(DuplicateScanActivity.this,
-                //                        "click : "
-                //                                + (postion - mDuplicateImageAdapter.getCustomHeaderCount()),
-                //                        Toast.LENGTH_SHORT)
-                //                        .show();
-                DuplicateHoldAdapter holdAdapter = DuplicateHoldAdapter.getInstance();
-                holdAdapter.setHoldAdapter(mDuplicateImageAdapter);
-                Intent intent = new Intent(getActivity(),
-                        PhotoActivity.class);
-                intent.putExtra("position",
-                        (position - mDuplicateImageAdapter.getCustomHeaderCount()));
-                intent.putExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
-                getActivity().startActivity(intent);
+                if (mDuplicateImageScanFinished) {
+                    DuplicateHoldAdapter holdAdapter = DuplicateHoldAdapter.getInstance();
+                    holdAdapter.setHoldAdapter(mDuplicateImageAdapter);
+                    Intent intent = new Intent(getActivity(),
+                            PhotoActivity.class);
+                    intent.putExtra("position",
+                            (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                    intent.putExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
+                    getActivity().startActivity(intent);
+                }
             }
         });
 

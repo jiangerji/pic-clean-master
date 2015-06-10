@@ -64,6 +64,8 @@ public class MainActivity extends BaseActivity {
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        PlatformUtils.applyFonts(findViewById(R.id.drawer_head));
     }
 
     @Override

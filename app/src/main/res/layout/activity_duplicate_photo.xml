@@ -32,16 +32,12 @@
         android:layout_alignBottom="@+id/textView1"
         android:layout_toEndOf="@+id/textView1"
         android:layout_toRightOf="@+id/textView1"
-        android:background="@drawable/bottom_num_text_bg"
-        android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:text="1"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:background="@drawable/campus_message_redbg"
         android:textColor="@color/white_light_FAFAFA"
-        android:textSize="12sp"
-        android:textStyle="bold"/>
+        android:gravity="center"
+        android:text="0"/>
 
     <Button
         android:id="@+id/delbutton"
