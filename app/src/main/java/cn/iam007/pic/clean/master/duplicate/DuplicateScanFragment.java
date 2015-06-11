@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVAnalytics;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.tonicartos.superslim.LayoutManager;
@@ -220,6 +221,7 @@ public class DuplicateScanFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
+            AVAnalytics.onEvent(getActivity(), "delete.btn.click", AV_TAG);
             DeleteConfirmDialog dialog = DeleteConfirmDialog.builder(getActivity());
 
             int index = 0;
@@ -581,6 +583,8 @@ public class DuplicateScanFragment extends BaseFragment {
         }
     }
 
+    public final static String AV_TAG = "duplicate.scan.fragment";
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -593,9 +597,11 @@ public class DuplicateScanFragment extends BaseFragment {
                 if (!mAutoSelected) {
                     mDuplicateImageAdapter.autoSelect(layoutManager);
                     item.setTitle(R.string.cancel_auto_select);
+                    AVAnalytics.onEvent(getActivity(), "auto.select", AV_TAG);
                 } else {
                     mDuplicateImageAdapter.cancelAutoSelect(layoutManager);
                     item.setTitle(R.string.auto_select);
+                    AVAnalytics.onEvent(getActivity(), "cancel.auto.select", AV_TAG);
                 }
 
                 mAutoSelected = !mAutoSelected;

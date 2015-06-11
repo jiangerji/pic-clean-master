@@ -69,6 +69,10 @@ public class MainActivity extends BaseActivity {
         mNavigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         PlatformUtils.applyFonts(findViewById(R.id.drawer_head));
+
+        Intent intent = new Intent();
+        intent.setClass(this, Iam007Service.class);
+        startService(intent);
     }
 
     @Override
@@ -76,9 +80,6 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         mExitHintToast = null;
-        Intent intent = new Intent();
-        intent.setClass(this, Iam007Service.class);
-        startService(intent);
     }
 
     @Override
@@ -88,6 +89,11 @@ public class MainActivity extends BaseActivity {
         if (mExitHintToast != null) {
             mExitHintToast.cancel();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         Intent intent = new Intent();
         intent.setClass(this, Iam007Service.class);
         stopService(intent);

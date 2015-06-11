@@ -6,6 +6,8 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.provider.MediaStore.Images.Media;
 
+import com.avos.avoscloud.AVAnalytics;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             mCallback.onDuplicateFindFinished(mTotalFileCount, mTotalFileSize);
         }
 
+        AVAnalytics.onEvent(mContext, "scan.file", mTotalFileCount);
 //        scanMediaStore();
 
         return 0L;

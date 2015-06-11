@@ -8,15 +8,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.URLUtil;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -178,7 +173,7 @@ public class Iam007Service extends Service {
         boolean ignore = SharedPreferenceUtil.getBoolean(IGNORE_CURRENT_VERSION, false);
         if (ignore && (ignoreVersionCode == versionCode)) {
             // 忽略该版本
-            Toast.makeText(this, "ignore", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "ignore", Toast.LENGTH_SHORT).show();
             return;
         } else {
             SharedPreferenceUtil.setBoolean(IGNORE_CURRENT_VERSION, false);

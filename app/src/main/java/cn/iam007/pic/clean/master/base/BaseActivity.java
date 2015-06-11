@@ -26,7 +26,6 @@ import com.avos.avoscloud.feedback.FeedbackThread;
 import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.about.AboutActivity;
 import cn.iam007.pic.clean.master.base.widget.SystemBarTintManager;
 import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
 import cn.iam007.pic.clean.master.main.MainActivity;

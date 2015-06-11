@@ -1,7 +1,5 @@
 package cn.iam007.pic.clean.master.delete;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -19,18 +17,16 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
+import com.avos.avoscloud.AVAnalytics;
+
+import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.duplicate.DuplicateItemImage;
 import cn.iam007.pic.clean.master.utils.DialogBuilder;
-import cn.iam007.pic.clean.master.utils.FileUtil;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
-import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class DeleteConfirmDialog {
@@ -147,24 +143,16 @@ public class DeleteConfirmDialog {
         third = (ImageView) mDialog.findViewById(R.id.third);
         forth = (ImageView) mDialog.findViewById(R.id.forth);
 
-//        View deleteConfirm = getActionButton(DialogAction.POSITIVE);
-//        deleteConfirm.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                startToDelete();
-//                dismiss();
-//            }
-//        });
-
         builder.callback(new MaterialDialog.ButtonCallback() {
             @Override
             public void onPositive(MaterialDialog dialog) {
                 startToDelete();
+                AVAnalytics.onEvent(dialog.getContext(), "confirm", "delete.dialog");
             }
 
             @Override
             public void onNegative(MaterialDialog dialog) {
+                AVAnalytics.onEvent(dialog.getContext(), "cancel", "delete.dialog");
             }
         });
     }

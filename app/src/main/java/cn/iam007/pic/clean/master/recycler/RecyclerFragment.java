@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +17,7 @@ import android.widget.Button;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.avos.avoscloud.AVAnalytics;
 
 import java.io.File;
 
@@ -100,34 +100,30 @@ public class RecyclerFragment extends BaseFragment {
 
         mRecyclerImageAdapter = new RecyclerImageAdapter();
         mRecyclerImageContainer.setAdapter(mRecyclerImageAdapter);
-        mRecyclerImageAdapter.setOnItemClickListener(new RecyclerImageAdapter.MyItemClickListener() {
+        mRecyclerImageAdapter.setOnItemClickListener(
+                new RecyclerImageAdapter.MyItemClickListener() {
 
-            @Override
-            public void onItemClick(View view, int position) {
-                Log.d("debug",
-                        "click item postion: "
-                                + position);
-                //                Toast.makeText(DuplicateScanActivity.this,
-                //                        "click : "
-                //                                + (postion - mDuplicateImageAdapter.getCustomHeaderCount()),
-                //                        Toast.LENGTH_SHORT)
-                //                        .show();
-                RecyclerHoldAdapter holdAdapter = RecyclerHoldAdapter.getInstance();
-                holdAdapter.setHoldAdapter(mRecyclerImageAdapter);
-                Intent intent = new Intent(getActivity(),
-                        PhotoActivity.class);
-                intent.putExtra("position", position);
-                intent.putExtra("fromFragment", MainActivity.RECYCLER_FRAGMENT);
-                getActivity().startActivity(intent);
-            }
-        });
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        RecyclerHoldAdapter holdAdapter = RecyclerHoldAdapter.getInstance();
+                        holdAdapter.setHoldAdapter(mRecyclerImageAdapter);
+                        Intent intent = new Intent(getActivity(),
+                                PhotoActivity.class);
+                        intent.putExtra("position", position);
+                        intent.putExtra("fromFragment", MainActivity.RECYCLER_FRAGMENT);
+                        getActivity().startActivity(intent);
+                    }
+                });
 
         PlatformUtils.applyFonts(rootView);
     }
 
+    private final static String AV_TAG = "recycler.fragment";
+
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            AVAnalytics.onEvent(v.getContext(), "delete.btn.click", AV_TAG);
             DialogBuilder builder = new DialogBuilder(getActivity());
             builder.title(R.string.recycle)
                     .positiveText(R.string.delete_confirm)
@@ -139,6 +135,7 @@ public class RecyclerFragment extends BaseFragment {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            AVAnalytics.onEvent(v.getContext(), "delete.recycler", AV_TAG);
                             startToDelete();
                             dialog.dismiss();
                         }
@@ -214,6 +211,7 @@ public class RecyclerFragment extends BaseFragment {
     private View.OnClickListener mRestoreBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            AVAnalytics.onEvent(v.getContext(), "restore.btn.click", AV_TAG);
             DialogBuilder builder = new DialogBuilder(getActivity());
 
             builder.title(R.string.recycle_restore)
@@ -224,6 +222,7 @@ public class RecyclerFragment extends BaseFragment {
             builder.callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {
+                    AVAnalytics.onEvent(dialog.getContext(), "restore.recycler", AV_TAG);
                     startToRestore();
                 }
             });
@@ -263,7 +262,7 @@ public class RecyclerFragment extends BaseFragment {
                 mRecyclerImageAdapter.restoreItems(getActivity(), mUpdateProgress);
                 try {
                     mProgressDialog.dismiss();
-                } catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 mUpdateHandler.sendEmptyMessage(1);
@@ -313,6 +312,11 @@ public class RecyclerFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_select_all:
+                if (mSelectAll){
+                    AVAnalytics.onEvent(getActivity(), "cancel.select.all", AV_TAG);
+                } else{
+                    AVAnalytics.onEvent(getActivity(), "select.all", AV_TAG);
+                }
                 mSelectAll = !mSelectAll;
                 applySelectState();
                 mRecyclerImageAdapter.selectAll(mSelectAll, mLayoutManager);

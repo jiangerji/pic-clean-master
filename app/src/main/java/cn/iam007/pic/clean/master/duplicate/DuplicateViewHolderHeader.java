@@ -7,6 +7,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVAnalytics;
+
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog.OnDeleteStatusListener;
@@ -34,6 +36,8 @@ public class DuplicateViewHolderHeader extends DuplicateViewHolder {
             public void onClick(View v) {
                 LogUtil.d("click on " + v);
                 showDeleteDialog(v.getContext());
+                AVAnalytics.onEvent(v.getContext(), "delete.section.btn.click",
+                        DuplicateScanFragment.AV_TAG);
             }
         });
     }
@@ -85,7 +89,8 @@ public class DuplicateViewHolderHeader extends DuplicateViewHolder {
                     handler.post(new Runnable() {
                         public void run() {
                             getAdapter().deleteSection(getDuplicateImageItem());
-                            SharedPreferenceUtil.subLong(SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
+                            SharedPreferenceUtil.subLong(
+                                    SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_SIZE,
                                     size);
                         }
                     });
