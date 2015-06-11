@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -49,13 +48,15 @@ public class MainActivity extends BaseActivity {
         showDuplicateScanFragment();
     }
 
+    CustomDrawerToggle actionBarDrawerToggle;
+
     private void _initSlideMenu() {
         // Handle DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         PlatformUtils.applyFonts(mDrawerLayout);
 
         // Handle ActionBarDrawerToggle
-        ActionBarDrawerToggle actionBarDrawerToggle = new CustomDrawerToggle(this,
+        actionBarDrawerToggle = new CustomDrawerToggle(this,
                 mDrawerLayout,
                 mToolbar,
                 R.string.drawer_open,
@@ -73,6 +74,16 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.setClass(this, Iam007Service.class);
         startService(intent);
+    }
+
+    public void disableDrawerLayout() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        actionBarDrawerToggle.disableNavigation();
+    }
+
+    public void enableDrawerLayout() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        actionBarDrawerToggle.enableNavigation();
     }
 
     @Override

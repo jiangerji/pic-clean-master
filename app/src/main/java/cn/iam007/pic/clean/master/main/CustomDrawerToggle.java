@@ -1,12 +1,14 @@
 package cn.iam007.pic.clean.master.main;
 
 import android.app.Activity;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.AbsoluteSizeSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +22,8 @@ import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 public class CustomDrawerToggle extends ActionBarDrawerToggle {
 
     private Activity mActivity;
+    private boolean mDrawerLayoutEnable = true;
+    private DrawerLayout mDrawerLayout;
 
     public CustomDrawerToggle(Activity activity,
                               DrawerLayout drawerLayout,
@@ -27,6 +31,32 @@ public class CustomDrawerToggle extends ActionBarDrawerToggle {
                               int openDrawerContentDescRes, int closeDrawerContentDescRes) {
         super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
         mActivity = activity;
+        mDrawerLayout = drawerLayout;
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDrawerLayoutEnable) {
+                    toggle();
+                }
+            }
+        });
+    }
+
+    private void toggle() {
+        if (mDrawerLayout.isDrawerVisible(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
+    public void enableNavigation() {
+        mDrawerLayoutEnable = true;
+    }
+
+    public void disableNavigation() {
+        mDrawerLayoutEnable = false;
     }
 
     @Override
@@ -53,4 +83,5 @@ public class CustomDrawerToggle extends ActionBarDrawerToggle {
         super.onDrawerStateChanged(newState);
         LogUtil.d("onDrawerStateChanged:" + newState);
     }
+
 }

@@ -40,7 +40,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
             mCallback.onDuplicateFindFinished(mTotalFileCount, mTotalFileSize);
         }
 
-        AVAnalytics.onEvent(mContext, "scan.file", mTotalFileCount);
+        AVAnalytics.onEvent(mContext, "scan.file.count", mTotalFileCount);
+        AVAnalytics.onEvent(mContext, "scan.file.size", (int) mTotalFileSize / 1024 / 1024);
 //        scanMediaStore();
 
         return 0L;
@@ -167,7 +168,8 @@ public class DuplicateImageFindTask extends AsyncTask<String, Integer, Long> {
                 imageHolder = (ImageHolder) objs[i];
 
                 if (mCallback != null) {
-                    mCallback.onDuplicateFindExecute(imageHolder.getImagePath(), imageHolder.getImageSize());
+                    mCallback.onDuplicateFindExecute(imageHolder.getImagePath(),
+                            imageHolder.getImageSize());
                 }
 
                 index++;
