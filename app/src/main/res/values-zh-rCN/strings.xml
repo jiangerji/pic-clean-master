@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">图片清理大师</string>
+    <string name="app_description">图片清理大师提供扫描手机的相册，并找出相册中可能相似的图片，清理多余的照片。自拍达人、摄影大师可以放心的拍，我们来帮你找出最好的照片。</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="recycle">图片回收站</string>
+    <string name="recycle_restore">图片恢复</string>
+    <string name="feedback">意见反馈</string>
+    <string name="deleting_progress">正在删除相似图片&#8230;</string>
+    <string name="deleting_progress_format">正在删除相似图片 (%1$d/%2$d)&#8230;</string>
+    <string name="restoring_progress">正在恢复图片&#8230;</string>
+    <string name="restoring_progress_format">正在恢复图片 (%1$d/%2$d)&#8230;</string>
+    <string name="need_handle">需要处理</string>
+    <string name="finish_handle">完成处理</string>
+    <string name="auto_select">智能选择</string>
+    <string name="cancel_auto_select">取消智能选择</string>
+    <string name="select_all">全选</string>
+    <string name="cancel_select_all">取消全选</string>
+    <string name="restore">恢复</string>
+
+    <string name="exit_hint">再按一次退出程序</string>
+    
+    <string name="slide_menu_hint_total_handle">累计处理照片</string>
+    <string name="slide_menu_duplicate_scan">相似照片</string>
+    
+    <string name="delete_confirm">确认删除</string>
+    <string name="delete_with_size">删除(%1$s)</string>
+    
+    <string name="delete_message">删除共%1$d张照片？7天内可在%2$s找回</string>
+
+    <string name="slide_menu_already_handled_pic_count">%1$d张</string>
+
+    <string name="recycler_delete_message">确定永久删除这%1$d张图片？</string>
+    <string name="recycler_restore_message">共%1$d张照片将被恢复。</string>
+    
+    <string name="scanning">正在扫描：%1$s %2$s</string>
+    
+    <string name="scan_result_progress_hint">共扫描%1$d张图片，发现%2$d张相似照片</string>
+
+    <string name="delete_duplicate_finish_hint">共删除%1$d张相似图片</string>
+
+    <string name="delete_hint">请选择需要删除的文件</string>
+
+    <!-- Feedback相关 -->
+    <string name="open_feedback_dialog_title">友情提示</string>
+    <string name="open_feedback_dialog_content">您的反馈有新的回复</string>
+    <string name="open_feedback_dialog_positive">去查看</string>
+    <string name="feedback_contact_hint">Email或QQ号码</string>
+    <string name="feedback_input_hint">填写反馈</string>
+
+    <!-- About相关 -->
+    <string name="about">关于</string>
+    <string name="about_version">版本号：%1$s</string>
+
+    <string name="loading">loading</string>
+
+    <!-- 更新相关Start -->
+    <string name="update_dialog_title">版本更新</string>
+    <string name="update_dialog_content">发现新版本：%1$s\n%2$s</string>
+    <string name="update_dialog_confirm">立即更新</string>
+    <string name="update_dialog_ignore">不再提醒</string>
+    <string name="update_dialog_cancel">取消</string>
+    <string name="update_dialog_download_apk_failed">更新失败：无法下载安装包。</string>
+    <string name="update_dialog_downloading">下载安装包&#8230;</string>
+    <string name="update_dialog_download_in_background">后台下载</string>
+    <string name="update_dialog_content_detail">查看详情</string>
+    <string name="update_dialog_detail_title">新特性</string>
+    <!-- 更新相关End -->
+</resources>
