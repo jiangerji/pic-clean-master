@@ -29,24 +29,24 @@
 
     <string name="exit_hint">One more press to exit</string>
     
-    <string name="slide_menu_hint_total_handle">photo(s) have been processed</string>
+    <string name="slide_menu_hint_total_handle">photos have been processed</string>
     <string name="slide_menu_duplicate_scan">Duplicate Photos</string>
     
     <string name="delete_confirm">Confirm Delete</string>
     <string name="delete_with_size">Delete(%1$s)</string>
     
-    <string name="delete_message">Delete %1$d photo(s)？They will be kept for 7 days in %2$s</string>
+    <string name="delete_message">Delete %1$d photos？They will be kept for 7 days in %2$s</string>
 
     <string name="slide_menu_already_handled_pic_count">%1$d\u0020</string>
 
     <string name="recycler_delete_message">Are you sure to delete %1$d photos permanently?</string>
-    <string name="recycler_restore_message">%1$d Photos(s) will be restored.</string>
+    <string name="recycler_restore_message">%1$d Photos will be restored.</string>
     
     <string name="scanning">Scanning：%1$s %2$s</string>
     
-    <string name="scan_result_progress_hint">Scan %1$d photo(s), find %2$d duplicate photo(s)</string>
+    <string name="scan_result_progress_hint">Scan %1$d photos, find %2$d duplicate photos</string>
 
-    <string name="delete_duplicate_finish_hint">%1$d duplicate photo(s) have been Deleted</string>
+    <string name="delete_duplicate_finish_hint">%1$d duplicate photos have been deleted</string>
 
     <string name="delete_hint">Selete items to delete</string>
 
