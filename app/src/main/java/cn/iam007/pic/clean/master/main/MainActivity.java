@@ -8,12 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.about.AboutActivity;
+import cn.iam007.pic.clean.master.about.AboutFragment;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
@@ -110,9 +109,8 @@ public class MainActivity extends BaseActivity {
         stopService(intent);
     }
 
-    private final void openAbout() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
+    public Toolbar getToolbar() {
+        return mToolbar;
     }
 
     private NavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener =
@@ -136,7 +134,9 @@ public class MainActivity extends BaseActivity {
                             break;
 
                         case R.id.navigation_about:
-                            openAbout();
+//                            openAbout();
+                            pos = ABOUT_FRAGMENT;
+                            menuItem.setChecked(true);
                             break;
 
                         default:
@@ -153,8 +153,10 @@ public class MainActivity extends BaseActivity {
 
     public final static int DUPLICATE_SCAN_FRAGMENT = 0x00;
     public final static int RECYCLER_FRAGMENT = 0x01;
+    public final static int ABOUT_FRAGMENT = 0x03;
     private DuplicateScanFragment mDuplicateScanFragment = null;
     private RecyclerFragment mRecyclerFragment = null;
+    private AboutFragment mAboutFragment = null;
 
     private void setFragment(int pos) {
         if (pos != mCurrentFragment) {
@@ -173,6 +175,13 @@ public class MainActivity extends BaseActivity {
                         mRecyclerFragment = new RecyclerFragment();
                     }
                     fragment = mRecyclerFragment;
+                    break;
+
+                case ABOUT_FRAGMENT:
+                    if (mAboutFragment == null){
+                        mAboutFragment = new AboutFragment();
+                    }
+                    fragment = mAboutFragment;
                     break;
 
                 default:

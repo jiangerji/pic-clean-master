@@ -67,8 +67,8 @@
     <!-- 更新相关Start -->
     <string name="update_dialog_title">Version Update</string>
     <string name="update_dialog_content">New Version Available：%1$s\n%2$s</string>
-    <string name="update_dialog_confirm">Check for Updates</string>
-    <string name="update_dialog_ignore">Do not ask again</string>
+    <string name="update_dialog_confirm">Update</string>
+    <string name="update_dialog_ignore">Ignore</string>
     <string name="update_dialog_cancel">Cancel</string>
     <string name="update_dialog_download_apk_failed">Update Failed：Unable to download installation package.</string>
     <string name="update_dialog_downloading">Download update package &#8230;</string>

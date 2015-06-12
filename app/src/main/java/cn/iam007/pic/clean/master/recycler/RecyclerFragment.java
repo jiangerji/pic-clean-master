@@ -36,11 +36,8 @@ public class RecyclerFragment extends BaseFragment {
     private View mRootView = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setHasOptionsMenu(true);
-        getActivity().setTitle(R.string.recycle);
+    public String getFragmentTitle() {
+        return getString(R.string.recycle);
     }
 
     @Override
