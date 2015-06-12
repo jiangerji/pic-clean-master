@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -67,7 +68,12 @@ public class MainActivity extends BaseActivity {
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Menu menu = mNavigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem menuItem = menu.getItem(i);
 
+            PlatformUtils.applyFontToMenuItem(menuItem);
+        }
         PlatformUtils.applyFonts(findViewById(R.id.drawer_head));
 
         Intent intent = new Intent();

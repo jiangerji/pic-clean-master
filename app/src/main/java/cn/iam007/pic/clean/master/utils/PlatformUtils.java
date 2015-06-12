@@ -1,11 +1,5 @@
 package cn.iam007.pic.clean.master.utils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.UUID;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -13,12 +7,20 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
 import android.provider.Settings.Secure;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.UUID;
 
 import cn.iam007.pic.clean.master.Iam007Application;
 
@@ -238,6 +240,19 @@ public class PlatformUtils {
         Typeface font = Typeface.createFromAsset(Iam007Application.getApplication().getAssets(),
                 "fonts/RobotoCondensed-Light.ttf");
         applyFonts(view, font);
+    }
+
+    /**
+     * 为MenuItem修改字体字体
+     *
+     * @param item
+     */
+    public static void applyFontToMenuItem(MenuItem item) {
+        Typeface font = Typeface.createFromAsset(Iam007Application.getApplication().getAssets(),
+                "fonts/RobotoCondensed-Light.ttf");
+        SpannableString mNewTitle = new SpannableString(item.getTitle());
+        mNewTitle.setSpan(new CustomTypefaceSpan("" , font), 0 , mNewTitle.length(),  Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        item.setTitle(mNewTitle);
     }
 
     /**

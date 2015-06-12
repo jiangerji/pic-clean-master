@@ -37,7 +37,7 @@
     
     <string name="delete_message">Delete %1$d photo(s)？They will be kept for 7 days in %2$s</string>
 
-    <string name="slide_menu_already_handled_pic_count">%1$d</string>
+    <string name="slide_menu_already_handled_pic_count">%1$d\u0020</string>
 
     <string name="recycler_delete_message">Are you sure to delete %1$d photos permanently?</string>
     <string name="recycler_restore_message">%1$d Photos(s) will be restored.</string>
