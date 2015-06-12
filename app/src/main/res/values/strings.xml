@@ -26,6 +26,7 @@
     <string name="select_all">Select All</string>
     <string name="cancel_select_all">Deselect All</string>
     <string name="restore">Restore</string>
+    <string name="select_number">Selected:</string>
 
     <string name="exit_hint">One more press to exit</string>
     

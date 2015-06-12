@@ -26,6 +26,7 @@
     <string name="select_all">全选</string>
     <string name="cancel_select_all">取消全选</string>
     <string name="restore">恢复</string>
+    <string name="select_number">选中：</string>
 
     <string name="exit_hint">再按一次退出程序</string>
     
