@@ -289,6 +289,13 @@ public class DuplicateScanFragment extends BaseFragment {
         @Override
         public void onDuplicateFindFinished(
                 final int fileCount, final long fileSize) {
+            try {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).enableDrawerLayout();
+                }
+            } catch (Exception e) {
+
+            }
             mIsStarted = false;
             LogUtil.d("Find finished:" + mDuplicateImageFileCount);
             Message msg = mHandler.obtainMessage(SCAN_HINT_UPDATE);
@@ -319,6 +326,9 @@ public class DuplicateScanFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             if (!mIsStarted) {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).disableDrawerLayout();
+                }
                 startDuplicateImageFindTask();
                 mProgressBar.setVisibility(View.VISIBLE);
                 mFloatingButton.setVisibility(View.INVISIBLE);
@@ -414,25 +424,26 @@ public class DuplicateScanFragment extends BaseFragment {
         mDuplicateImageAdapter.addCustomHeader(R.layout.fragment_duplicate_scan_header);
         mDuplicateImageAdapter.addCustomHeader(R.layout.fragment_duplicate_scan_progress);
         mDuplicateImageContainer.setAdapter(mDuplicateImageAdapter);
-        mDuplicateImageAdapter.setOnItemClickListener(new DuplicateImageAdapter.MyItemClickListener() {
+        mDuplicateImageAdapter.setOnItemClickListener(
+                new DuplicateImageAdapter.MyItemClickListener() {
 
-            @Override
-            public void onItemClick(View view, int position) {
-                Log.d("debug",
-                        "click item postion: "
-                                + (position - mDuplicateImageAdapter.getCustomHeaderCount()));
-                if (mDuplicateImageScanFinished) {
-                    DuplicateHoldAdapter holdAdapter = DuplicateHoldAdapter.getInstance();
-                    holdAdapter.setHoldAdapter(mDuplicateImageAdapter);
-                    Intent intent = new Intent(getActivity(),
-                            PhotoActivity.class);
-                    intent.putExtra("position",
-                            (position - mDuplicateImageAdapter.getCustomHeaderCount()));
-                    intent.putExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
-                    getActivity().startActivity(intent);
-                }
-            }
-        });
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Log.d("debug",
+                                "click item postion: "
+                                        + (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                        if (mDuplicateImageScanFinished) {
+                            DuplicateHoldAdapter holdAdapter = DuplicateHoldAdapter.getInstance();
+                            holdAdapter.setHoldAdapter(mDuplicateImageAdapter);
+                            Intent intent = new Intent(getActivity(),
+                                    PhotoActivity.class);
+                            intent.putExtra("position",
+                                    (position - mDuplicateImageAdapter.getCustomHeaderCount()));
+                            intent.putExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
+                            getActivity().startActivity(intent);
+                        }
+                    }
+                });
 
         mFloatingButton =
                 (FloatingActionButton) rootView.findViewById(R.id.startProgress);
@@ -526,7 +537,7 @@ public class DuplicateScanFragment extends BaseFragment {
 
         mDeleteBtnContainer.setVisibility(View.VISIBLE);
         mDeleteBtnContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                        R.anim.abc_slide_in_bottom));
+                R.anim.abc_slide_in_bottom));
 
         final int scanHeaderViewHeight = mScanHeaderView.getHeight();
         final float scanCountTextSize = mScanCount.getTextSize();

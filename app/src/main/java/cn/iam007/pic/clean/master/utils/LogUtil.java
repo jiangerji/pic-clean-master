@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class LogUtil {
 
-    private final static boolean LOGGER_ENABLE = true;
+    private final static boolean LOGGER_ENABLE = false;
 
     //    public static Logger getLogger() {
     //        return Logger.getLogger("main");
