@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Photo Cleanup Masters</string>
-    <string name="app_description">Photo clear master scan cell phone photo albums, and find a photo album that may be similar in pictures, clean up the redundant photos. Take talent, photography masters can rest assured, we will help you find the best photos.</string>
+    <string name="app_name">Photo Clean Master</string>
+    <string name="app_description">Photo clean master scan cell phone photo albums, and find a photo album that may be similar in pictures, clean up the redundant photos. Take talent, photography masters can rest assured, we will help you find the best photos.</string>
     <string name="action_settings">Settings</string>
     
     <string name="drawer_open">open</string>
@@ -12,13 +12,13 @@
     <string name="stop">Stop</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="recycle">Photo Trash</string>
-    <string name="recycle_restore">Photo Restore</string>
+    <string name="recycle">Photo Recovery</string>
+    <string name="recycle_restore">Photo Recovery</string>
     <string name="feedback">Feedback</string>
     <string name="deleting_progress">Deleting duplicate photo &#8230;</string>
     <string name="deleting_progress_format">Deleting duplicate photo (%1$d/%2$d)&#8230;</string>
-    <string name="restoring_progress">Restoring photo &#8230;</string>
-    <string name="restoring_progress_format">Restoring photo (%1$d/%2$d)&#8230;</string>
+    <string name="restoring_progress">Recoverying photo &#8230;</string>
+    <string name="restoring_progress_format">Recoverying photo (%1$d/%2$d)&#8230;</string>
     <string name="need_handle">wait to processed</string>
     <string name="finish_handle">Done</string>
     <string name="auto_select">Smart Choice</string>
