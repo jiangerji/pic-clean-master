@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Photo Cleanup Masters</string>
-    <string name="app_description">Photo clear master scan cell phone photo albums, and find a photo album that may be similar in pictures, clean up the redundant photos. Take talent, photography masters can rest assured, we will help you find the best photos.</string>
+    <string name="app_name">Image Screening Master</string>
+    <string name="app_description">Image Screening Master could help you scan the phone album, find out the images which are possibly similar and clean up the needless images. Selfie talents and photographing masters could use this APP as their wishes. We will pick out the best one for you.</string>
     <string name="action_settings">Settings</string>
     
     <string name="drawer_open">open</string>
@@ -12,51 +12,51 @@
     <string name="stop">Stop</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="recycle">Photo Trash</string>
-    <string name="recycle_restore">Photo Restore</string>
+    <string name="recycle">Image Recycle</string>
+    <string name="recycle_restore">Image Restoration</string>
     <string name="feedback">Feedback</string>
-    <string name="deleting_progress">Deleting duplicate photo &#8230;</string>
-    <string name="deleting_progress_format">Deleting duplicate photo (%1$d/%2$d)&#8230;</string>
-    <string name="restoring_progress">Restoring photo &#8230;</string>
-    <string name="restoring_progress_format">Restoring photo (%1$d/%2$d)&#8230;</string>
-    <string name="need_handle">wait to processed</string>
-    <string name="finish_handle">Done</string>
-    <string name="auto_select">Smart Choice</string>
+    <string name="deleting_progress">Similar images deleting &#8230;</string>
+    <string name="deleting_progress_format">Similar images deleting (%1$d/%2$d)&#8230;</string>
+    <string name="restoring_progress">Image recovering &#8230;</string>
+    <string name="restoring_progress_format">Image recovering (%1$d/%2$d)&#8230;</string>
+    <string name="need_handle">processing needed</string>
+    <string name="finish_handle">processing finished</string>
+    <string name="auto_select">Smart Screening</string>
     <string name="cancel_auto_select">Deselect All</string>
     <string name="select_all">Select All</string>
     <string name="cancel_select_all">Deselect All</string>
-    <string name="restore">Restore</string>
+    <string name="restore">Restoration</string>
     <string name="select_number">Selected:</string>
 
-    <string name="exit_hint">One more press to exit</string>
+    <string name="exit_hint">Repress the exit process</string>
     
-    <string name="slide_menu_hint_total_handle">photos have been processed</string>
-    <string name="slide_menu_duplicate_scan">Duplicate Photos</string>
+    <string name="slide_menu_hint_total_handle">screened image total</string>
+    <string name="slide_menu_duplicate_scan">Similar Images</string>
     
-    <string name="delete_confirm">Confirm Delete</string>
-    <string name="delete_with_size">Delete(%1$s)</string>
+    <string name="delete_confirm">Delete Confirm</string>
+    <string name="delete_with_size">Delete (%1$s)</string>
     
-    <string name="delete_message">Delete %1$d photos？They will be kept for 7 days in %2$s</string>
+    <string name="delete_message">%1$d image has been deleted? you can recovering them at %2$s within 7 days.</string>
 
     <string name="slide_menu_already_handled_pic_count">%1$d\u0020</string>
 
-    <string name="recycler_delete_message">Are you sure to delete %1$d photos permanently?</string>
-    <string name="recycler_restore_message">%1$d Photos will be restored.</string>
+    <string name="recycler_delete_message">Delete %1$d images completely?</string>
+    <string name="recycler_restore_message">%1$d images would be recovering.</string>
     
     <string name="scanning">Scanning：%1$s %2$s</string>
     
-    <string name="scan_result_progress_hint">Scan %1$d photos, find %2$d duplicate photos</string>
+    <string name="scan_result_progress_hint">%1$d images has been scanned,%2$d images need smart screening</string>
 
-    <string name="delete_duplicate_finish_hint">%1$d duplicate photos have been deleted</string>
+    <string name="delete_duplicate_finish_hint">%1$d images has been deleted</string>
 
-    <string name="delete_hint">Selete items to delete</string>
+    <string name="delete_hint">please seclect images</string>
 
     <!-- Feedback相关 -->
     <string name="open_feedback_dialog_title">Tips</string>
-    <string name="open_feedback_dialog_content">Your feedback have new reply</string>
-    <string name="open_feedback_dialog_positive">Open</string>
-    <string name="feedback_contact_hint">Email or QQ</string>
-    <string name="feedback_input_hint">Write feedback</string>
+    <string name="open_feedback_dialog_content">you got a new massage</string>
+    <string name="open_feedback_dialog_positive">Proceed to check</string>
+    <string name="feedback_contact_hint">Email ADD or QQ</string>
+    <string name="feedback_input_hint">Feedback Writing</string>
 
     <!-- About相关 -->
     <string name="about">About</string>
@@ -67,13 +67,13 @@
     <!-- 更新相关Start -->
     <string name="update_dialog_title">Version Update</string>
     <string name="update_dialog_content">New Version Available：%1$s\n%2$s</string>
-    <string name="update_dialog_confirm">Check for Updates</string>
-    <string name="update_dialog_ignore">Do not ask again</string>
+    <string name="update_dialog_confirm">Upgrade immediately</string>
+    <string name="update_dialog_ignore">Do not remind me anymore</string>
     <string name="update_dialog_cancel">Cancel</string>
-    <string name="update_dialog_download_apk_failed">Update Failed：Unable to download installation package.</string>
-    <string name="update_dialog_downloading">Download update package &#8230;</string>
-    <string name="update_dialog_download_in_background">Download in_background</string>
-    <string name="update_dialog_content_detail">View details</string>
+    <string name="update_dialog_download_apk_failed">Upgrade failure: apk download failed</string>
+    <string name="update_dialog_downloading">downloading &#8230;</string>
+    <string name="update_dialog_download_in_background">Back end downloading</string>
+    <string name="update_dialog_content_detail">Check the details</string>
     <string name="update_dialog_detail_title">New Features</string>
     <!-- 更新相关End -->
 </resources>
