@@ -26,10 +26,12 @@ public class DefaultPushHandler extends PushHandler {
         String command = bundle.getString(JPushInterface.EXTRA_EXTRA);
         int action = ACTION_UNKNOWN;
         String url = null;
+        String title = null;
         try {
             JSONObject commandJson = new JSONObject(command);
             action = commandJson.optInt("action");
             url = commandJson.optString("url");
+            title = commandJson.optString("title");
         } catch (Exception e) {
 
         }
@@ -38,7 +40,8 @@ public class DefaultPushHandler extends PushHandler {
             //打开自定义的Activity
             Intent i = new Intent(context, WebViewActivity.class);
             i.putExtra(WebViewActivity.DATA_URL, url);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.putExtra(WebViewActivity.DATA_TITLE, title);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
         }
 

@@ -60,13 +60,6 @@
             android:screenOrientation="portrait" >
         </activity>
 
-        <activity
-            android:name="cn.iam007.pic.clean.master.about.AboutActivity"
-            android:label="@string/about"
-            android:configChanges="keyboard|keyboardHidden|orientation"
-            android:screenOrientation="portrait" >
-        </activity>
-
         <service
             android:name="cn.iam007.pic.clean.master.service.Iam007Service"
             android:enabled="true"

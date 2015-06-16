@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.LogUtil;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 /**
@@ -57,6 +58,17 @@ public class CustomDrawerToggle extends ActionBarDrawerToggle {
 
     public void disableNavigation() {
         mDrawerLayoutEnable = false;
+    }
+
+    private boolean mInitFont = false;
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+        super.onDrawerSlide(drawerView, slideOffset);
+        if (!mInitFont){
+            PlatformUtils.applyFonts(drawerView);
+            mInitFont = true;
+        }
     }
 
     @Override

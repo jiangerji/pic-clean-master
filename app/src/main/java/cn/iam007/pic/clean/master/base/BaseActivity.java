@@ -143,7 +143,7 @@ public class BaseActivity extends AppCompatActivity {
      *
      * @return
      */
-    public final Toolbar getToolbar() {
+    public Toolbar getToolbar() {
         return mToolbar;
     }
 

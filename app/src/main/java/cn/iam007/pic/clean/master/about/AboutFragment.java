@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.about;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,11 +8,17 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
 import com.avos.avoscloud.AVException;
@@ -25,41 +32,45 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.base.BaseActivity;
+import cn.iam007.pic.clean.master.base.BaseFragment;
+import cn.iam007.pic.clean.master.feedback.FeedbackActivity;
 import cn.iam007.pic.clean.master.service.Iam007Service;
+import cn.iam007.pic.clean.master.utils.PlatformUtils;
 
 /**
  * Created by Administrator on 2015/6/8.
  */
-public class AboutActivity extends BaseActivity {
+public class AboutFragment extends BaseFragment {
 
     RecyclerView mRecyclerView;
     AboutRecyclerViewAdapter mAdapter;
     View mLoadingProgressBar;
 
+    private View mRootView = null;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_about);
-        initView();
-
-        mLoadingProgressBar = getToolbar().findViewById(R.id.toolbar_progress_bar);
-        mLoadingProgressBar.setVisibility(View.VISIBLE);
-
-        bindService();
+    public String getFragmentTitle() {
+        return getString(R.string.about);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(mServiceConnection);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (mRootView == null) {
+            mRootView = inflater.inflate(R.layout.activity_about, null);
+            initView(mRootView);
+            PlatformUtils.applyFonts(mRootView);
+
+            mLoadingProgressBar = getToolbar().findViewById(R.id.toolbar_progress_bar);
+            mLoadingProgressBar.setVisibility(View.VISIBLE);
+        }
+        return mRootView;
     }
 
-    private void initView() {
+    private void initView(View view) {
         // init CardView
-        mRecyclerView = (RecyclerView) findViewById(R.id.cardListView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.cardListView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new AboutRecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -74,9 +85,9 @@ public class AboutActivity extends BaseActivity {
 
     private void _initAdatperHeader() {
         //get the packageManager to load and read some values :D
-        PackageManager pm = getPackageManager();
+        PackageManager pm = getActivity().getPackageManager();
         //get the packageName
-        String packageName = getPackageName();
+        String packageName = getActivity().getPackageName();
         //Try to load the applicationInfo
         PackageInfo packageInfo = null;
         try {
@@ -127,13 +138,14 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void hideLoadingView() {
-        runOnUiThread(new Runnable() {
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 if (mLoadingProgressBar != null) {
                     mLoadingProgressBar.setVisibility(View.GONE);
                     mLoadingProgressBar.startAnimation(
-                            AnimationUtils.loadAnimation(AboutActivity.this, R.anim.fade_out));
+                            AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out));
                 }
             }
         });
@@ -163,10 +175,22 @@ public class AboutActivity extends BaseActivity {
         return library;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        bindService();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getActivity().unbindService(mServiceConnection);
+    }
+
     private void bindService() {
         Intent intent = new Intent();
-        intent.setClass(this, Iam007Service.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        intent.setClass(getActivity(), Iam007Service.class);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private Iam007Service mService = null;
@@ -181,4 +205,21 @@ public class AboutActivity extends BaseActivity {
             mService = null;
         }
     };
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.about_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_feedback);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                /**
+                 * 打开反馈页面
+                 */
+                Intent intent = new Intent(getActivity(), FeedbackActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
+    }
 }
