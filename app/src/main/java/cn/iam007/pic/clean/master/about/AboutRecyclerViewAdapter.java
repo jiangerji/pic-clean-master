@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.LinkedList;
 import java.util.List;
 
+import cn.iam007.pic.clean.master.BuildConfig;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.webview.WebViewActivity;
@@ -56,7 +57,12 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //Set the description or hide it
             holder.aboutAppName.setText(R.string.app_name);
             //set the Version
-            holder.aboutVersion.setText(ctx.getString(R.string.about_version, aboutVersionName));
+            String version = ctx.getString(R.string.about_version, aboutVersionName,
+                    BuildConfig.GIT_REVISION);
+            if (BuildConfig.DEBUG){
+                version += BuildConfig.FLAVOR;
+            }
+            holder.aboutVersion.setText(version);
             //Set the description
             holder.aboutAppDescription.setText(Html.fromHtml(getDescription()));
         } else if (viewHolder instanceof ViewHolder) {

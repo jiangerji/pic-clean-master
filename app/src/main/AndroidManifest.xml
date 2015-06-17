@@ -67,7 +67,7 @@
         </service>
 
         <!-- 用于表示渠道来源 -->
-        <meta-data android:name="leancloud" android:value="Offical"/>
+        <meta-data android:name="leancloud" android:value="${CHANNEL_VALUE}"/>
 
         <!-- Required SDK核心功能-->
         <activity

@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def getGitVersion(){
+    return "git rev-parse --short HEAD".execute().text.trim()
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -9,26 +13,82 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+        // 添加到BuildConfig.java中加入git的版本号
+        buildConfigField "String", "GIT_REVISION", "\"${getGitVersion()}\""
+
+        // 添加PlaceHolder定义，用于定义Manifest中的渠道变量
+        manifestPlaceholders = [ CHANNEL_VALUE: "Offical" ]
     }
+
+    // 填写签名相关信息
+    /*
+    signingConfigs {
+        release {
+            storeFile file('release.keystore')
+            storePassword "yourstorepassword"
+            keyAlias "yourkeyalias"
+            keyPassword "yourkeypassword"
+        }
+
+        debug {
+            storeFile file('debug.keystore')
+        }
+    }
+    */
+
     buildTypes {
         release {
             // 是否混淆
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 配置使用签名信息
+            // signingConfig signingConfigs.release
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
     productFlavors {
+        Offical {
+
+        }
+
+        _360 {
+
+        }
+
+        baidu {
+
+        }
+    }
+
+    // 给渠道变量赋值
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [ CHANNEL_VALUE: name ]
     }
 
     sourceSets {
         main {
+            // 指定jni目录
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    // 这是sourceSets里面设置，可以为不同的productFlavors设置不同的代码地址
+    /*
+    main {
+        manifest.srcFile 'AndroidManifest.xml'
+        java.srcDirs = ['src']
+        resources.srcDirs = ['src']
+        aidl.srcDirs = ['src']
+        renderscript.srcDirs = ['src']
+        res.srcDirs = ['res']
+        assets.srcDirs = ['assets']
+    }
+    */
 
     //LeanCloud为了解决部分第三方库重复打包了META-INF的问题
     packagingOptions{

@@ -60,7 +60,7 @@
 
     <!-- About相关 -->
     <string name="about">About</string>
-    <string name="about_version">Version：%1$s</string>
+    <string name="about_version">Version：%1$s (%2$s)</string>
 
     <string name="loading">loading</string>
 
