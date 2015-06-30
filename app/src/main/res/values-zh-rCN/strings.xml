@@ -61,6 +61,8 @@
     <!-- About相关 -->
     <string name="about">关于</string>
     <string name="about_version">版本号：%1$s (%2$s)</string>
+    <string name="copyright_desc">Copyright © 2007-2014 蓝港互动</string>
+    <string name="copyright_second_line">All Rights Reserved</string>
 
     <string name="loading">loading</string>
 
