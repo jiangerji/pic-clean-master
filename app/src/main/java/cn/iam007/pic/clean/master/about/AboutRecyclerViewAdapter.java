@@ -23,6 +23,7 @@ import cn.iam007.pic.clean.master.webview.WebViewActivity;
 public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
+    private static final int TYPE_FOOTER = 2;
 
     private List<AboutLibrary> libs = new LinkedList<AboutLibrary>();
 
@@ -35,17 +36,24 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
+        View view = null;
+        RecyclerView.ViewHolder viewHolder = null;
         if (viewType == TYPE_HEADER) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(
                     R.layout.activity_about_header, viewGroup, false);
-            PlatformUtils.applyFonts(v);
-            return new HeaderViewHolder(v);
+            viewHolder = new HeaderViewHolder(view);
+        } else if (viewType == TYPE_FOOTER) {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(
+                    R.layout.activity_about_footer, viewGroup, false);
+            viewHolder = new FooterViewHolder(view);
+        } else {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(
+                    R.layout.activity_about_library_item, viewGroup, false);
+            viewHolder = new ViewHolder(v);
         }
 
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.activity_about_library_item, viewGroup, false);
-        PlatformUtils.applyFonts(v);
-        return new ViewHolder(v);
+        PlatformUtils.applyFonts(view);
+        return viewHolder;
     }
 
     @Override
@@ -59,7 +67,7 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //set the Version
             String version = ctx.getString(R.string.about_version, aboutVersionName,
                     BuildConfig.GIT_REVISION);
-            if (BuildConfig.DEBUG){
+            if (BuildConfig.DEBUG) {
                 version += BuildConfig.FLAVOR;
             }
             holder.aboutVersion.setText(version);
@@ -144,6 +152,8 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_HEADER;
+        } else if (position == getItemCount() - 1) {
+            return TYPE_FOOTER;
         }
 
         return TYPE_ITEM;
@@ -163,8 +173,10 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public void addLibraries(Object[] libraries) {
+        int index = 1;
         for (Object library : libraries) {
-            this.libs.add((AboutLibrary) library);
+            this.libs.add(index, (AboutLibrary) library);
+            index++;
         }
     }
 
@@ -179,7 +191,8 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public void setHeader(String aboutVersionName, Integer aboutVersionCode, Drawable aboutIcon) {
-        this.libs.add(0, null);
+        this.libs.add(0, null); // 添加header
+        this.libs.add(1, null); // 添加footer
         this.aboutVersionName = aboutVersionName;
         this.aboutVersionCode = aboutVersionCode;
         this.aboutIcon = aboutIcon;
@@ -199,6 +212,13 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             aboutVersion = (TextView) headerView.findViewById(R.id.aboutVersion);
             aboutDivider = headerView.findViewById(R.id.aboutDivider);
             aboutAppDescription = (TextView) headerView.findViewById(R.id.aboutDescription);
+        }
+    }
+
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(View headerView) {
+            super(headerView);
         }
     }
 
