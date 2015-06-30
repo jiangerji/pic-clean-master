@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def getGitVersion(){
+def getGitVersion() {
     return "git rev-parse --short HEAD".execute().text.trim()
 }
 
@@ -18,24 +18,24 @@ android {
         buildConfigField "String", "GIT_REVISION", "\"${getGitVersion()}\""
 
         // 添加PlaceHolder定义，用于定义Manifest中的渠道变量
-        manifestPlaceholders = [ CHANNEL_VALUE: "Offical" ]
+        manifestPlaceholders = [CHANNEL_VALUE: "Offical"]
     }
 
     // 填写签名相关信息
-    /*
+    ///*
     signingConfigs {
         release {
-            storeFile file('release.keystore')
-            storePassword "yourstorepassword"
-            keyAlias "yourkeyalias"
-            keyPassword "yourkeypassword"
+            storeFile file('../keystore/keystore.jks')
+            storePassword "linekong"
+            keyAlias "iam007"
+            keyPassword "linekong"
         }
 
-        debug {
-            storeFile file('debug.keystore')
-        }
+//        debug {
+//            storeFile file('debug.keystore')
+//        }
     }
-    */
+    //*/
 
     buildTypes {
         release {
@@ -43,7 +43,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             // 配置使用签名信息
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -56,6 +56,7 @@ android {
 
         }
 
+        /*
         _360 {
 
         }
@@ -63,11 +64,12 @@ android {
         baidu {
 
         }
+        */
     }
 
     // 给渠道变量赋值
     productFlavors.all { flavor ->
-        flavor.manifestPlaceholders = [ CHANNEL_VALUE: name ]
+        flavor.manifestPlaceholders = [CHANNEL_VALUE: name]
     }
 
     sourceSets {
@@ -91,7 +93,7 @@ android {
     */
 
     //LeanCloud为了解决部分第三方库重复打包了META-INF的问题
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
