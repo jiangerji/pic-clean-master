@@ -47,9 +47,9 @@ public class AboutRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     R.layout.activity_about_footer, viewGroup, false);
             viewHolder = new FooterViewHolder(view);
         } else {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(
                     R.layout.activity_about_library_item, viewGroup, false);
-            viewHolder = new ViewHolder(v);
+            viewHolder = new ViewHolder(view);
         }
 
         PlatformUtils.applyFonts(view);
