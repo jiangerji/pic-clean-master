@@ -53,15 +53,23 @@ android {
 
     productFlavors {
         Offical {
+            // 官方
+        }
 
+        baidu {
+            // 百度助手
+        }
+
+        baidu_91 {
+            // 91助手
+        }
+
+        hiapk {
+            // android市场
         }
 
         /*
         _360 {
-
-        }
-
-        baidu {
 
         }
         */
