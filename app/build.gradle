@@ -68,6 +68,10 @@ android {
             // android市场
         }
 
+        goolge {
+            // google play市场
+        }
+
         /*
         _360 {
 
