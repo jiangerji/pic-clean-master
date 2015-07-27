@@ -2,6 +2,7 @@ package cn.iam007.pic.clean.master.duplicate;
 
 import java.io.File;
 
+import cn.iam007.pic.clean.master.delete.DeleteItem;
 import cn.iam007.pic.clean.master.recycler.RecyclerManager;
 
 public class DuplicateItemImage extends DuplicateItem {
@@ -107,8 +108,4 @@ public class DuplicateItemImage extends DuplicateItem {
         this.itemHeader = itemHeader;
     }
 
-
-    public void delete() {
-        RecyclerManager.getInstance().deleteToRecycler(imageUrl);
-    }
 }

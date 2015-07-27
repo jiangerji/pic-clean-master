@@ -200,7 +200,7 @@ public class BaseActivity extends AppCompatActivity {
             RelativeLayout.LayoutParams layoutParams =
                     (RelativeLayout.LayoutParams) view.getLayoutParams();
 
-            TypedArray actionbarSizeTypedArray = obtainStyledAttributes(new int[] {
+            TypedArray actionbarSizeTypedArray = obtainStyledAttributes(new int[]{
                     android.R.attr.actionBarSize
             });
 
@@ -266,5 +266,28 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return launcher;
+    }
+
+    private MaterialDialog mProgressDialog = null;
+
+    public MaterialDialog showProgressDialog() {
+        DialogBuilder builder = new DialogBuilder(this);
+        builder.progress(true, 100);
+        builder.content("加载中...");
+        builder.cancelable(false);
+        mProgressDialog = builder.show();
+
+        return mProgressDialog;
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog != null) {
+            try {
+                mProgressDialog.dismiss();
+            } catch (Exception e) {
+
+            }
+        }
+        mProgressDialog = null;
     }
 }

@@ -5,11 +5,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.provider.Settings.Secure;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import cn.iam007.pic.clean.master.Iam007Application;
@@ -251,7 +255,8 @@ public class PlatformUtils {
         Typeface font = Typeface.createFromAsset(Iam007Application.getApplication().getAssets(),
                 "fonts/RobotoCondensed-Light.ttf");
         SpannableString mNewTitle = new SpannableString(item.getTitle());
-        mNewTitle.setSpan(new CustomTypefaceSpan("" , font), 0 , mNewTitle.length(),  Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        mNewTitle.setSpan(new CustomTypefaceSpan("", font), 0, mNewTitle.length(),
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         item.setTitle(mNewTitle);
     }
 
@@ -276,5 +281,32 @@ public class PlatformUtils {
         }
 
         return versionCode;
+    }
+
+    /**
+     * 获取屏幕的真实高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getDisplayScreenHeight(Context context) {
+        // 取得窗口属性
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        // 窗口的宽度
+        Point size = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            display.getRealSize(size);
+            mScreenHeight = size.y;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            display.getSize(size);
+            mScreenHeight = size.y;
+        } else {
+            mScreenHeight = display.getHeight();
+        }
+
+
+        return mScreenHeight;
     }
 }

@@ -72,6 +72,11 @@ android {
             // google play市场
         }
 
+        kepler452b {
+            // Kepler452b
+            applicationId 'cn.iam007.pic.clean.master.kepler452b'
+        }
+
         /*
         _360 {
 
@@ -112,6 +117,31 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    productFlavors {
+        Offical {
+            // 官方
+        }
+
+        /*
+        baidu {
+            // 百度助手
+        }
+
+        baidu_91 {
+            // 91助手
+        }
+
+        hiapk {
+            // android市场
+        }
+        */
+    }
+
+    // 给渠道变量赋值
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [CHANNEL_VALUE: name]
     }
 }
 

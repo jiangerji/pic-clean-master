@@ -2,9 +2,11 @@ package cn.iam007.pic.clean.master.utils;
 
 import android.util.Log;
 
+import cn.iam007.pic.clean.master.BuildConfig;
+
 public class LogUtil {
 
-    private final static boolean LOGGER_ENABLE = false;
+    private final static boolean LOGGER_ENABLE = BuildConfig.DEBUG;
 
     //    public static Logger getLogger() {
     //        return Logger.getLogger("main");

@@ -16,6 +16,7 @@ import cn.iam007.pic.clean.master.about.AboutFragment;
 import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.duplicate.DuplicateScanFragment;
 import cn.iam007.pic.clean.master.recycler.RecyclerFragment;
+import cn.iam007.pic.clean.master.screenshot.ScreenshotFragment;
 import cn.iam007.pic.clean.master.service.Iam007Service;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -129,12 +130,12 @@ public class MainActivity extends BaseActivity {
                             menuItem.setChecked(true);
                             break;
 
-                        case R.id.navigation_feedback:
-                            openFeedback();
+                        case R.id.navigation_screenshot:
+                            pos = SCREENSHOT_FRAGMENT;
+                            menuItem.setChecked(true);
                             break;
 
                         case R.id.navigation_about:
-//                            openAbout();
                             pos = ABOUT_FRAGMENT;
                             menuItem.setChecked(true);
                             break;
@@ -153,10 +154,12 @@ public class MainActivity extends BaseActivity {
 
     public final static int DUPLICATE_SCAN_FRAGMENT = 0x00;
     public final static int RECYCLER_FRAGMENT = 0x01;
+    public final static int SCREENSHOT_FRAGMENT = 0x02;
     public final static int ABOUT_FRAGMENT = 0x03;
     private DuplicateScanFragment mDuplicateScanFragment = null;
     private RecyclerFragment mRecyclerFragment = null;
     private AboutFragment mAboutFragment = null;
+    private ScreenshotFragment mScreenshotFramgent = null;
 
     private void setFragment(int pos) {
         if (pos != mCurrentFragment) {
@@ -170,6 +173,13 @@ public class MainActivity extends BaseActivity {
                     fragment = mDuplicateScanFragment;
                     break;
 
+                case SCREENSHOT_FRAGMENT:
+                    if (mScreenshotFramgent == null) {
+                        mScreenshotFramgent = new ScreenshotFragment();
+                    }
+                    fragment = mScreenshotFramgent;
+                    break;
+
                 case RECYCLER_FRAGMENT:
                     if (mRecyclerFragment == null) {
                         mRecyclerFragment = new RecyclerFragment();
@@ -178,7 +188,7 @@ public class MainActivity extends BaseActivity {
                     break;
 
                 case ABOUT_FRAGMENT:
-                    if (mAboutFragment == null){
+                    if (mAboutFragment == null) {
                         mAboutFragment = new AboutFragment();
                     }
                     fragment = mAboutFragment;

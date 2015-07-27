@@ -43,9 +43,9 @@ public class DeleteConfirmDialog {
         return dialog;
     }
 
-    private ArrayList<DuplicateItemImage> mDuplicateItemImages;
+    private ArrayList<DeleteItem> mDuplicateItemImages;
 
-    public void addDeleteItems(ArrayList<DuplicateItemImage> items) {
+    public void addDeleteItems(ArrayList<? extends DeleteItem> items) {
         if (mDuplicateItemImages == null) {
             mDuplicateItemImages = new ArrayList<>();
         }
@@ -195,24 +195,26 @@ public class DeleteConfirmDialog {
     private void startDeleteTask() {
         new Thread(new Runnable() {
             public void run() {
-                if (mOnDeleteStatusListener != null){
+                if (mOnDeleteStatusListener != null) {
                     mOnDeleteStatusListener.onDeleteStart();
                 }
 
                 if (mDuplicateItemImages != null) {
                     int count = 0;
                     int size = mDuplicateItemImages.size();
-                    for (DuplicateItemImage image : mDuplicateItemImages) {
+                    for (DeleteItem image : mDuplicateItemImages) {
                         try {
                             image.delete();
                         } catch (Exception e) {
                         }
 
-                        if (mOnDeleteStatusListener != null){
-                            mOnDeleteStatusListener.onDeleteImage(image.getImageRealPath());
+                        if (mOnDeleteStatusListener != null) {
+                            mOnDeleteStatusListener.onDeleteImage(image);
                         }
 
-                        String content = mDialog.getContext().getString(R.string.deleting_progress_format, ++count, size);
+                        String content =
+                                mDialog.getContext().getString(R.string.deleting_progress_format,
+                                        ++count, size);
                         Message msg = new Message();
                         msg.obj = content;
                         mUpdateDeleteProgress.sendMessage(msg);
@@ -264,7 +266,9 @@ public class DeleteConfirmDialog {
 
     public interface OnDeleteStatusListener {
         void onDeleteStart();
-        void onDeleteImage(String filePath);
+
+        void onDeleteImage(DeleteItem filePath);
+
         void onDeleteFinish();
     }
 

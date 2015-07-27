@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
         <item
@@ -7,15 +7,17 @@
             android:checked="true"
             android:icon="@drawable/ic_duplicate_scan_normal"
             android:title="@string/slide_menu_duplicate_scan"/>
+
+        <item
+            android:id="@+id/navigation_screenshot"
+            android:icon="@drawable/ic_screenshot_normal"
+            android:title="@string/screenshot"/>
+        
         <item
             android:id="@+id/navigation_recycler"
             android:icon="@drawable/ic_delete_normal"
             android:title="@string/recycle"/>
-        <item
-            android:id="@+id/navigation_feedback"
-            android:icon="@drawable/ic_feedback_normal"
-            android:title="@string/feedback"
-            android:visible="false"/>
+
         <item
             android:id="@+id/navigation_about"
             android:icon="@drawable/ic_about_normal"

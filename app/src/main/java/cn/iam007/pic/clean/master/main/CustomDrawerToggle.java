@@ -8,12 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.AbsoluteSizeSpan;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import cn.iam007.pic.clean.master.R;
-import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
@@ -65,7 +63,7 @@ public class CustomDrawerToggle extends ActionBarDrawerToggle {
     @Override
     public void onDrawerSlide(View drawerView, float slideOffset) {
         super.onDrawerSlide(drawerView, slideOffset);
-        if (!mInitFont){
+        if (!mInitFont) {
             PlatformUtils.applyFonts(drawerView);
             mInitFont = true;
         }
@@ -88,12 +86,6 @@ public class CustomDrawerToggle extends ActionBarDrawerToggle {
                 startIndex + 1,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //设置指定位置textview的背景颜色
         countTextView.setText(style);
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-        super.onDrawerStateChanged(newState);
-        LogUtil.d("onDrawerStateChanged:" + newState);
     }
 
 }

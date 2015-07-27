@@ -12,6 +12,7 @@ import com.avos.avoscloud.AVAnalytics;
 import cn.iam007.pic.clean.master.R;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog.OnDeleteStatusListener;
+import cn.iam007.pic.clean.master.delete.DeleteItem;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
@@ -80,7 +81,7 @@ public class DuplicateViewHolderHeader extends DuplicateViewHolder {
                 }
 
                 @Override
-                public void onDeleteImage(String filePath) {
+                public void onDeleteImage(DeleteItem item) {
 
                 }
 

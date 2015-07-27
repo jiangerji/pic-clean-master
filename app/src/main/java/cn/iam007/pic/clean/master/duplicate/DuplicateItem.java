@@ -1,8 +1,8 @@
 package cn.iam007.pic.clean.master.duplicate;
 
-import cn.iam007.pic.clean.master.base.BaseItemInterface;
+import cn.iam007.pic.clean.master.delete.DeleteItem;
 
-public abstract class DuplicateItem implements BaseItemInterface {
+public abstract class DuplicateItem extends DeleteItem {
 
     /**
      * 当前item绑定的view对象

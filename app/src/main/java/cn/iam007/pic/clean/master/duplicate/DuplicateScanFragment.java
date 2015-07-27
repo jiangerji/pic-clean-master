@@ -42,6 +42,7 @@ import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.base.widget.CustomRecyclerView;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog.OnDeleteStatusListener;
+import cn.iam007.pic.clean.master.delete.DeleteItem;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageAdapter.HeaderViewCallback;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.DuplicateFindCallback;
 import cn.iam007.pic.clean.master.duplicate.DuplicateImageFindTask.ImageHolder;
@@ -208,7 +209,7 @@ public class DuplicateScanFragment extends BaseFragment {
         }
 
         @Override
-        public void onDeleteImage(String filePath) {
+        public void onDeleteImage(DeleteItem filePath) {
 
         }
 
@@ -454,10 +455,6 @@ public class DuplicateScanFragment extends BaseFragment {
         mDeleteBtn.setOnClickListener(mDeleteBtnClickListener);
 
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-
-        if (rootView != null) {
-            PlatformUtils.applyFonts(rootView);
-        }
     }
 
     @SuppressLint("SdCardPath")

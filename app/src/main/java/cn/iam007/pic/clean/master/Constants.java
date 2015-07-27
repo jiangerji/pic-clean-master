@@ -16,20 +16,21 @@ public class Constants {
 
     /**
      * 获取回收站目录路径
+     *
      * @return
      */
     public static File getRecyclerPath() {
         return recyclerPath;
     }
 
-    public static void init(Context context){
+    public static void init(Context context) {
         File cacheDir = context.getExternalCacheDir();
-        if (cacheDir == null){
+        if (cacheDir == null) {
             cacheDir = context.getCacheDir();
         }
 
         recyclerPath = new File(cacheDir, ".recycler");
-        if (!recyclerPath.isDirectory()){
+        if (!recyclerPath.isDirectory()) {
             recyclerPath.mkdirs();
         }
     }

@@ -59,7 +59,6 @@ public class AboutFragment extends BaseFragment {
         if (mRootView == null) {
             mRootView = inflater.inflate(R.layout.activity_about, null);
             initView(mRootView);
-            PlatformUtils.applyFonts(mRootView);
 
             mLoadingProgressBar = getToolbar().findViewById(R.id.toolbar_progress_bar);
             mLoadingProgressBar.setVisibility(View.VISIBLE);

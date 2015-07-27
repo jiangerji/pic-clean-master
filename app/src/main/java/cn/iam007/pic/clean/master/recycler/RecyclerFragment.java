@@ -71,7 +71,6 @@ public class RecyclerFragment extends BaseFragment {
             mDeleteBtn.setEnabled(true);
         }
 
-        PlatformUtils.applyFonts(mRootView);
         return mRootView;
     }
 
@@ -111,8 +110,6 @@ public class RecyclerFragment extends BaseFragment {
                         getActivity().startActivity(intent);
                     }
                 });
-
-        PlatformUtils.applyFonts(rootView);
     }
 
     private final static String AV_TAG = "recycler.fragment";
@@ -309,9 +306,9 @@ public class RecyclerFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_select_all:
-                if (mSelectAll){
+                if (mSelectAll) {
                     AVAnalytics.onEvent(getActivity(), "cancel.select.all", AV_TAG);
-                } else{
+                } else {
                     AVAnalytics.onEvent(getActivity(), "select.all", AV_TAG);
                 }
                 mSelectAll = !mSelectAll;
