@@ -11,8 +11,8 @@ android {
         applicationId 'cn.iam007.pic.clean.master'
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         // 添加到BuildConfig.java中加入git的版本号
         buildConfigField "String", "GIT_REVISION", "\"${getGitVersion()}\""
