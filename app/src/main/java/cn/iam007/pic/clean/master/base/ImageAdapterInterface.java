@@ -6,6 +6,8 @@ public interface ImageAdapterInterface {
     ArrayList<? extends BaseItemInterface> getItems();
 
     BaseItemInterface getItem(int pos);
+
+    long getSelectedCount();
 }
 
 

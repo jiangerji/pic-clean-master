@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.iam007.pic.clean.master.R;
+import cn.iam007.pic.clean.master.base.BaseItemInterface;
+import cn.iam007.pic.clean.master.base.ImageAdapterInterface;
 import cn.iam007.pic.clean.master.delete.DeleteItem;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -19,9 +21,11 @@ import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 /**
  * Created by Administrator on 2015/7/27.
  */
-public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewHolder> {
+public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewHolder> implements
+        ImageAdapterInterface {
 
     private ArrayList<ScreenshotImageItem> mItems = new ArrayList<>();
+    private MyItemClickListener mItemClickListener;
 
     @Override
     public int getItemCount() {
@@ -34,12 +38,26 @@ public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewH
         }
     }
 
+    @Override
+    public ArrayList<? extends BaseItemInterface> getItems() {
+        return mItems;
+    }
+
     public ScreenshotImageItem getItem(int pos) {
         if (pos < mItems.size()) {
             return mItems.get(pos);
         } else {
             return null;
         }
+    }
+
+    @Override
+    public long getSelectedCount() {
+        return mSelectedItem;
+    }
+
+    public void setSelectedCount(long count) {
+        mSelectedItem = count;
     }
 
     @Override
@@ -57,38 +75,39 @@ public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewH
     }
 
     @Override
-    public void onBindViewHolder(ScreenshotViewHolder holder, int position) {
+    public void onBindViewHolder(ScreenshotViewHolder holder, final int position) {
         ScreenshotImageItem item = mItems.get(position);
-        holder.bindView(item);
+        holder.bindView(item, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick(v, position);
+                }
+            }
+        });
     }
 
     private long mSelectedItem = 0;
 
-    // 主要用于更新已选择的数量
-    public void updateItem(ScreenshotImageItem item) {
-        if (item != null) {
-            if (item.isSelected()) {
-                mSelectedItem++;
-            } else {
-                mSelectedItem--;
-            }
-        }
-
-        LogUtil.d("updateItem:" + mSelectedItem);
-        SharedPreferenceUtil.setLong(
-                SharedPreferenceUtil.SELECTED_SCREENSHOT_IMAGE_TOTAL_SIZE, mSelectedItem);
-    }
+//    // 主要用于更新已选择的数量
+//    public void updateItem(ScreenshotImageItem item) {
+//        if (item != null) {
+//            if (item.isSelected()) {
+//                mSelectedItem++;
+//            } else {
+//                mSelectedItem--;
+//            }
+//        }
+//
+//        LogUtil.d("updateItem:" + mSelectedItem);
+//        SharedPreferenceUtil.setLong(
+//                SharedPreferenceUtil.SELECTED_SCREENSHOT_IMAGE_TOTAL_SIZE, mSelectedItem);
+//    }
 
     public void selectAll(boolean select, GridLayoutManager layoutManager) {
         for (ScreenshotImageItem item : mItems) {
             item.setSelected(select, false);
         }
-
-//        if (select) {
-//            mSelectedItem = mItems.size();
-//        } else {
-//            mSelectedItem = 0;
-//        }
 
         SharedPreferenceUtil.setLong(
                 SharedPreferenceUtil.SELECTED_SCREENSHOT_IMAGE_TOTAL_SIZE, mSelectedItem);
@@ -109,33 +128,6 @@ public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewH
         }
     }
 
-    /**
-     * 删除选中的图片
-     */
-    public void deleteItems(Context context, Handler handler) {
-//        ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
-//        int count = 0;
-//        String content;
-//        for (ScreenshotImageItem item : mItems) {
-//            if (item.isSelected()) {
-//                RecyclerManager.getInstance().delete(item);
-//                deleteItems.add(item);
-//
-//                content = context.getString(R.string.deleting_progress_format, ++count,
-//                        mSelectedItem);
-//                Message msg = new Message();
-//                msg.obj = content;
-//                handler.sendMessage(msg);
-//            }
-//        }
-//
-//        mSelectedItem = 0;
-//        SharedPreferenceUtil.setLong(
-//                SharedPreferenceUtil.SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, mSelectedItem);
-//
-//        mItems.removeAll(deleteItems);
-    }
-
     public ArrayList<? extends DeleteItem> getSelectedItems() {
         ArrayList<ScreenshotImageItem> deleteItems = new ArrayList<>();
         for (ScreenshotImageItem item : mItems) {
@@ -152,5 +144,18 @@ public class ScreenshotImageAdapter extends RecyclerView.Adapter<ScreenshotViewH
             mItems.removeAll(deleteItems);
             mSelectedItem -= deleteItems.size();
         }
+    }
+
+    /**
+     * 设置Item点击监听
+     *
+     * @param listener
+     */
+    public void setOnItemClickListener(MyItemClickListener listener) {
+        this.mItemClickListener = listener;
+    }
+
+    public interface MyItemClickListener {
+        void onItemClick(View view, int position);
     }
 }

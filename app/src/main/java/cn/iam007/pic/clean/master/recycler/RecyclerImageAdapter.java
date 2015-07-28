@@ -18,7 +18,8 @@ import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements ImageAdapterInterface {
+public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements
+        ImageAdapterInterface {
 
     private ArrayList<RecyclerImageItem> mItems = new ArrayList<>();
 
@@ -126,7 +127,8 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements
                 RecyclerManager.getInstance().delete(item);
                 deleteItems.add(item);
 
-                content = context.getString(R.string.deleting_progress_format, ++count, mSelectedItem);
+                content = context.getString(R.string.deleting_progress_format, ++count,
+                        mSelectedItem);
                 Message msg = new Message();
                 msg.obj = content;
                 handler.sendMessage(msg);
@@ -143,7 +145,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements
     /**
      * 将选择的回收站图片恢复到原始路径
      */
-    public void restoreItems(Context context, Handler handler){
+    public void restoreItems(Context context, Handler handler) {
         ArrayList<RecyclerImageItem> deleteItems = new ArrayList<>();
         int count = 0;
         String content;
@@ -152,7 +154,8 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements
                 RecyclerManager.getInstance().restore(item);
                 deleteItems.add(item);
 
-                content = context.getString(R.string.restoring_progress_format, ++count, mSelectedItem);
+                content = context.getString(R.string.restoring_progress_format, ++count,
+                        mSelectedItem);
                 Message msg = new Message();
                 msg.obj = content;
                 handler.sendMessage(msg);
@@ -171,7 +174,7 @@ public class RecyclerImageAdapter extends Adapter<RecyclerViewHolder> implements
      *
      * @return
      */
-    public long getSelectedItem() {
+    public long getSelectedCount() {
         return mSelectedItem;
     }
 

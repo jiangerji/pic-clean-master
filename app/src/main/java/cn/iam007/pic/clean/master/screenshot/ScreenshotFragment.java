@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.screenshot;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVAnalytics;
 
@@ -25,6 +27,8 @@ import cn.iam007.pic.clean.master.base.BaseActivity;
 import cn.iam007.pic.clean.master.base.BaseFragment;
 import cn.iam007.pic.clean.master.delete.DeleteConfirmDialog;
 import cn.iam007.pic.clean.master.delete.DeleteItem;
+import cn.iam007.pic.clean.master.duplicate.gallery.PhotoActivity;
+import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.utils.ImageUtils;
 import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
@@ -113,20 +117,19 @@ public class ScreenshotFragment extends BaseFragment implements
 
         mScreenshotImageAdapter = new ScreenshotImageAdapter();
         mScreenshotImageContainer.setAdapter(mScreenshotImageAdapter);
-//        mRecyclerImageAdapter.setOnItemClickListener(
-//                new RecyclerImageAdapter.MyItemClickListener() {
-//
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//                        RecyclerHoldAdapter holdAdapter = RecyclerHoldAdapter.getInstance();
-//                        holdAdapter.setHoldAdapter(mRecyclerImageAdapter);
-//                        Intent intent = new Intent(getActivity(),
-//                                PhotoActivity.class);
-//                        intent.putExtra("position", position);
-//                        intent.putExtra("fromFragment", MainActivity.RECYCLER_FRAGMENT);
-//                        getActivity().startActivity(intent);
-//                    }
-//                });
+        mScreenshotImageAdapter.setOnItemClickListener(
+                new ScreenshotImageAdapter.MyItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        ScreenshotHolderAdapter holdAdapter = ScreenshotHolderAdapter.getInstance();
+                        holdAdapter.setHoldAdapter(mScreenshotImageAdapter);
+                        Intent intent = new Intent(getActivity(), PhotoActivity.class);
+                        intent.putExtra("position", position);
+                        intent.putExtra("fromFragment", MainActivity.SCREENSHOT_FRAGMENT);
+                        getActivity().startActivity(intent);
+                    }
+                });
     }
 
     private void scanFile(File file) {
@@ -212,6 +215,8 @@ public class ScreenshotFragment extends BaseFragment implements
             mDeleteBtn.startAnimation(AnimationUtils.loadAnimation(getActivity(),
                     R.anim.abc_slide_out_bottom));
         }
+
+        mScreenshotImageAdapter.setSelectedCount(mSelected);
     }
 
     private ArrayList<DeleteItem> mDeleteItems;
@@ -219,31 +224,35 @@ public class ScreenshotFragment extends BaseFragment implements
     private View.OnClickListener mDeleteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DeleteConfirmDialog dialog = DeleteConfirmDialog.builder(getActivity());
-            dialog.addDeleteItems(mScreenshotImageAdapter.getSelectedItems());
-            dialog.setOnDeleteStatusListener(new DeleteConfirmDialog.OnDeleteStatusListener() {
-                @Override
-                public void onDeleteStart() {
-                    mDeleteItems = new ArrayList<>();
-                }
+            if (mSelected > 0) {
+                DeleteConfirmDialog dialog = DeleteConfirmDialog.builder(getActivity());
+                dialog.addDeleteItems(mScreenshotImageAdapter.getSelectedItems());
+                dialog.setOnDeleteStatusListener(new DeleteConfirmDialog.OnDeleteStatusListener() {
+                    @Override
+                    public void onDeleteStart() {
+                        mDeleteItems = new ArrayList<>();
+                    }
 
-                @Override
-                public void onDeleteImage(DeleteItem item) {
-                    mDeleteItems.add(item);
-                }
+                    @Override
+                    public void onDeleteImage(DeleteItem item) {
+                        mDeleteItems.add(item);
+                    }
 
-                @Override
-                public void onDeleteFinish() {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mScreenshotImageAdapter.removeItems(mDeleteItems);
-                            mScreenshotImageAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
-            dialog.show();
+                    @Override
+                    public void onDeleteFinish() {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mScreenshotImageAdapter.removeItems(mDeleteItems);
+                                mScreenshotImageAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            } else {
+                Toast.makeText(getActivity(), R.string.delete_hint, Toast.LENGTH_SHORT).show();
+            }
         }
     };
 }

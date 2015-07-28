@@ -1,5 +1,6 @@
 package cn.iam007.pic.clean.master.screenshot;
 
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.widget.CheckBox;
@@ -39,12 +40,15 @@ public class ScreenshotViewHolder extends ViewHolder {
         PlatformUtils.applyFonts(itemView);
     }
 
-    public void bindView(ScreenshotImageItem item) {
+    public void bindView(ScreenshotImageItem item, View.OnClickListener listener) {
         mItem = item;
         String imageUrl = item.getImageUrl();
         if (imageUrl != null) {
             ImageUtils.showImageByUrl(imageUrl, mImageView);
             mImageView.setVisibility(View.VISIBLE);
+            if (listener != null) {
+                mImageView.setOnClickListener(listener);
+            }
             mCheckBox.setVisibility(View.VISIBLE);
             setChecked(item.isSelected());
         }
@@ -59,6 +63,6 @@ public class ScreenshotViewHolder extends ViewHolder {
      * 刷新绑定view
      */
     public void refresh() {
-        bindView(mItem);
+        bindView(mItem, null);
     }
 }

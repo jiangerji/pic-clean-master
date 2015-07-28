@@ -63,7 +63,7 @@ public class RecyclerFragment extends BaseFragment {
             startScanRecycler();
         }
 
-        if (mRecyclerImageAdapter.getSelectedItem() <= 0) {
+        if (mRecyclerImageAdapter.getSelectedCount() <= 0) {
             mRestoreBtn.setEnabled(false);
             mDeleteBtn.setEnabled(false);
         } else {
@@ -123,7 +123,7 @@ public class RecyclerFragment extends BaseFragment {
                     .positiveText(R.string.delete_confirm)
                     .negativeText(R.string.cancel)
                     .content(getString(R.string.recycler_delete_message,
-                            mRecyclerImageAdapter.getSelectedItem()));
+                            mRecyclerImageAdapter.getSelectedCount()));
             final MaterialDialog dialog = builder.build();
             dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(
                     new View.OnClickListener() {
@@ -212,7 +212,7 @@ public class RecyclerFragment extends BaseFragment {
                     .positiveText(R.string.restore)
                     .negativeText(R.string.cancel)
                     .content(getActivity().getString(R.string.recycler_restore_message,
-                            mRecyclerImageAdapter.getSelectedItem()));
+                            mRecyclerImageAdapter.getSelectedCount()));
             builder.callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {

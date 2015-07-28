@@ -15,6 +15,7 @@ import cn.iam007.pic.clean.master.base.ImageAdapterInterface;
 import cn.iam007.pic.clean.master.duplicate.DuplicateHoldAdapter;
 import cn.iam007.pic.clean.master.main.MainActivity;
 import cn.iam007.pic.clean.master.recycler.RecyclerHoldAdapter;
+import cn.iam007.pic.clean.master.screenshot.ScreenshotHolderAdapter;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
 public class PhotoActivity extends BaseActivity {
@@ -36,23 +37,18 @@ public class PhotoActivity extends BaseActivity {
                 @Override
                 public void onSharedPreferenceChanged(
                         SharedPreferences sharedPreferences, String key) {
+                    long count = 0;
                     if (key.equalsIgnoreCase(SELECTED_DELETE_IMAGE_TOTAL_NUM)) {
-                        if (mTextView != null) {
-                            long count = sharedPreferences.getLong(key, 0);
-                            if (count <= 0) {
-                                mTextView.setText("0");
-                            } else {
-                                mTextView.setText(String.valueOf(count));
-                            }
-                        }
+                        count = sharedPreferences.getLong(key, 0);
                     } else if (key.equalsIgnoreCase(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE)) {
-                        if (mTextView != null) {
-                            long count = sharedPreferences.getLong(key, 0);
-                            if (count <= 0) {
-                                mTextView.setText("0");
-                            } else {
-                                mTextView.setText(String.valueOf(count));
-                            }
+                        count = sharedPreferences.getLong(key, 0);
+                    }
+
+                    if (mTextView != null) {
+                        if (count <= 0) {
+                            mTextView.setText("0");
+                        } else {
+                            mTextView.setText(String.valueOf(count));
                         }
                     }
 
@@ -73,8 +69,9 @@ public class PhotoActivity extends BaseActivity {
         mPosition = getIntent().getIntExtra("position", 1);
         mFrom = getIntent().getIntExtra("fromFragment", MainActivity.DUPLICATE_SCAN_FRAGMENT);
         if (mFrom == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
-            mImageAdapterInterface = DuplicateHoldAdapter.getInstance()
-                    .getHoldAdapter();
+            mImageAdapterInterface = DuplicateHoldAdapter.getInstance().getHoldAdapter();
+        } else if (mFrom == MainActivity.SCREENSHOT_FRAGMENT) {
+            mImageAdapterInterface = ScreenshotHolderAdapter.getInstance().getHoldAdapter();
         } else {
             mImageAdapterInterface = RecyclerHoldAdapter.getInstance().getHoldAdapter();
         }
@@ -95,13 +92,14 @@ public class PhotoActivity extends BaseActivity {
 //            }
 //        });
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this, new CenterLockListener.CenterItemListener() {
-            @Override
-            public void onCenterItem(int position) {
-                mPosition = position;
-                invalidateOptionsMenu();
-            }
-        }));
+        mRecyclerView.addOnScrollListener(new CenterLockListener(PhotoActivity.this,
+                new CenterLockListener.CenterItemListener() {
+                    @Override
+                    public void onCenterItem(int position) {
+                        mPosition = position;
+                        invalidateOptionsMenu();
+                    }
+                }));
         mRecyclerView.scrollToPosition(mPosition);
     }
 
@@ -109,19 +107,31 @@ public class PhotoActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
 
-        long count = 0L;
-        if (mFrom == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
-            count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_NUM, 0L);
-        } else {
-            count = SharedPreferenceUtil.getLong(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 0L);
-        }
+//        long count = mImageAdapterInterface.getSelectedCount();
+//
+////        if (mFrom == MainActivity.DUPLICATE_SCAN_FRAGMENT) {
+////            count = SharedPreferenceUtil.getLong(SELECTED_DELETE_IMAGE_TOTAL_NUM, 0L);
+////        } else {
+////            count = SharedPreferenceUtil.getLong(SELECTED_RECYCLER_IMAGE_TOTAL_SIZE, 0L);
+////        }
+//
+//        if (count <= 0) {
+//            mTextView.setText("0");
+//        } else {
+//            mTextView.setText(String.valueOf(count));
+//        }
+        setCount();
+        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
+    }
+
+    private void setCount() {
+        long count = mImageAdapterInterface.getSelectedCount();
 
         if (count <= 0) {
             mTextView.setText("0");
         } else {
             mTextView.setText(String.valueOf(count));
         }
-        SharedPreferenceUtil.setOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
     }
 
     @Override
@@ -166,6 +176,7 @@ public class PhotoActivity extends BaseActivity {
                     duplicateItem.setSelected(true, true);
                 }
                 duplicateItem.refresh();
+                setCount();
                 return true;
             default:
                 break;

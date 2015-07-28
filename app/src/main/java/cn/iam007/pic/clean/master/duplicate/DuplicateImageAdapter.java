@@ -21,7 +21,8 @@ import cn.iam007.pic.clean.master.utils.LogUtil;
 import cn.iam007.pic.clean.master.utils.PlatformUtils;
 import cn.iam007.pic.clean.master.utils.SharedPreferenceUtil;
 
-public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implements ImageAdapterInterface {
+public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implements
+        ImageAdapterInterface {
 
     // 用于获取custom header对应position的mask
     private final static int CUSTOM_HEADER_MASK = 0x00FF;
@@ -136,6 +137,13 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implemen
     }
 
     @Override
+    public long getSelectedCount() {
+        return SharedPreferenceUtil.getLong(
+                SharedPreferenceUtil.SELECTED_DELETE_IMAGE_TOTAL_NUM,
+                0L);
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (position < mCustomHeaderCount) {
             return mCustomHeaderType.get(position);
@@ -223,8 +231,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implemen
     }
 
     @Override
-    public DuplicateViewHolder onCreateViewHolder(
-            ViewGroup parent, int viewType) {
+    public DuplicateViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
         DuplicateViewHolder holder = null;
@@ -351,21 +358,21 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implemen
             } else {
                 if (bestItem == null) {
                     bestItem = item;
-                    ((DuplicateItemImage) bestItem).setSelected(false, false);
+                    bestItem.setSelected(false, false);
                 } else {
                     long preBestFileSize = ((DuplicateItemImage) bestItem).getFileSize();
                     long currentFileSize = ((DuplicateItemImage) item).getFileSize();
 
                     if (currentFileSize >= preBestFileSize) {
-                        ((DuplicateItemImage) bestItem).setSelected(true, false);
+                        bestItem.setSelected(true, false);
                         totalCount += ((DuplicateItemImage) bestItem).getFileSize();
                         if (((DuplicateItemImage) bestItem).getFileSize() > 0) {
                             totalNum += 1;
                         }
                         bestItem = item;
-                        ((DuplicateItemImage) bestItem).setSelected(false, false);
+                        bestItem.setSelected(false, false);
                     } else {
-                        ((DuplicateItemImage) item).setSelected(true, false);
+                        item.setSelected(true, false);
                         totalCount += ((DuplicateItemImage) item).getFileSize();
                         if (((DuplicateItemImage) item).getFileSize() > 0) {
                             totalNum += 1;
@@ -403,7 +410,7 @@ public class DuplicateImageAdapter extends Adapter<DuplicateViewHolder> implemen
     public void cancelAutoSelect(LayoutManager layoutManager) {
         for (DuplicateItem item : mItems) {
             if (!item.isHeader()) {
-                ((DuplicateItemImage) item).setSelected(false, false);
+                item.setSelected(false, false);
             }
         }
 
